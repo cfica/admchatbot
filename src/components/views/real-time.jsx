@@ -24,6 +24,7 @@ export default class RealTime extends Component {
 	    this.state = {
 	      error: null,
 	      isLoaded: false,
+	      perPage: 10,
 	      items: [],
 	      offset: 0
 	    };
@@ -32,7 +33,7 @@ export default class RealTime extends Component {
 	loadCommentsFromServer() {
 	    $.ajax({
 	      url: 'http://127.0.0.1:8082/api/v1/real-time',
-	      data: { limit: 10, offset: 0},
+	      data: { limit: this.state.perPage, offset: this.state.offset},
 	      dataType: 'json',
 	      type: 'GET',
 	      success: data => {
@@ -89,10 +90,8 @@ export default class RealTime extends Component {
 	}
 
 	handlePageClick = data => {
-		alert('asfdsf');
 	    let selected = data.selected;
-	    let offset = Math.ceil(selected * this.props.perPage);
-
+	    let offset = Math.ceil(selected * this.state.perPage);
 	    this.setState({ offset: offset }, () => {
 	      this.loadCommentsFromServer();
 	    });
@@ -148,19 +147,21 @@ export default class RealTime extends Component {
 		              </tbody>
 		            </Table>
 
-		            <ReactPaginate
-			          previousLabel={'previous'}
-			          nextLabel={'next'}
-			          breakLabel={'...'}
-			          breakClassName={'break-me'}
-			          pageCount={this.state.pageCount}
-			          marginPagesDisplayed={2}
-			          pageRangeDisplayed={5}
-			          onPageChange={this.handlePageClick}
-			          containerClassName={'pagination'}
-			          subContainerClassName={'pages pagination'}
-			          activeClassName={'active'}
-			        />
+		            <div id="react-paginate">
+			            <ReactPaginate
+				          previousLabel={'Anterior'}
+				          nextLabel={'Siguiente'}
+				          breakLabel={'...'}
+				          breakClassName={'break-me'}
+				          pageCount={this.state.pageCount}
+				          marginPagesDisplayed={2}
+				          pageRangeDisplayed={5}
+				          onPageChange={this.handlePageClick}
+				          containerClassName={'pagination'}
+				          subContainerClassName={'pages pagination'}
+				          activeClassName={'active'}
+				        />
+			        </div>
 
 		          </section>
 		        </section>

@@ -226,9 +226,115 @@ a[data-toggle="collapse"] {
 .navbar {
     padding: 15px 10px;
     background: #fff;
-        background-color: rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
     border: none;
     border-radius: 0;
     margin-bottom: 40px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+#react-paginate ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: .25rem;
+}
+
+#react-paginate li > a {
+    display: inline-block;
+    padding: .75rem 1.5rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+#react-paginate li a:hover {
+    z-index: 2;
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+#react-paginate li.active a{
+    z-index: 2;
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+
+#react-paginate li.disabled a{
+  color: #6c757d;
+  pointer-events: none;
+  cursor: auto;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+.content-button{
+  display: inline-block;
+}
+
+.jumbotron-sm{
+  padding: 10px
+}
+
+.jumbotron{
+  border: #dbdbdb solid 1px;
+}
+
+.jumbotron-right{
+  text-align: right;
+}
+
+.list-group-sm .list-group-item{
+  padding: 5px;
+  font-size: 0.9rem;
+}
+
+.contentListGroupSelect{
+  max-height: 80px;
+  overflow-y: scroll;
+  margin-bottom: 10px
+}
+
+.formTypeResponse{
+  display: none;
+}
+
+.listPatternsSelected{
+  display: inline-block;
+}
+
+.listPatternsSelected .badge{
+  margin-right: 5px;
+}
+
+
+.contFilterList{
+  max-height: 80px;
+  overflow-y: scroll;
+  margin-bottom: 10px
+}
+
+.contFilterList .list-group-item{
+  padding: 5px;
+  font-size: 0.9rem;
+}
+
+.contFilterList .list-group-item a{
+      line-height: 0.7;
 }
