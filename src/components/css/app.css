@@ -306,20 +306,26 @@ a[data-toggle="collapse"] {
 }
 
 .contentListGroupSelect{
-  max-height: 80px;
+  /*max-height: 80px;
   overflow-y: scroll;
+  */
   margin-bottom: 10px
 }
 
 .formTypeResponse{
-  display: none;
+  
 }
 
-.listPatternsSelected{
-  display: inline-block;
+.listItemsSelected{
+  margin: 0px;
+  padding: 0px
 }
 
-.listPatternsSelected .badge{
+.listItemsSelected li{
+  list-style: none;
+}
+
+.listItemsSelected .badge{
   margin-right: 5px;
 }
 
@@ -337,4 +343,13 @@ a[data-toggle="collapse"] {
 
 .contFilterList .list-group-item a{
       line-height: 0.7;
+}
+
+
+.form-control:focus{
+  box-shadow: none;
+}
+
+.mb-3, .my-3{
+  margin-bottom: 0.2rem !important;
 }

@@ -43,7 +43,7 @@ export default class SidebarMenu extends Component {
 		            <h3>bElisa</h3>
 		        </div>
 
-		        <ul class="list-unstyled CTAs">
+		        <ul className="list-unstyled CTAs">
 		            <p>Options Admin</p>
 
 		            <li className="active">
@@ -112,10 +112,10 @@ export default class SidebarMenu extends Component {
 
 		            {/*
 	                <li>
-	                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+	                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" className="download">Download source</a>
 	                </li>
 	                <li>
-	                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+	                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" className="article">Back to article</a>
 	                </li>*/}
 	            </ul>
 
