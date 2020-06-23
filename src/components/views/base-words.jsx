@@ -6,8 +6,8 @@ import SidebarMenu from './sidebar-menu';
 import SidebarAction from './sidebar-action';
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
-//https://github.com/AdeleD/react-paginate/blob/master/demo/js/demo.js
 import axios from 'axios';
+import ModalToLearn from './modal-add-pattern';
 
 export default class BaseWords extends Component {
 	constructor(props) {
@@ -17,7 +17,8 @@ export default class BaseWords extends Component {
 	      perPage: 50,
 	      items: [],
 	      offset: 0,
-	      listPatterns : []
+	      listPatterns : [],
+	      showModalAddPattern: false
 	    };
 	}
 
@@ -40,7 +41,6 @@ export default class BaseWords extends Component {
 	      },
 	    });
 	}
-
 
 	loadPatterns() {
 	    $.ajax({
@@ -70,7 +70,6 @@ export default class BaseWords extends Component {
 	    });
 	};
 
-
 	componentDidMount(){
 	    this.loadWords();
 	    this.loadPatterns();
@@ -84,207 +83,13 @@ export default class BaseWords extends Component {
 	    });
 	};
 
+	handleShowModalAddPattern = (event)=>{
+		this.setState({showModalAddPattern : true});
+	}
 
-    addPatternForm() {
-	    const [show, setShow] = React.useState(false);
-	    const handleClose = () => setShow(false);
-	    const handleShow = () => setShow(true);
-
-	    /*FILTER INPUT*/
-	  	const [searchTerm, setSearchTerm] = React.useState("");
-		const [searchResults, setSearchResults] = React.useState([]);
-		const [resultFiler, setResultFiler] = React.useState([]);
-		const [showFilterInput, setShowFilterInput] = React.useState(false);
-		const handleChange = event => {
-			var _value = event.target.value;
-			setSearchTerm(_value);
-			if(searchTerm.length > 2){
-				axios.post('http://127.0.0.1:8082/api/v1/filter-tags', JSON.stringify({ tag: _value}), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
-			    .then(res => {
-			    	var _items = [];
-			    	res.data.items.forEach(function(elem){
-			    		_items.push(elem.tag);
-			    	});
-			    	setResultFiler(_items);
-			    });
-			}
-		};
-
-		React.useEffect(() => {
-			//console.log(searchTerm);
-		    if(resultFiler.length > 0 && searchTerm.length > 0){
-		    	setShowFilterInput(true);
-		    	setSearchResults(resultFiler);
-		    }else{
-		    	setShowFilterInput(false);
-		    	setSearchResults([]);
-		    }
-		}, [searchTerm]);
-		/*FILTER INPUT*/
-
-
-		/*INPUT ADD PATTERN*/
-		const [valuePattern, setValuePattern] = React.useState('');
-		const [listPatternsAdd, setListPatternsAdd] = React.useState([]);
-		const _handonchangeInputPattern = (event)=>{
-			var _value = event.target.value;
-			setValuePattern(_value);
-		}
-		const _handleonAddPattern = (event)=>{    	
-	    	if(valuePattern.length > 3){
-	    		const _items = listPatternsAdd;
-		    	_items.push(valuePattern);
-		    	setValuePattern('');
-				setListPatternsAdd(_items);
-			}
-		}
-		
-		/*INPUT ADD RESPONSE*/
-		const [showResponseTypeText, setShowResponseTypeText] = React.useState(false);
-		const [responseTypeValue, setResponseTypeValue] = React.useState(false);
-		const _handleonTypeResponse = (event) =>{
-			setResponseTypeValue(event.target.value);
-			if(event.target.value == 'Text'){
-				setShowResponseTypeText(true);
-			}else{
-				setShowResponseTypeText(false);
-			}
-		}
-
-		/*INPUT ADD RESPONSE TEXT*/
-		const [valueResponseText, setValueResponseText] = React.useState('');
-		const [listResponseTextAdd, setListResponseTextAdd] = React.useState([]);
-		const _handleChangeInputResponseText = (event)=>{
-			var _value = event.target.value;
-			setValueResponseText(_value);
-		}
-		const _handleAddResponseText = (event)=>{
-	    	if(valueResponseText.length > 3){
-	    		const _items = listResponseTextAdd;
-		    	_items.push(valueResponseText);
-		    	setValueResponseText('');
-				setListResponseTextAdd(_items);
-			}
-		}
-
-		/*SUBMIT FORM*/
-		const handleSubmitFormAddPattern = (event) =>{
-   		    event.preventDefault();
-   		    var _dataPost = {
-   		    	"tag" : searchTerm,
-   		    	"patterns" : listPatternsAdd,
-   		    	"responses" : listResponseTextAdd
-   		    };
-
-   		    axios.post('http://127.0.0.1:8082/api/v1/add-pattern', JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
-		    .then(res => {
-		    	alert('result');
-		    });
-		}
-
-		return (
-		  	<div className="content-button">
-		      <Button variant="secondary" onClick={handleShow}>Add Pattern</Button>
-		      <Modal show={show} onHide={handleClose}>
-		        <Form onSubmit={handleSubmitFormAddPattern}>
-				        <Modal.Header closeButton>
-				          <Modal.Title>Add Pattern</Modal.Title>
-				        </Modal.Header>
-				        
-				        <Modal.Body>
-				        	{/*<p>Woohoo, you're reading this text in a modal!</p>*/}
-				            
-			                    <Form.Group  controlId="formBasicTag">
-						            <Form.Label >1.- Tag</Form.Label>
-						            <Form.Control size="sm" type="text" value={searchTerm} onChange={handleChange} placeholder="Search Tag" />
-						            {showFilterInput &&
-						                <div className="contFilterList">
-						                	<ListGroup variant="flush">
-						                    	{searchResults.map(item => (
-										          <ListGroup.Item action href="#link1">{item}</ListGroup.Item>
-										        ))}
-											</ListGroup>
-						                </div>
-						            }
-						            <Form.Text className="text-muted">
-						              This tag must be unique. Example, hello_how_are_you
-						            </Form.Text>
-						        </Form.Group>
-
-				                <Form.Group  controlId="formBasicPatterns">
-				                    <Form.Label >2.- Patterns</Form.Label>
-									<InputGroup className="mb-3">
-									    <FormControl value={valuePattern} onChange={_handonchangeInputPattern} size="sm"
-									      placeholder="Add Pattern"
-									      aria-label="Add Pattern"
-									      aria-describedby="basic-addon2"
-									    />
-									    <InputGroup.Append>
-									      <Button size="sm" onClick={_handleonAddPattern} variant="outline-secondary">Add</Button>
-									    </InputGroup.Append>
-									</InputGroup>
-				                    <ul className="listItemsSelected">
-								        {listPatternsAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
-				                    </ul>
-				                    <Form.Text className="text-muted">
-				                      Possible questions that the user will ask through the chat.
-				                    </Form.Text>
-				                 </Form.Group>
-
-
-				                <Form.Group  controlId="formBasicResponse">
-				                    <Form.Label >3.- Type Response</Form.Label>
-				                    <div className="contentListGroupSelect">
-									    <Form.Control size="sm" as="select" onChange={_handleonTypeResponse}>
-										    <option>Select</option>
-										    <option value="Text">Text</option>
-										    <option value="Form">Form</option>
-										    <option value="Single-option">Single option</option>
-										    <option value="Multiple-choices">Multiple choices</option>
-										</Form.Control>
-				                    </div>
-
-									<div className="formTypeResponse">						
-											{showResponseTypeText &&
-												<Form.Group  controlId="formBasicResponseText">
-									                    <Form.Label >Responses</Form.Label>
-														<InputGroup className="mb-3">
-														    <FormControl value={valueResponseText} onChange={_handleChangeInputResponseText} size="sm"
-														      placeholder="Add Response"
-														      aria-label="Add Response"
-														      aria-describedby="basic-addon2"
-														    />
-														    <InputGroup.Append>
-														      <Button size="sm" onClick={_handleAddResponseText} variant="outline-secondary">Add</Button>
-														    </InputGroup.Append>
-														</InputGroup>
-									                    <ul className="listItemsSelected">
-													        {listResponseTextAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
-									                    </ul>
-									                    <Form.Text className="text-muted">
-									                      Possible responses that the user will ask through the chat.
-									                    </Form.Text>
-								                </Form.Group>
-							            	}
-									</div>
-				                </Form.Group>
-			               
-				        </Modal.Body>
-				        
-				        <Modal.Footer>
-				          <Button variant="secondary" onClick={handleClose}>
-				            Close
-				          </Button>
-				          <Button variant="primary" type="submit">
-				            Save Changes
-				          </Button>
-				        </Modal.Footer>
-		        </Form>
-		      </Modal>
-		    </div>
-		);
-    }
-
+	handleHiddenModalAddPattern = data => {
+	    this.setState({showModalAddPattern : false});
+	};
 
   render() {
     return (
@@ -297,7 +102,13 @@ export default class BaseWords extends Component {
 	            <div className="line"></div>
 	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
 		            <Button variant="primary">Train Chat</Button>{' '}
-		            <this.addPatternForm/>
+		            <Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
+		            {this.state.showModalAddPattern && 
+		            	<ModalToLearn
+			        	 hiddenModal = {this.handleHiddenModalAddPattern} 
+			        	 patternSelected = {[]}
+			        	/>
+		            }
 				</Jumbotron>
 				<Tabs defaultActiveKey="patterns" id="uncontrolled-tab-example">
 				  <Tab eventKey="patterns" title="Patterns">
