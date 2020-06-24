@@ -15,11 +15,15 @@ export default class ModalToLearn extends Component {
 		      searchResults : [],
 		      showFilterInput: false,
 		      valuePattern : _valueInputAddPattern,
+		      valuePatternHidden: '',
 		      listPatternsAdd : [],
 		      showResponseTypeText : false,
 		      responseTypeValue : '',
 		      valueResponseText : '',
-		      listResponseTextAdd : []
+		      valueResponseTextHidden : '',
+		      listResponseTextAdd : [],
+		      validated : false,
+		      errorSaveForm: ""
 		    };
 		}
 
@@ -62,8 +66,8 @@ export default class ModalToLearn extends Component {
 	    		const _items = this.state.listPatternsAdd;
 		    	_items.push(this.state.valuePattern);
 		    	this.setState({valuePattern : ''});
-
 				this.setState({listPatternsAdd : _items});
+				this.setState({valuePatternHidden : _items});
 			}
 		}
 		
@@ -89,23 +93,52 @@ export default class ModalToLearn extends Component {
 		    	_items.push(this.state.valueResponseText);
 		    	this.setState({valueResponseText: ''});
 				this.setState({listResponseTextAdd : _items});
+				this.setState({valueResponseTextHidden : _items});
 			}
 		}
 
 		/*SUBMIT FORM*/
 		handleSubmitFormAddPattern = (event) =>{
-   		    event.preventDefault();
-   		    var _dataPost = {
-   		    	"tag" : this.state.searchTerm,
-   		    	"patterns" : this.state.listPatternsAdd,
-   		    	"responses" : this.state.listResponseTextAdd
-   		    };
-
-   		    //this.state.responseTypeValue
-   		    axios.post('http://127.0.0.1:8082/api/v1/add-pattern', JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
-		    .then(res => {
-		    	alert('result');
-		    });
+			event.preventDefault();
+			const form = event.currentTarget;
+		    if (form.checkValidity() === false || 
+		    	this.state.valueResponseTextHidden.length == 0 ||
+		    	this.state.valuePatternHidden.length == 0 
+		    ) {
+		      event.stopPropagation();
+		      this.setState({errorSaveForm : ''});
+		      this.setState({valueResponseTextHidden : false});
+		      this.setState({valuePatternHidden : false});
+		      this.setState({validated : true});
+		    }else{
+		    	this.setState({validated : false});
+	   		    var _dataPost = {
+	   		    	"tag" : this.state.searchTerm,
+	   		    	"patterns" : this.state.listPatternsAdd,
+	   		    	"responses" : this.state.listResponseTextAdd
+	   		    };
+	   		    //this.state.responseTypeValue
+	   		    axios.post('http://127.0.0.1:8082/api/v1/add-pattern', JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
+			    .then(res => {
+			    	this.setState({errorSaveForm : false});
+			    	this.setState({searchTerm : ''});
+			    	this.setState({valueResponseTextHidden : ''});
+			    	this.setState({valuePatternHidden : ''});
+			    	this.setState({listResponseTextAdd : []});
+			    	this.setState({listPatternsAdd : []});
+			    	this.setState({searchResults : []});
+			    	this.setState({showResponseTypeText : false});
+			    	this.setState({valueResponseTextHidden : ''});
+		      		this.setState({valuePatternHidden : ''});
+			    	form.reset();
+			    })
+			    .catch(function (error) {
+				    this.setState({errorSaveForm : true});
+				})
+				.then(function () {
+				    // always executed
+				});
+		    }
 		}
 
   		render() {
@@ -113,14 +146,15 @@ export default class ModalToLearn extends Component {
 				  	<div className="content-button">
 				      {/*<Button variant="secondary" onClick={handleShow}>Add Pattern</Button>*/}
 				      <Modal show={this.state.showModal} onHide={this.handleClose}>
-				        <Form onSubmit={this.handleSubmitFormAddPattern}>
+				        <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitFormAddPattern}>
 						        <Modal.Header closeButton>
 						          <Modal.Title>Add Pattern</Modal.Title>
 						        </Modal.Header>
 						        <Modal.Body>
+					                    
 					                    <Form.Group  controlId="formBasicTag">
 								            <Form.Label >1.- Tag</Form.Label>
-								            <Form.Control size="sm" type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search Tag" />
+								            <Form.Control required size="sm" type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search Tag" />
 								            {this.state.showFilterInput &&
 								                <div className="contFilterList">
 								                	<ListGroup variant="flush">
@@ -130,6 +164,8 @@ export default class ModalToLearn extends Component {
 													</ListGroup>
 								                </div>
 								            }
+								            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+								            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 								            <Form.Text className="text-muted">
 								              This tag must be unique. Example, hello_how_are_you
 								            </Form.Text>
@@ -147,9 +183,16 @@ export default class ModalToLearn extends Component {
 											      <Button size="sm" onClick={this._handleonAddPattern} variant="outline-secondary">Add</Button>
 											    </InputGroup.Append>
 											</InputGroup>
+											<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden} size="sm"/>
+						                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
+						                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
+
 						                    <ul className="listItemsSelected">
 										        {this.state.listPatternsAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
 						                    </ul>
+						                    
+						                    
+
 						                    <Form.Text className="text-muted">
 						                      Possible questions that the user will ask through the chat.
 						                    </Form.Text>
@@ -159,43 +202,53 @@ export default class ModalToLearn extends Component {
 						                <Form.Group  controlId="formBasicResponse">
 						                    <Form.Label >3.- Type Response</Form.Label>
 						                    <div className="contentListGroupSelect">
-											    <Form.Control size="sm" as="select" onChange={this._handleonTypeResponse}>
-												    <option>Select</option>
+											    <Form.Control required size="sm" as="select" onChange={this._handleonTypeResponse}>
+												    <option value="">Select</option>
 												    <option value="Text">Text</option>
 												    <option value="Form">Form</option>
 												    <option value="Single-option">Single option</option>
 												    <option value="Multiple-choices">Multiple choices</option>
 												</Form.Control>
+												<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+								            	<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 						                    </div>
-
-											<div className="formTypeResponse">						
-													{this.state.showResponseTypeText &&
-														<Form.Group  controlId="formBasicResponseText">
-											                    <Form.Label >Responses</Form.Label>
-																<InputGroup className="mb-3">
-																    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
-																      placeholder="Add Response"
-																      aria-label="Add Response"
-																      aria-describedby="basic-addon2"
-																    />
-																    <InputGroup.Append>
-																      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
-																    </InputGroup.Append>
-																</InputGroup>
-											                    <ul className="listItemsSelected">
-															        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
-											                    </ul>
-											                    <Form.Text className="text-muted">
-											                      Possible responses that the user will ask through the chat.
-											                    </Form.Text>
-										                </Form.Group>
-									            	}
-											</div>
+								            <Form.Text className="text-muted">
+						                      Possible responses that the user will ask through the chat.
+						                    </Form.Text>
 						                </Form.Group>
+
+						                {this.state.showResponseTypeText &&
+							                <div className="formTypeResponse">						
+												<Form.Group  controlId="formBasicResponseText">
+									                    <Form.Label >Responses</Form.Label>
+														<InputGroup className="mb-3">
+														    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
+														      placeholder="Add Response"
+														      aria-label="Add Response"
+														      aria-describedby="basic-addon2"
+														    />
+														    <InputGroup.Append>
+														      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
+														    </InputGroup.Append>
+														</InputGroup>
+
+														<FormControl required type="hidden" name="valueResponseTextHidden" value={this.state.valueResponseTextHidden} size="sm"/>
+														{this.state.valueResponseTextHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
+							                    		{this.state.valueResponseTextHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
+
+									                    <ul className="listItemsSelected">
+													        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
+									                    </ul>
+								                </Form.Group>
+											</div>
+										}
 					               
 						        </Modal.Body>
 						        
 						        <Modal.Footer>
+						          {this.state.errorSaveForm === false && <Alert key="success" variant="success">The configuration was successfully saved,</Alert>}
+						          {this.state.errorSaveForm === true && <Alert key="danger" variant="danger">An error occurred while saving the configuration.</Alert>}
+
 						          <Button variant="secondary" onClick={this.handleClose}>
 						            Close
 						          </Button>

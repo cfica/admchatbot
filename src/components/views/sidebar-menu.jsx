@@ -126,7 +126,15 @@ export default class SidebarMenu extends Component {
 		            	<a href="/dashboard">Dashboard</a>
 		            </li>
 
-		            <li className="active">
+		            <li>
+		            	<a href="/real-time">Real Time</a>
+		            </li>
+
+		            <li>
+		            	<a href="/base-words">Words Base</a>
+		            </li>
+
+		            {/*<li className="active">
 		                <a href="#realTimeSubmenu" data-toggle="collapse" aria-expanded="false">Real Time</a>
 		                <ul className="collapse list-unstyled" id="realTimeSubmenu">
 		                    <li>
@@ -139,9 +147,9 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
-		            <li className="active">
+		            {/*<li className="active">
 		                <a href="#WordsBaseSubmenu" data-toggle="collapse" aria-expanded="false">Words Base</a>
 		                <ul className="collapse list-unstyled" id="WordsBaseSubmenu">
 		                    <li>
@@ -155,7 +163,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
 		            <li className="active">
 		                <a href="#TeamSubmenu" data-toggle="collapse" aria-expanded="false">Team collaboration</a>
