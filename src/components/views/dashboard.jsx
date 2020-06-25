@@ -4,8 +4,20 @@ import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './sidebar-menu';
 import SidebarAction from './sidebar-action';
+import { browserHistory } from 'react-router';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 export default class Dashboard extends Component {
+	constructor(props) {
+	    super(props);
+	    if(read_cookie('username') == ''){
+	      browserHistory.push('/login');
+	    }
+
+	    this.state = {};
+	}
+  
+
   componentDidMount(){
   }
 

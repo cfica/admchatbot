@@ -12,6 +12,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //import 'bootstrap/dist/css/bootstrap-theme.css';
 import './components/css/app.css';
 
+import config from 'react-global-configuration';
+import configuration from './config';
+config.set(configuration);
+config.setEnvironment('production');
 
 
 ReactDOM.render(

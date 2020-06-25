@@ -7,12 +7,18 @@ import SidebarAction from './sidebar-action';
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
-import ModalToLearn from './modal-add-pattern';
+import ModalToLearn from './components/modal-add-pattern';
 import ModalToConfirm from './components/confirm';
+import config from 'react-global-configuration';
+import { browserHistory } from 'react-router';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 export default class BaseWords extends Component {
 	constructor(props) {
 	    super(props);
+	    if(read_cookie('username') == ''){
+	      browserHistory.push('/login');
+	    }
 	    this.state = {
 	      error: null,
 	      perPage: 50,
@@ -28,7 +34,7 @@ export default class BaseWords extends Component {
 
 	loadWords() {
 	    $.ajax({
-	      url: 'http://127.0.0.1:8082/api/v1/base-words',
+	      url: config.get('baseUrl')+'/api/v1/base-words',
 	      data: { limit: this.state.perPage, offset: this.state.offset},
 	      dataType: 'json',
 	      type: 'GET',
@@ -48,7 +54,7 @@ export default class BaseWords extends Component {
 
 	loadPatterns() {
 	    $.ajax({
-	      url: 'http://127.0.0.1:8082/api/v1/patterns',
+	      url: config.get('baseUrl')+'/api/v1/patterns',
 	      data: { limit: this.state.perPage, offset: this.state.offset},
 	      dataType: 'json',
 	      type: 'GET',
@@ -67,7 +73,7 @@ export default class BaseWords extends Component {
 	}
 
 	loadLogTraining(){
-		axios.get('http://127.0.0.1:8082/api/v1/log-training')
+		axios.get(config.get('baseUrl')+'/api/v1/log-training')
 	    .then(res => {
 	    	//console.log(res);
 	    	this.setState({logTraining : res.data.items});
@@ -107,7 +113,7 @@ export default class BaseWords extends Component {
 	
 	hiddenModalConfirm = data => this.setState({showModalConfirm : false});
 	handleModalConfirm = data => {
-		axios.post('http://127.0.0.1:8082/api/v1/del-pattern', JSON.stringify({id: this.state.idPattern}), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
+		axios.post(config.get('baseUrl')+'/api/v1/del-pattern', JSON.stringify({id: this.state.idPattern}), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
 	    .then(res => {
 	    	this.loadPatterns();
 	    	this.loadWords();
@@ -121,8 +127,11 @@ export default class BaseWords extends Component {
 
 	handleTrain = (event) =>{
 		//alert('training chat..');
-		axios.get('http://127.0.0.1:8082/api/v1/train')
-	    .then(res => {});
+		axios.get(config.get('baseUrl')+'/api/v1/train')
+	    .then(res => {
+	    	//algo
+	    });
+	    this.loadLogTraining();
 	}
 
     render() {

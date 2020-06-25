@@ -23,11 +23,13 @@
     "react-bootstrap-validation": "^0.1.11",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.13.1",
+    "react-global-configuration": "^1.4.0",
     "react-paginate": "^6.3.2",
     "react-router": "^3.2.6",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "sfcookies": "^1.0.2",
     "yup": "^0.29.1"
   },
   "scripts": {

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import App from './components/App';
-import Home from './components/views/home';
 import Login from './components/views/login';
 import Contact from './components/views/contact';
 import Dashboard from './components/views/dashboard';
@@ -11,7 +10,6 @@ import BaseWords from './components/views/base-words';
 export default (
   <Route path='/' component={App}>
     <IndexRoute component={Login} />
-    <Route path='home' component={Home} />
     <Route path='real-time' component={RealTime} />
     <Route path='base-words' component={BaseWords} />
     <Route path='contact' component={Contact} />

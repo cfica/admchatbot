@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import config from 'react-global-configuration';
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
@@ -7,12 +8,18 @@ import SidebarAction from './sidebar-action';
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
-import ModalToLearn from './modal-add-pattern';
+import ModalToLearn from './components/modal-add-pattern';
+import { browserHistory } from 'react-router';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 
 export default class RealTime extends Component {
 	constructor(props) {
 	    super(props);
+	    if(read_cookie('username') == ''){
+	      browserHistory.push('/login');
+	    }
+
 	    this.state = {
 	      error: null,
 	      perPage: 10,
@@ -25,7 +32,7 @@ export default class RealTime extends Component {
 
 	loadWords() {
 	    $.ajax({
-	      url: 'http://127.0.0.1:8082/api/v1/real-time',
+	      url: config.get('baseUrl')+'/api/v1/real-time',
 	      data: { limit: this.state.perPage, offset: this.state.offset},
 	      dataType: 'json',
 	      type: 'GET',

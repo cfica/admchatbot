@@ -2,9 +2,16 @@ import React, { Component } from "react";
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { browserHistory } from 'react-router';
 
 export default class SidebarAction extends Component {
   componentDidMount(){
+  }
+
+  _handleLogout = (event)=>{
+    delete_cookie('username');
+    browserHistory.push('/login');
   }
 
   render() {
@@ -28,7 +35,7 @@ export default class SidebarAction extends Component {
                         <a className="nav-link" href="#">Page</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Page</a>
+                        <a className="nav-link" href="#" onClick={this._handleLogout}>Cerrar Sesión</a>
                     </li>
                 </ul>
             </div>
