@@ -10,7 +10,7 @@ export default class SidebarAction extends Component {
   }
 
   _handleLogout = (event)=>{
-    delete_cookie('username');
+    delete_cookie('token');
     browserHistory.push('/login');
   }
 

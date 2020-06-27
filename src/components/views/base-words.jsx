@@ -16,9 +16,10 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 export default class BaseWords extends Component {
 	constructor(props) {
 	    super(props);
-	    if(read_cookie('username') == ''){
+	    if(read_cookie('token') == ''){
 	      browserHistory.push('/login');
 	    }
+
 	    this.state = {
 	      error: null,
 	      perPage: 50,
@@ -28,56 +29,55 @@ export default class BaseWords extends Component {
 	      showModalAddPattern: false,
 	      showModalConfirm: false,
 	      idPattern: 0,
-	      logTraining: []
+	      logTraining: [],
+	      token: read_cookie('token')
 	    };
 	}
 
 	loadWords() {
-	    $.ajax({
-	      url: config.get('baseUrl')+'/api/v1/base-words',
-	      data: { limit: this.state.perPage, offset: this.state.offset},
-	      dataType: 'json',
-	      type: 'GET',
-	      success: data => {
-	        this.setState({
-	          items: data.items,
-	          pageCountWords: Math.ceil(data.total_count / data.limit),
+	    axios.get(config.get('baseUrlApi')+'/api/v1/base-words?limit='+this.state.perPage+'&offset='+this.state.offset, 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	    .then(res => {
+	    	this.setState({
+	          items: res.data.data.items,
+	          pageCountWords: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	      },
-	      error: (xhr, status, err) => {
-	        this.setState({
-	           err
-	        });
-	      },
-	    });
+	    }).catch(function (error) {
+	    	if(error.response.status == 401){
+	    		delete_cookie('token');
+	    		browserHistory.push('/login');
+	    	}
+		});
 	}
 
 	loadPatterns() {
-	    $.ajax({
-	      url: config.get('baseUrl')+'/api/v1/patterns',
-	      data: { limit: this.state.perPage, offset: this.state.offset},
-	      dataType: 'json',
-	      type: 'GET',
-	      success: data => {
-	        this.setState({
-	          listPatterns: data.items,
-	          pageCountPatterns: Math.ceil(data.total_count / data.limit),
+	    axios.get(config.get('baseUrlApi')+'/api/v1/patterns?limit='+this.state.perPage+'&offset='+this.state.offset, 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	    .then(res => {
+	    	this.setState({
+	          listPatterns: res.data.data.items,
+	          pageCountPatterns: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	      },
-	      error: (xhr, status, err) => {
-	        this.setState({
-	           err
-	        });
-	      },
-	    });
+	    }).catch(function (error) {
+	    	if(error.response.status == 401){
+	    		delete_cookie('token');
+	    		browserHistory.push('/login');
+	    	}
+		});
 	}
 
 	loadLogTraining(){
-		axios.get(config.get('baseUrl')+'/api/v1/log-training')
+	    axios.get(config.get('baseUrlApi')+'/api/v1/log-training', 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
-	    	//console.log(res);
-	    	this.setState({logTraining : res.data.items});
-	    });
+	    	this.setState({logTraining : res.data.data.items});
+	    }).catch(function (error) {
+	    	if(error.response.status == 401){
+	    		delete_cookie('token');
+	    		browserHistory.push('/login');
+	    	}
+		});
+
 	}
 
 	handlePageClickPatterns = data => {
@@ -113,11 +113,17 @@ export default class BaseWords extends Component {
 	
 	hiddenModalConfirm = data => this.setState({showModalConfirm : false});
 	handleModalConfirm = data => {
-		axios.post(config.get('baseUrl')+'/api/v1/del-pattern', JSON.stringify({id: this.state.idPattern}), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
+		axios.post(config.get('baseUrlApi')+'/api/v1/del-pattern', JSON.stringify({id: this.state.idPattern}), 
+			{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
 	    	this.loadPatterns();
 	    	this.loadWords();
-	    });
+	    }).catch(function (error) {
+	    	if(error.response.status == 401){
+	    		delete_cookie('token');
+	    		browserHistory.push('/login');
+	    	}
+		});
 	    this.setState({showModalConfirm : false});
 	}
 	handleClickDelPattern(_id){
@@ -127,10 +133,16 @@ export default class BaseWords extends Component {
 
 	handleTrain = (event) =>{
 		//alert('training chat..');
-		axios.get(config.get('baseUrl')+'/api/v1/train')
+		axios.get(config.get('baseUrlApi')+'/api/v1/train', 
+			{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
 	    	//algo
-	    });
+	    }).catch(function (error) {
+	    	if(error.response.status == 401){
+	    		delete_cookie('token');
+	    		browserHistory.push('/login');
+	    	}
+		});
 	    this.loadLogTraining();
 	}
 

@@ -10,7 +10,7 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 export default class Dashboard extends Component {
 	constructor(props) {
 	    super(props);
-	    if(read_cookie('username') == ''){
+	    if(read_cookie('token') == ''){
 	      browserHistory.push('/login');
 	    }
 

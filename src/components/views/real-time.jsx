@@ -16,7 +16,7 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 export default class RealTime extends Component {
 	constructor(props) {
 	    super(props);
-	    if(read_cookie('username') == ''){
+	    if(read_cookie('token') == ''){
 	      browserHistory.push('/login');
 	    }
 
@@ -26,30 +26,27 @@ export default class RealTime extends Component {
 	      items: [],
 	      offset: 0,
 	      showModalToLearn: false,
-	      patternSelected: []
+	      patternSelected: [],
+	      token: read_cookie('token')
 	    };
 	}
 
-	loadWords() {
-	    $.ajax({
-	      url: config.get('baseUrl')+'/api/v1/real-time',
-	      data: { limit: this.state.perPage, offset: this.state.offset},
-	      dataType: 'json',
-	      type: 'GET',
-	      success: data => {
-	        this.setState({
-	          items: data.items,
-	          pageCount: Math.ceil(data.total_count / data.limit),
-	        });
-	      },
 
-	      error: (xhr, status, err) => {
-	        //console.error(this.props.url, status, err.toString()); // eslint-disable-line
-	        this.setState({
-	           error: err
+
+	loadWords() {
+		axios.get(config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset, 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	    .then(res => {
+	    	this.setState({
+	          items: res.data.data.items,
+	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	      },
-	    });
+	    }).catch(function (error) {
+	    	if(error.response.status == 401){
+	    		delete_cookie('token');
+	    		browserHistory.push('/login');
+	    	}
+		});
 	  }
 
 	componentDidMount(){

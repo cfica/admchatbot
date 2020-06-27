@@ -2,10 +2,17 @@ import React, { Component } from "react";
 import $ from "jquery";
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import axios from 'axios';
+import config from 'react-global-configuration';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { browserHistory } from 'react-router';
 
 export default class ModalToLearn extends Component {
   		constructor(props) {
 		    super(props);
+		    if(read_cookie('token') == ''){
+		      browserHistory.push('/login');
+		    }
+
 		    //console.log(this.props.patternSelected);
 		    var _valueInputAddPattern = typeof this.props.patternSelected[1] != 'undefined' ? this.props.patternSelected[1] : '';
 		    this.state = {
@@ -23,7 +30,8 @@ export default class ModalToLearn extends Component {
 		      valueResponseTextHidden : '',
 		      listResponseTextAdd : [],
 		      validated : false,
-		      errorSaveForm: ""
+		      errorSaveForm: "",
+		      token: read_cookie('token')
 		    };
 		}
 
@@ -36,10 +44,11 @@ export default class ModalToLearn extends Component {
 			var _value = event.target.value;
 			this.setState({searchTerm: _value});
 			if(this.state.searchTerm.length > 2){
-				axios.post('http://127.0.0.1:8082/api/v1/filter-tags', JSON.stringify({ tag: _value}), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
+				axios.post(config.get('baseUrlApi')+'/api/v1/filter-tags', 
+				JSON.stringify({ tag: _value}), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 			    .then(res => {
 			    	var _items = [];
-			    	res.data.items.forEach(function(elem){
+			    	res.data.data.items.forEach(function(elem){
 			    		_items.push(elem.tag);
 			    	});
 			    	this.setState({resultFiler: _items});
@@ -118,7 +127,8 @@ export default class ModalToLearn extends Component {
 	   		    	"responses" : this.state.listResponseTextAdd
 	   		    };
 	   		    //this.state.responseTypeValue
-	   		    axios.post('http://127.0.0.1:8082/api/v1/add-pattern', JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
+	   		    axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern', 
+	   		    	JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 			    .then(res => {
 			    	this.setState({errorSaveForm : false});
 			    	this.setState({searchTerm : ''});

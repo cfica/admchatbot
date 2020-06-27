@@ -46,7 +46,7 @@ export default class SidebarMenu extends Component {
 		        <ul className="list-unstyled CTAs">
 		            <p>Options Admin</p>
 
-		            <li className="active">
+		            {/*<li className="active">
 		                <a href="#ClientsSubmenu" data-toggle="collapse" aria-expanded="false">Clients</a>
 		                <ul className="collapse list-unstyled" id="ClientsSubmenu">
 		                    <li>
@@ -60,6 +60,10 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
+		            </li>*/}
+
+		            <li>
+		            	<a href="/clients">Clients</a>
 		            </li>
 
 		            <li className="active">

@@ -86,7 +86,6 @@ p {
 
 a, a:hover, a:focus {
     color: inherit;
-    text-decoration: underline;
     transition: all 0.3s;
 }
 
@@ -398,5 +397,9 @@ a[data-toggle="collapse"] {
 }
 
 .fade.alert.alert-danger.show{
+  width: 100%
+}
+
+#login .content-form > button{
   width: 100%
 }

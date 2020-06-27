@@ -3,7 +3,6 @@ import { Alert, Navbar, Nav, Modal, Collapse,Form,NavDropdown,FormControl,Contai
 import config from 'react-global-configuration';
 import axios from 'axios';
 import  { Redirect } from 'react-router-dom';
-import UserProfile from '../../UserProfile';
 import { browserHistory } from 'react-router';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
@@ -11,94 +10,31 @@ export default class Login extends Component {
   constructor(props){
     super(props);
     this.state = {
-      validated : false,
-      errorSaveForm: "",
-      email: "",
-      password: ""
+      urlAuth: config.get('baseUrlAuth')+'/oauth?client_id='+config.get('client_id')+'&redirect_uri='+config.get('baseUrlApp')+'/auth/callback&scope=read:current_user update:current_user_metadata'
     };
   }
 
   componentDidMount(){
-    if(read_cookie('username') != ''){
+    if(read_cookie('token') != ''){
       browserHistory.push('/dashboard');
     }else{
       browserHistory.push('/');
     }
   }
 
-  _handleChangeEmail = (event)=>{
-    var _value = event.target.value;
-    this.setState({email: _value});
-  }
-
-  _handleChangePassword = (event)=>{
-    var _value = event.target.value;
-    this.setState({password: _value});
-  }
-
-  handleSubmitForm = (event) =>{
-        event.preventDefault();
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-          event.stopPropagation();
-          this.setState({validated : true});
-        }else{
-            this.setState({validated : false});
-            var _dataPost = {"email" : this.state.email,"password" : this.state.password};
-            axios.post(config.get('baseUrl')+'/api/v1/login', JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8'}})
-            .then(res => {
-                //console.log(res);
-                if(typeof res.data.login != 'undefined'){
-                    //localStorage.setItem('username', this.state.email);
-                    bake_cookie('username', this.state.email);
-                    this.setState({errorSaveForm : false});
-                    this.setState({password: ''});
-                    this.setState({'email': ''});
-                    form.reset();
-                    browserHistory.push('/dashboard');
-                }else{
-                  this.setState({errorSaveForm : true});
-                }
-            }).catch(function (error) {
-              alert(error);
-                //this.setState({errorSaveForm : true});
-            }).then(function () {
-                // always executed
-            });
-        }
+  _handleLogin = (event) =>{
+    window.location.href = this.state.urlAuth;
   }
 
   render() {
     return (
       <div id="login">
             <Jumbotron className="content-form">
-                  <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
-                        {this.state.errorSaveForm === false && <Alert key="success" variant="success">Success to login!</Alert>}
-                        {this.state.errorSaveForm === true && <Alert key="danger" variant="danger">Please check the username or password.</Alert>}
-
-                        <Form.Group controlId="formBasicEmail">
-                          <Form.Label>Email address</Form.Label>
-                          <Form.Control required value={this.state.email} onChange={this._handleChangeEmail} type="email" placeholder="Enter email" />
-                          
-                          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                          <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-                          
-                          <Form.Text className="text-muted">
-                            We'll never share your email with anyone else.
-                          </Form.Text>
-                        </Form.Group>
-
-                        <Form.Group controlId="formBasicPassword">
-                          <Form.Label>Password</Form.Label>
-                          <Form.Control required value={this.state.password} onChange={this._handleChangePassword} type="password" placeholder="Password" />
-                          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                          <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-                        </Form.Group>
-
-                        <Button variant="primary" type="submit">
-                          Log in
-                        </Button>
-                    </Form>
+                  <h5>Inicia sesión para poder acceder.</h5>
+                  <hr/>
+                  <Button onClick={this._handleLogin} variant="primary" type="button">
+                    Log in
+                  </Button>
             </Jumbotron>
       </div>
     );
