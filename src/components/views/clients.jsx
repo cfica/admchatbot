@@ -4,10 +4,11 @@ import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './sidebar-menu';
 import SidebarAction from './sidebar-action';
-import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, DropdownButton,Dropdown,Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalClient from './components/modal-client';
+import ModalConfChat from './components/modal-confchat.jsx';
 import ModalToConfirm from './components/confirm';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
@@ -29,7 +30,9 @@ export default class Clients extends Component {
 	      showModalClient: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      token: read_cookie('token')
+	      token: read_cookie('token'),
+	      showModalConfigChatbot : false,
+	      idClient: ''
 	    };
 	}
 
@@ -67,6 +70,16 @@ export default class Clients extends Component {
 	    this.setState({showModalClient : false});
 	};
 
+	handleGenConfigChat(id){
+		console.log(id);
+		this.setState({showModalConfigChatbot : true});	
+		this.setState({idClient : id});	
+	}
+
+	hiddenModalConfigChatbot = data =>{
+		this.setState({showModalConfigChatbot : false});
+	}
+
     render() {
       return (
         <div className="wrapper">
@@ -87,56 +100,81 @@ export default class Clients extends Component {
 		        }
 
 		  		<br/>
-		        <div className="line"></div>
-		  		<p>You can generate question patterns that can be asked by chat.</p>
-			    <section>
-		          <section>
-		           
-		            <Table id="itemTable" striped bordered hover size="sm">
-		              <thead>
-		                <tr>
-		                  <th>ID</th>
-		                  <th>Tag</th>
-		                  <th>Category</th>
-		                  <th>Word</th>
-		                  <th></th>
-		                </tr>
-		              </thead>
-		              <tbody>
-		                {this.state.items.map((item) => 
-		                  <tr key={item._id.$oid}>
-		                    <td>#{item.code}</td>
-		                    <td>{item.tag}</td>
-		                    <td>{item.category}</td>
-		                    <td>{item.word}</td>
-		                    <td>
-		                      {/* Here add the onClick for the action "remove it" on the span 
-		                      <a href="" ><span>Bloquear</span></a> / <a href="" ><span>Aprender</span></a>*/}
-		                      Algo
-		                    </td>
-		                  </tr>
-		                )}
-		              </tbody>
-		            </Table>
+		  		<Tab.Container id="left-tabs-example" defaultActiveKey="first">
+				  <Row>
+				    <Col sm={2}>
+				      <Nav variant="pills" className="flex-column">
+				        <Nav.Item>
+				          <Nav.Link eventKey="first">Clients</Nav.Link>
+				        </Nav.Item>
+				        <Nav.Item>
+				          <Nav.Link eventKey="second">Users</Nav.Link>
+				        </Nav.Item>
+				      </Nav>
+				    </Col>
+				    <Col sm={10}>
+				      <Tab.Content>
+				        <Tab.Pane eventKey="first">
+				            <section>
+				            {this.state.showModalConfigChatbot && 
+					        	<ModalConfChat
+					        	 hiddenModal = {this.hiddenModalConfigChatbot} 
+					        	 idSelected = {this.state.idClient}
+					        	/>
+					        }
 
-		            <div id="react-paginate">
-			            <ReactPaginate
-				          previousLabel={'Anterior'}
-				          nextLabel={'Siguiente'}
-				          breakLabel={'...'}
-				          breakClassName={'break-me'}
-				          pageCount={this.state.pageCount}
-				          marginPagesDisplayed={2}
-				          pageRangeDisplayed={5}
-				          onPageChange={this.handlePageClickClients}
-				          containerClassName={'pagination'}
-				          subContainerClassName={'pages pagination'}
-				          activeClassName={'active'}
-				        />
-			        </div>
+					            <Table id="itemTable" striped bordered hover size="sm">
+					              <thead>
+					                <tr>
+					                  <th>Domain</th>
+					                  <th>Name</th>
+					                  <th></th>
+					                </tr>
+					              </thead>
+					              <tbody>
+					                {this.state.items.map((item) => 
+					                  <tr key={item._id.$oid}>
+					                    <td>#{item.domain}</td>
+					                    <td>{item.name}</td>
+					                    <td>
+					                      
+					                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
+											    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
+											    <Dropdown.Item eventKey="2">Edit</Dropdown.Item>
+											    <Dropdown.Item eventKey="3">Delete</Dropdown.Item>
+										  </DropdownButton>
+					                    </td>
+					                  </tr>
+					                )}
+					              </tbody>
+					            </Table>
 
-		          </section>
-		        </section>
+					            <div id="react-paginate">
+						            <ReactPaginate
+							          previousLabel={'Anterior'}
+							          nextLabel={'Siguiente'}
+							          breakLabel={'...'}
+							          breakClassName={'break-me'}
+							          pageCount={this.state.pageCount}
+							          marginPagesDisplayed={2}
+							          pageRangeDisplayed={5}
+							          onPageChange={this.handlePageClickClients}
+							          containerClassName={'pagination'}
+							          subContainerClassName={'pages pagination'}
+							          activeClassName={'active'}
+							        />
+						        </div>
+					        </section>
+				        </Tab.Pane>
+				        <Tab.Pane eventKey="second">
+				          
+				        </Tab.Pane>
+				      </Tab.Content>
+				    </Col>
+				  </Row>
+				</Tab.Container>
+
+			    
 	        </div>
 	        <div className="overlay"></div>
 		</div>

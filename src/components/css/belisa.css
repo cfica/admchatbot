@@ -7,32 +7,45 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h5{
+#chat h5{
 	margin-bottom: 0px !important;
-	font-size: 1.1rem !important;
+	font-size: 1.0rem !important;
+}
+
+#chat span{
+	font-size: 0.9rem !important;
+}
+
+#chat{
+	height: 100vh;
+	max-height: 100vh
 }
 
 .contentSend{
 	position: fixed !important;
-	bottom: 0px;
+	bottom: 0%;
 	width: 100%;
 	margin: 0px !important;
 	padding: 0px;
 	background: #ffffff;
+	height: 45px !important;
 }
 
 .contentResponse{
 	height: 93vh;
+	min-height: 93vh;
 	overflow-y: auto;
 	background: #ffffff;
 }
 
 .contentSend .btn-group-lg > .btn, .btn-lg{
-	border-radius: 0px !important
+	border-radius: 0px !important;
+	font-size: 1.1rem !important;
 }
 
 .contentSend .form-control-lg{
-	border-radius: 0px !important
+	border-radius: 0px !important;
+	font-size: 1.1rem !important;
 }
 
 .contentResponse .contentMessageChat{

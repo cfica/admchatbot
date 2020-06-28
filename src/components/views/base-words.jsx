@@ -1,7 +1,4 @@
 import React, { Component } from "react";
-import $ from "jquery";
-import Mousewheel from "jquery-mousewheel";
-import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './sidebar-menu';
 import SidebarAction from './sidebar-action';
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';

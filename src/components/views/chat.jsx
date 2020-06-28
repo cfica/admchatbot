@@ -14,11 +14,38 @@ export default class Login extends Component {
       validated : false,
       errorSaveForm: '',
       inputMessage: '',
-      listMessages: []
+      listMessages: [],
+      'token' : '',
+      'client_id' : ''
     };
   }
 
   componentDidMount(){
+    const client_id = this.props.location.query.i;
+    if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false || this.inIframe() == false){
+    }else{
+      this.auth();
+    }
+  }
+
+  auth(){
+    const client_id = this.props.location.query.i;
+    var url = (window.location != window.parent.location)
+            ? document.referrer
+            : document.location.href;
+    //console.log(document.host);
+    console.log(url);
+    axios.post(config.get('baseUrlApi')+'/api/v1/auth',JSON.stringify({}), 
+        {headers: {'Content-Type': 'application/json;charset=UTF-8', 
+                   'Authorization' : 'Bearer ' + client_id
+        }}
+    ).then(res => {
+         this.setState({token: res.data.data.token}); 
+    }).catch(function (error) {
+          //this.setState({errorSaveForm : true});
+    }).then(function () {
+          // always executed
+    });
   }
 
   _handleSend = (event)=>{
@@ -37,39 +64,49 @@ export default class Login extends Component {
           //
           this.setState({validated : false});
           var _dataPost = {"message" : this.state.inputMessage};
-          const token = this.props.location.query.i;
+          //const token = this.props.location.query.i;
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
-              {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + token}}
+              {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
           ).then(res => {
-                //
                 const item = {'type' : '_res', 'msg' : res.data.data.response};
                 const items = this.state.listMessages.slice();
                 items.push(item);
                 this.setState({'listMessages' : items});
-                //
-                
                 form.reset();
           }).catch(function (error) {
-                //this.setState({errorSaveForm : true});
+                if(error.response.status == 401 || error.response.status == 404){
+                  const item = {'type' : '_res', 'msg' : 'Oops! Houston, we have a problem.'};
+                  const items = this.state.listMessages.slice();
+                  items.push(item);
+                  this.setState({'listMessages' : items});
+                }
           }).then(function () {
                 // always executed
           });
         }
   }
 
-  render() {
-    //add recaptcha..
-    function clsAlphaNoOnly(text){ 
+  inIframe () {
+      try {
+          return window.self !== window.top;
+      } catch (e) {
+          return true;
+      }
+  }
+
+  clsAlphaNoOnly(text){ 
       var letters = /^[a-zA-Z0-9]+$/;
       if(text.match(letters)){
         return true;
       }else{
         return false;
       }
-    }
+  }
 
+  render() {
+    //add recaptcha..
     const client_id = this.props.location.query.i;
-    if(client_id == null || client_id.length < 25 || clsAlphaNoOnly(client_id) == false){
+    if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false || this.inIframe() == false){
       return ('');
     }else{
         return (

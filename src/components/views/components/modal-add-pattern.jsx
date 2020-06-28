@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import $ from "jquery";
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';

@@ -403,3 +403,13 @@ a[data-toggle="collapse"] {
 #login .content-form > button{
   width: 100%
 }
+
+
+.dropdown.btn-group .dropdown-toggle.btn{
+ width: 170px
+}
+
+.modal-90w{
+  width: 90%;
+  max-width: none !important;
+}

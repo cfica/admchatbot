@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import $ from "jquery";
 import {Modal,Button} from 'react-bootstrap';
 
 export default class ModalToConfirm extends Component {

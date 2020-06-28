@@ -31,8 +31,6 @@ export default class RealTime extends Component {
 	    };
 	}
 
-
-
 	loadWords() {
 		axios.get(config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset, 
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
