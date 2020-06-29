@@ -33,14 +33,11 @@ export default class ModalConfChat extends Component {
 		}	
 
 		componentDidMount(){
-			axios.post(config.get('baseUrlApi')+'/api/v1/user-api', JSON.stringify({id: this.props.idSelected}), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+			const id_client = this.props.idSelected;
+			axios.post(config.get('baseUrlApi')+'/api/v1/user-api', JSON.stringify({id: id_client}), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 		    .then(res => {
 		    	const client_id = res.data.data.result[0].client_id;
-		    	var _fileCss = __dirname+'/base/chat-client.css';
-		    	//const _fileJs = './../../../../public/base/chat-client.js';
-		    	this.cpFile(_fileCss, __dirname+'/'+client_id+'/app.css');
-		    	//this.cpFile(_fileJs, process.env.PUBLIC_URL+'/'+client_id+'/app.js');
-		    	this.setState({codeInitChat : this.codeInitChat(client_id, config.get('baseUrlApp'))});
+		    	this.setState({codeInitChat : this.codeInitChat(client_id,id_client, config.get('staticFrontChat'),config.get('baseUrlApp'), 'app.min')});
 		    }).catch(function (error) {
 		    	console.log(error);
 		    	//if(error.response.status == 401){
@@ -53,42 +50,15 @@ export default class ModalConfChat extends Component {
 			this.props.handleConfirm();
 		}
 
-		cpFile(file_orig, file_dest){
-			//const {fs} = require('fs');
-			//const fsPromises = fs.promises;
-			//const {promises: fsPromises,constants: {COPYFILE_EXCL}} = fs;
-
-			//fsPromises.copyFile('source.txt', 'destination.txt', COPYFILE_EXCL)
-		    //.then(() => console.log('source.txt was copied to destination.txt'))
-		    //.catch(() => console.log('The file could not be copied'));
-
-
-			//fs.copyFile('source.txt', 'destination.txt')
-			//.then(() => console.log('source.txt was copied to destination.txt'))
-			//.catch(() => console.log('The file could not be copied'));
-
-			//console.log
-			//const copyFileSync = require('fs-copy-file-sync');
-			//console.log(__dirname);
-			//const fs = require('fs');
-			//const path = require('path');
-			//const {promisify} = require('util');
-			//const fs = require('fs-copy-file');
-			// destination.txt will be created or overwritten by default.
-			//this.fs.copyFile('modal-client.jsx', 'modal-client.jsxx');
-			//const copyFileSync = require('fs-copy-file-sync');
-			//const { COPYFILE_EXCL } = copyFileSync.constants;
-			//promisify.copyFile('source.txt', 'destination.txt', (err) => {
-			//});
-		}
-
-		codeInitChat(client_id, url){
+		codeInitChat(client_id,id_client,staticFrontChat,baseUrl, fileName){
 			const code = `
 			<script type="text/javascript">
 			     (function(d) {
 			        window.bElisa = {};
 			        bElisa.client_id = '`+client_id+`';
-			        bElisa.base_url = '`+url+`';
+			        bElisa.baseStatic = '`+staticFrontChat+'/'+id_client+`';
+			        bElisa.fileName = '`+fileName+`';
+			        bElisa.baseApp = '`+baseUrl+`';
 			        var ref = d.getElementsByTagName('script')[0];
 			        var app, appId = 'app-bElisa';
 			        if (d.getElementById(appId)) return;
@@ -97,7 +67,7 @@ export default class ModalConfChat extends Component {
 			        app.async = true;
 			        app.charset='UTF-8';
 			        //app.setAttribute('crossorigin','*');
-			        app.src = bElisa.base_url+"/`+client_id+`/app.js";
+			        app.src = bElisa.baseStatic+"/"+bElisa.fileName+".js";
 			        ref.parentNode.insertBefore(app, ref);
 			     }(document));
 			</script>

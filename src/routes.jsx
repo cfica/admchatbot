@@ -9,6 +9,7 @@ import RealTime from './components/views/real-time';
 import BaseWords from './components/views/base-words';
 import AuthCallback from './components/views/auth-callback';
 import Clients from './components/views/clients';
+import AccessChat from './components/views/access-chat';
 
 export default (
   <Route path='/' component={App}>
@@ -16,6 +17,7 @@ export default (
     <Route path='real-time' component={RealTime} />
     <Route path='auth/callback' component={AuthCallback} />
     <Route path='widget/belisa' component={Chat} />
+    <Route path='access-chat' component={AccessChat} />
     <Route path='clients' component={Clients} />
     <Route path='base-words' component={BaseWords} />
     <Route path='contact' component={Contact} />

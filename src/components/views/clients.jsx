@@ -100,21 +100,24 @@ export default class Clients extends Component {
 		        }
 
 		  		<br/>
-		  		<Tab.Container id="left-tabs-example" defaultActiveKey="first">
+		  		<Tab.Container id="left-tabs-example" defaultActiveKey="clients">
 				  <Row>
 				    <Col sm={2}>
 				      <Nav variant="pills" className="flex-column">
 				        <Nav.Item>
-				          <Nav.Link eventKey="first">Clients</Nav.Link>
+				          <Nav.Link eventKey="clients">Clients</Nav.Link>
 				        </Nav.Item>
 				        <Nav.Item>
-				          <Nav.Link eventKey="second">Users</Nav.Link>
+				          <Nav.Link eventKey="users">Users</Nav.Link>
+				        </Nav.Item>
+				        <Nav.Item>
+				          <Nav.Link eventKey="config">Configuration Chat</Nav.Link>
 				        </Nav.Item>
 				      </Nav>
 				    </Col>
 				    <Col sm={10}>
 				      <Tab.Content>
-				        <Tab.Pane eventKey="first">
+				        <Tab.Pane eventKey="clients">
 				            <section>
 				            {this.state.showModalConfigChatbot && 
 					        	<ModalConfChat
@@ -166,11 +169,16 @@ export default class Clients extends Component {
 						        </div>
 					        </section>
 				        </Tab.Pane>
-				        <Tab.Pane eventKey="second">
-				          
+				        
+				        <Tab.Pane eventKey="users">
+				        	users
 				        </Tab.Pane>
+
+				        <Tab.Pane eventKey="config">
+				        	configuration chat
+				        	</Tab.Pane>
 				      </Tab.Content>
-				    </Col>
+				    </Col>		    
 				  </Row>
 				</Tab.Container>
 

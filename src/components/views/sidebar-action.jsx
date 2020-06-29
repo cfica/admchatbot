@@ -4,6 +4,7 @@ import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import { browserHistory } from 'react-router';
+import {DropdownButton, Dropdown, ButtonGroup} from 'react-bootstrap';
 
 export default class SidebarAction extends Component {
   componentDidMount(){
@@ -35,7 +36,10 @@ export default class SidebarAction extends Component {
                         <a className="nav-link" href="#">Page</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#" onClick={this._handleLogout}>Cerrar Sesión</a>
+                        <DropdownButton as={ButtonGroup} variant="link" title="Account" id="bg-vertical-dropdown-3">
+                            <Dropdown.Item eventKey="1">Edit Account</Dropdown.Item>
+                            <Dropdown.Item eventKey="2" onClick={this._handleLogout}>Sign off</Dropdown.Item>
+                        </DropdownButton>
                     </li>
                 </ul>
             </div>

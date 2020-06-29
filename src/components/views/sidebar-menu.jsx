@@ -66,7 +66,7 @@ export default class SidebarMenu extends Component {
 		            	<a href="/clients">Clients</a>
 		            </li>
 
-		            <li className="active">
+		            {/*<li className="active">
 		                <a href="#UsersSubmenu" data-toggle="collapse" aria-expanded="false">Users</a>
 		                <ul className="collapse list-unstyled" id="UsersSubmenu">
 		                    <li>
@@ -96,7 +96,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
 		            <li className="active">
 		                <a href="#SystemsSubmenu" data-toggle="collapse" aria-expanded="false">Systems</a>
@@ -106,7 +106,7 @@ export default class SidebarMenu extends Component {
 				            </li>
 				            
 		                    <li>
-		                        <a href="#">Home 2</a>
+		                        <a href="#">Users</a>
 		                    </li>
 		                    <li>
 		                        <a href="#">Home 3</a>
@@ -167,7 +167,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>*/}
+		            </li>
 
 		            <li className="active">
 		                <a href="#TeamSubmenu" data-toggle="collapse" aria-expanded="false">Team collaboration</a>
@@ -183,7 +183,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
 		            <li className="active">
 		                <a href="#IntegrationsSubmenu" data-toggle="collapse" aria-expanded="false">Integrations</a>
@@ -217,7 +217,7 @@ export default class SidebarMenu extends Component {
 		                </ul>
 		            </li>
 
-		            <li className="active">
+		            {/*<li className="active">
 		                <a href="#SmartActionsSubmenu" data-toggle="collapse" aria-expanded="false">Smart Actions</a>
 		                <ul className="collapse list-unstyled" id="SmartActionsSubmenu">
 		                    <li>
@@ -231,7 +231,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
 
 		            {/*<li className="active">
