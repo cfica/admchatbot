@@ -4,7 +4,6 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import  { Redirect } from 'react-router-dom';
 import { browserHistory } from 'react-router';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import './../css/belisa.css';
 
 export default class Login extends Component {
@@ -22,28 +21,79 @@ export default class Login extends Component {
       showContHello: true,
       inputName: '',
       inputEmail: '',
-      inputTelephone: ''
+      inputTelephone: '',
+      welcomeInputs:[]
     };
+  }
+
+  bake_cookie(name, value) {
+    var cookie = [name, '=', JSON.stringify(value), ';SameSite=None; Secure; domain_.', window.location.host.toString(), '; path=/;'].join('');
+    document.cookie = cookie;
+  }
+
+  // reads a cookie according to the given name
+  read_cookie(name) {
+    var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
+    result = result != null ? JSON.parse(result[1]) : [];
+    return result;
+  }
+
+  delete_cookie(name) {
+    document.cookie = [name, '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
   }
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
-    if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false || this.inIframe() == false){
-    //if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false){
+    if(this._vldParamasGet() == false){
     }else{
       //this.auth();
-    }
+      //this.delCookie();
+      if(this.read_cookie('token') != ''){
+        this.setState({showContHello : false});
+        this.setState({showContChat : true});
+        this.setState({'listMessages' : this.read_cookie('messages')});
+      }else{
+        this.setState({showContHello : true});
+        this.setState({showContChat : false});
+        const client_id = this.props.location.query.i;
+        const init = this.props.location.query.init;
+        axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}), 
+              {headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                'x-dsi-restful-i' : client_id,
+                'x-dsi-restful-init' : init
+              }}
+        ).then(res => {
+            this.bake_cookie('init', res.data.data.config[0]);
+        }).catch(function (error) {
+          this.bake_cookie('init', false);
+        }).then(function () {
+        });
 
-    //delete_cookie('token');
-    //delete_cookie('key_temp');
-
-    if(read_cookie('token') != ''){
-      this.setState({showContHello : false});
-      this.setState({showContChat : true});
-    }else{
-      this.setState({showContHello : true});
-      this.setState({showContChat : false});
+        if(this.read_cookie('init') == false){
+            this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
+        }else{
+            const _init = this.read_cookie('init');
+            this.setState({welcomeInputs: _init.start_conversation});
+        }
+      }
     }
+  }
+
+  delCookie(){
+      this.delete_cookie('token');
+      this.delete_cookie('key_temp');
+      this.delete_cookie('messages');
+      this.delete_cookie('init');
+  }
+
+  setMessage(_type,message){
+    const item = {'type' : _type,'msg' : message};
+    var oldItems = this.read_cookie('messages') || [];
+    const items = oldItems.slice();
+    items.push(item);
+    this.bake_cookie("messages", items);
+    this.setState({'listMessages' : this.read_cookie('messages')});
   }
 
   _handleSend = (event)=>{
@@ -53,10 +103,7 @@ export default class Login extends Component {
           event.stopPropagation();
           this.setState({validated : true});
         }else{
-          const item = {'type' : '_req','msg' : this.state.inputMessage};
-          const items = this.state.listMessages.slice();
-          items.push(item);
-          this.setState({'listMessages' : items});
+          this.setMessage('_req', this.state.inputMessage);
           this.setState({inputMessage : ''});
           //
           this.setState({validated : false});
@@ -65,23 +112,26 @@ export default class Login extends Component {
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization' : 'Bearer ' + read_cookie('token'),
-                'x-dsi-restful' : read_cookie('key_temp')
+                'Authorization' : 'Bearer ' + this.read_cookie('token'),
+                'x-dsi-restful' : this.read_cookie('key_temp')
               }}
           ).then(res => {
-                const item = {'type' : '_res', 'msg' : res.data.data.response};
-                const items = this.state.listMessages.slice();
-                items.push(item);
-                this.setState({'listMessages' : items});
-                form.reset();
+              this.setMessage('_res', res.data.data.response);
+              form.reset();
           }).catch(function (error) {
-                delete_cookie('token');
-                delete_cookie('key_temp');
+            if(typeof error.response.status != 'undefined'){
+                if(error.response.status == 403){
+                    document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    document.cookie = ['init', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                }
+            }
           }).then(function () {
                 // always executed
           });
 
-          if(read_cookie('token') == ''){
+          if(this.read_cookie('token') == ''){
             this.setState({showContHello : true});
             this.setState({showContChat : false});
           }
@@ -100,17 +150,22 @@ export default class Login extends Component {
         var url = (window.location != window.parent.location)
                 ? document.referrer
                 : document.location.href;
-        axios.post(config.get('baseUrlApi')+'/api/v1/auth',JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
-            {headers: {'Content-Type': 'application/json;charset=UTF-8', 
-                       'Authorization' : 'Bearer ' + client_id,
-                       'x-dsi-time' : 1800
-            }}
+        axios.post(
+          config.get('baseUrlApi')+'/api/v1/auth',
+          JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
+          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + client_id,'x-dsi-time' : 1800}}
         ).then(res => {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
              /*##*/
-             bake_cookie('token', res.data.data.token);
-             bake_cookie('key_temp', res.data.data.key_temp);
+             this.bake_cookie('token', res.data.data.token);
+             this.bake_cookie('key_temp', res.data.data.key_temp);
+             if(this.read_cookie('init') == false){
+              this.setMessage('_res', config.get('chat_welcome_message_start'));
+             }else{
+                const _init = this.read_cookie('init');
+                this.setMessage('_res', _init.welcome_message);
+             }
         }).catch(function (error) {
               //this.setState({errorSaveForm : true});
         }).then(function () {
@@ -136,11 +191,31 @@ export default class Login extends Component {
       }
   }
 
+  _vldParamasGet(){
+    const client_id = this.props.location.query.i;
+    const init = this.props.location.query.init;
+    if(client_id == null || init == null){
+      return false;
+    }else{
+      if(this.inIframe() == false){
+        return false;
+      }else{
+        if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false){
+          return false;
+        }else{
+          if(init == null || init.length < 25 || this.clsAlphaNoOnly(init) == false){
+            return false;
+          }else{
+            return true;
+          }
+        }
+      }
+    }
+  }
+
   render() {
     //add recaptcha..
-    const client_id = this.props.location.query.i;
-    if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false || this.inIframe() == false){
-    //if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false){
+    if(this._vldParamasGet() == false){
       return ('');
     }else{
         return (
@@ -148,18 +223,24 @@ export default class Login extends Component {
                 {this.state.showContHello &&
                   <div className="contHello">
                       <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
-                        <p>Please complete the following information to start a conversation.</p>
+
+                        <div dangerouslySetInnerHTML={{__html: config.get('chat_welcome_message_init')}}></div>
+
                         <Form.Group controlId="formName">
                           <Form.Control required size="sm" value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                         </Form.Group>
 
-                        <Form.Group controlId="formEmail">
-                          <Form.Control required size="sm" value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" placeholder="Enter email" />
-                        </Form.Group>
-
-                        <Form.Group controlId="formTelephone">
-                          <Form.Control required size="sm" type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}} placeholder="Enter Telephone" />
-                        </Form.Group>
+                        {this.state.welcomeInputs.map((item, index) => {
+                            if(item == 'Email'){
+                              return (<Form.Group controlId="formEmail">
+                                        <Form.Control required size="sm" value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" placeholder="Enter email" />
+                                      </Form.Group>);
+                            }else if(item == 'Telephone'){
+                              return (<Form.Group controlId="formTelephone">
+                                        <Form.Control required size="sm" type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}} placeholder="Enter Telephone" />
+                                      </Form.Group>);
+                            }
+                        })}
 
                         <Button variant="primary" type="submit">
                           Start Conversation
@@ -171,10 +252,10 @@ export default class Login extends Component {
                   {this.state.showContChat && 
                         <div className="contChat">
                               <div className="contentResponse">
-                                {this.state.listMessages.map(item => {
+                                {this.state.listMessages.map((item, index) => {
                                   if(item.type == '_req'){
                                     return (
-                                      <div className="contentMessageClient">
+                                      <div key={index} className="contentMessageClient">
                                           <div>
                                              <div className="contentUser"><h5>You</h5></div>
                                              <div className="contentMsg">
@@ -185,7 +266,7 @@ export default class Login extends Component {
                                     );
                                   }else if(item.type == '_res'){
                                     return (
-                                        <div className="contentMessageChat">
+                                        <div key={index} className="contentMessageChat">
                                                <div>
                                                    <div className="contentUser"><h5>Belisa</h5></div>
                                                    <div className="contentMsg">

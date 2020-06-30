@@ -175,7 +175,7 @@ export default class RealTime extends Component {
 						                  <th>Name</th>
 						                  <th>Email</th>
 						                  <th>Telephone</th>
-						                  <th>User Agent</th>
+						                  <th>Created</th>
 						                </tr>
 						              </thead>
 						              <tbody>
