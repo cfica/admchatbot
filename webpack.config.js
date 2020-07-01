@@ -45,6 +45,8 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, 'public'),
     hot: true,
-    publicPath: '/'
+    publicPath: '/',
+    compress: true,
+    public: 'app.v1.acyr.cl'
   }
 }
