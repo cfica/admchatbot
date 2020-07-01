@@ -8,7 +8,7 @@ import { Alert, Navbar, Nav, DropdownButton,Dropdown,Tab, Modal, Badge, Tabs, In
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalClient from './components/modal-client';
-import ModalConfChat from './components/modal-confchat.jsx';
+import ModalConfChat from './components/modal-confchat';
 import ModalToConfirm from './components/confirm';
 import MessageResult from './components/message-result';
 import config from 'react-global-configuration';

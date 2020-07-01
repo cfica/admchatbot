@@ -11,13 +11,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
+        test: /\.(js,jsx)$/,
+        exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-react', {'plugins': ['@babel/plugin-proposal-class-properties']}]
-          }
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-react']
+            }
         }
       },
       {
@@ -28,12 +28,7 @@ module.exports = {
           }
         ]
       },
-      { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] },
-      {
-         test: /\.(png|svg|jpg|jpeg|gif|ico)$/,
-         exclude: /node_modules/,
-         use: ['file-loader?name=[name].[ext]'] // ?name=[name].[ext] is only necessary to preserve the original file name
-     }
+      { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] }
     ]
   },
   plugins: [
