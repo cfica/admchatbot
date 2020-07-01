@@ -22,7 +22,8 @@ export default class Login extends Component {
       inputName: '',
       inputEmail: '',
       inputTelephone: '',
-      welcomeInputs:[]
+      welcomeInputs:[],
+      welcomeMessageInit: ''
     };
   }
 
@@ -72,9 +73,11 @@ export default class Login extends Component {
 
         if(this.read_cookie('init') == false){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
+            this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
             const _init = this.read_cookie('init');
             this.setState({welcomeInputs: _init.start_conversation});
+            this.setState({welcomeMessageInit: _init.welcome_message_init});
         }
       }
     }
@@ -224,7 +227,7 @@ export default class Login extends Component {
                   <div className="contHello">
                       <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
 
-                        <div dangerouslySetInnerHTML={{__html: config.get('chat_welcome_message_init')}}></div>
+                        <div dangerouslySetInnerHTML={{__html: this.state.welcomeMessageInit}}></div>
 
                         <Form.Group controlId="formName">
                           <Form.Control required size="sm" value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />

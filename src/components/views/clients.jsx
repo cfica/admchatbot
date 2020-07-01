@@ -38,6 +38,7 @@ export default class Clients extends Component {
 	      validated: false,
 	      clientSelected:'',
 	      welcomeMessage: '',
+	      welcomeMessageInit: '',
 	      headerMessage:'',
 	      checksSelected:[],
 	      client_id: '',
@@ -117,7 +118,8 @@ export default class Clients extends Component {
    		    	"client" : this.state.clientSelected,
    		    	"welcome_message" : this.state.welcomeMessage,
    		    	"header_message" : this.state.headerMessage,
-   		    	"start_conversation": this.state.checksSelected 
+   		    	"start_conversation": this.state.checksSelected, 
+   		    	"welcome_message_init": this.state.welcomeMessageInit 
    		    };
    		    axios.post(
    		    	config.get('baseUrlApi')+'/api/v1/add-setting-chat', 
@@ -280,7 +282,7 @@ export default class Clients extends Component {
 							    <Form.Row>
 				        	        <Col xs={4}>
 				        				<Form.Group  controlId="formWelcomeMessage">
-								            <Form.Label  size="sm">Welcome message</Form.Label>
+								            <Form.Label  size="sm">Welcome message start conversation</Form.Label>
 								            <Form.Control required size="sm" type="text" 
 								            			  value={this.state.welcomeMessage}  
 								            			  onChange={this.changeName = (event) => {this.setState({welcomeMessage: event.target.value})}}
@@ -306,6 +308,20 @@ export default class Clients extends Component {
 
 
 							    <hr className="divide"></hr>
+
+							    <Form.Row>
+				        	        <Col xs={4}>
+				        				<Form.Group controlId="exampleForm.ControlTextarea1">
+										    <Form.Label>Welcome Message</Form.Label>
+										    <Form.Control required as="textarea" value={this.state.welcomeMessageInit} 
+										     onChange={this.changeName1 = (event) => {this.setState({welcomeMessageInit: event.target.value})}} rows="3" />
+										</Form.Group>
+							        </Col>
+							    </Form.Row>
+
+
+							    <hr className="divide"></hr>
+
 
 							    <Form.Row>
 							    	<Form.Group  controlId="formClientId">
