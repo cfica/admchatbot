@@ -60,6 +60,8 @@ export default class Login extends Component {
     }else{
       const cookies = new Cookies();
       if(typeof cookies.get('token') != 'undefined'){
+        console.log(cookies.get('token'));
+        console.log(cookies.get('messages'));
         this.setState({showContHello : false});
         this.setState({showContChat : true});
         this.setState({'listMessages' : cookies.get('messages')});
@@ -112,6 +114,7 @@ export default class Login extends Component {
     items.push(item);
     cookies.set('messages', items, {path: '/', sameSite: 'none', secure: true});
     this.setState({'listMessages' : cookies.get('messages')});
+    console.log(this.state.listMessages);
   }
 
   _handleSend = (event)=>{
@@ -180,6 +183,7 @@ export default class Login extends Component {
              const cookies = new Cookies();
              cookies.set('token', res.data.data.token, {path: '/', sameSite: 'none', secure: true});
              cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'none', secure: true});
+             
              if(cookies.get('confChatInit') == false){
               this.setMessage('_res', config.get('chat_welcome_message_start'));
              }else{
