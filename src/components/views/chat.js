@@ -31,7 +31,7 @@ export default class Login extends Component {
   bake_cookie(name, value) {
     var cookie = [name, '=', JSON.stringify(value), ';SameSite=None; Secure; domain_.', window.location.host.toString(), '; path=/;'].join('');
     document.cookie = cookie;
-    console.log(cookie);
+    //console.log(cookie);
   }
 
   // reads a cookie according to the given name
@@ -72,13 +72,13 @@ export default class Login extends Component {
         ).then(res => {
             //console.log(res.data.data.config[0]);
             this.bake_cookie('init', res.data.data.config[0]);
-            cookies.set('init', res.data.data.config[0]);
+            cookies.set('_conChat', res.data.data.config[0]);
         }).catch(function (error) {
           this.bake_cookie('init', false);
         }).then(function () {
         });
 
-        console.log(cookies.get('init'));
+        console.log(cookies.get('_conChat'));
 
         //console.log(this.read_cookie('init'));
         //console.log(config.get('chat_welcome_inputs'));
