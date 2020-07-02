@@ -46,7 +46,6 @@ export default class Login extends Component {
   }
 
   componentDidMount(){
-    const cookies = new Cookies();
     const client_id = this.props.location.query.i;
     //console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
@@ -71,8 +70,7 @@ export default class Login extends Component {
                 'x-dsi-restful-init' : init
               }}
         ).then(res => {
-            //console.log(res.data.data.config[0]);
-            //this.bake_cookie('init', res.data.data.config[0]);
+            const cookies = new Cookies();
             cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'None'});
         }).catch(function (error) {
           //this.bake_cookie('init', false);
@@ -83,7 +81,8 @@ export default class Login extends Component {
 
         });
 
-        //console.log(cookies.get('confChatInit'));
+        const cookies = new Cookies();
+        console.log(cookies.get('confChatInit'));
 
         //console.log(this.read_cookie('init'));
         //console.log(config.get('chat_welcome_inputs'));
