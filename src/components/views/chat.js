@@ -78,11 +78,11 @@ export default class Login extends Component {
               }}
         ).then(res => {
             const cookies = new Cookies();
-            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none', secure: true});
+            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none', secure: false});
         }).catch(function (error) {
           //this.bake_cookie('init', false);
           const cookies = new Cookies();
-          cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: true});
+          cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: false});
         }).then(function () {
         });
 
@@ -112,7 +112,7 @@ export default class Login extends Component {
     var oldItems = cookies.get('messages') || [];
     const items = oldItems.slice();
     items.push(item);
-    cookies.set('messages', items, {path: '/', sameSite: 'none', secure: true});
+    cookies.set('messages', items, {path: '/', sameSite: 'none', secure: false});
     this.setState({'listMessages' : cookies.get('messages')});
     console.log(this.state.listMessages);
   }
@@ -181,8 +181,8 @@ export default class Login extends Component {
              this.setState({showContChat : true});
              /*##*/
              const cookies = new Cookies();
-             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'none', secure: true});
-             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'none', secure: true});
+             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'none', secure: false});
+             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'none', secure: false});
              
              if(cookies.get('confChatInit') == false){
               this.setMessage('_res', config.get('chat_welcome_message_start'));
