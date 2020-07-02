@@ -48,12 +48,12 @@ export default class Login extends Component {
   componentDidMount(){
     const client_id = this.props.location.query.i;
 
-    /*const cookies = new Cookies();
+    const cookies = new Cookies();
     cookies.remove('messages');
     cookies.remove('token');
     cookies.remove('key_temp');
     cookies.remove('confChatInit');
-    this.delCookie();*/
+    this.delCookie();
 
     if(this._vldParamasGet() == false){
     //if(true == false){
