@@ -48,12 +48,12 @@ export default class Login extends Component {
   componentDidMount(){
     const client_id = this.props.location.query.i;
 
-    const cookies = new Cookies();
+    /*const cookies = new Cookies();
     cookies.remove('messages');
     cookies.remove('token');
     cookies.remove('key_temp');
     cookies.remove('confChatInit');
-    this.delCookie();
+    this.delCookie();*/
 
     if(this._vldParamasGet() == false){
     //if(true == false){
@@ -76,11 +76,11 @@ export default class Login extends Component {
               }}
         ).then(res => {
             const cookies = new Cookies();
-            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'None', secure: true});
+            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none', secure: true});
         }).catch(function (error) {
           //this.bake_cookie('init', false);
           const cookies = new Cookies();
-          cookies.set('confChatInit', false, {path: '/', sameSite: 'None', secure: true});
+          cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: true});
         }).then(function () {
         });
 
@@ -110,7 +110,7 @@ export default class Login extends Component {
     var oldItems = cookies.get('messages') || [];
     const items = oldItems.slice();
     items.push(item);
-    cookies.set('messages', items, {path: '/', sameSite: 'None', secure: true});
+    cookies.set('messages', items, {path: '/', sameSite: 'none', secure: true});
     this.setState({'listMessages' : cookies.get('messages')});
   }
 
@@ -178,8 +178,8 @@ export default class Login extends Component {
              this.setState({showContChat : true});
              /*##*/
              const cookies = new Cookies();
-             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'None', secure: true});
-             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'None', secure: true});
+             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'none', secure: true});
+             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'none', secure: true});
              if(cookies.get('confChatInit') == false){
               this.setMessage('_res', config.get('chat_welcome_message_start'));
              }else{
