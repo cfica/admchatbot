@@ -49,12 +49,10 @@ export default class Login extends Component {
     const client_id = this.props.location.query.i;
     //console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
-    //console.log(cookies.get('token')); //return undefined
     if(true == false){
     }else{
-      //this.auth();
-      //this.delCookie();
-      if(this.read_cookie('token') != ''){
+      const cookies = new Cookies();
+      if(typeof cookies.get('token') != 'undefined'){
         this.setState({showContHello : false});
         this.setState({showContChat : true});
         this.setState({'listMessages' : this.read_cookie('messages')});
@@ -76,17 +74,10 @@ export default class Login extends Component {
           //this.bake_cookie('init', false);
           const cookies = new Cookies();
           cookies.set('confChatInit', false, {path: '/', sameSite: 'None'});
-          
         }).then(function () {
-
         });
 
-        const cookies = new Cookies();
-        console.log(cookies.get('confChatInit'));
-
-        //console.log(this.read_cookie('init'));
-        //console.log(config.get('chat_welcome_inputs'));
-
+        //const cookies = new Cookies();
         if(cookies.get('confChatInit') == undefined){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
