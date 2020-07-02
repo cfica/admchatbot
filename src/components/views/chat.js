@@ -62,7 +62,7 @@ export default class Login extends Component {
       if(typeof cookies.get('token') != 'undefined'){
         this.setState({showContHello : false});
         this.setState({showContChat : true});
-        this.setState({'listMessages' : this.read_cookie('messages')});
+        this.setState({'listMessages' : cookies.get('messages')});
       }else{
         this.setState({showContHello : true});
         this.setState({showContChat : false});
