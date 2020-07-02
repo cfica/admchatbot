@@ -45,7 +45,8 @@ export default class Login extends Component {
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
-    if(this._vldParamasGet() == false){
+    //if(this._vldParamasGet() == false){
+    if(true == false){
     }else{
       //this.auth();
       //this.delCookie();
@@ -218,7 +219,8 @@ export default class Login extends Component {
 
   render() {
     //add recaptcha..
-    if(this._vldParamasGet() == false){
+    //if(this._vldParamasGet() == false){
+    if(true == false){
       return ('');
     }else{
         return (
