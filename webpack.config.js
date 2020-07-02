@@ -47,6 +47,11 @@ module.exports = {
     hot: true,
     publicPath: '/',
     compress: true,
-    public: 'app.v1.acyr.cl'
+    public: 'app.v1.acyr.cl',
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+    }
   }
 }
