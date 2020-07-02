@@ -75,7 +75,7 @@ export default class Login extends Component {
         }).then(function () {
         });
 
-        console.log(cookie);
+        console.log(document.cookie);
 
         console.log(this.read_cookie('init'));
         console.log(config.get('chat_welcome_inputs'));
