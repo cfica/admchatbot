@@ -50,6 +50,7 @@ export default class Login extends Component {
     const client_id = this.props.location.query.i;
     //console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
+    console.log(cookies.get('token'));
     if(true == false){
     }else{
       //this.auth();
@@ -71,11 +72,14 @@ export default class Login extends Component {
               }}
         ).then(res => {
             //console.log(res.data.data.config[0]);
-            this.bake_cookie('init', res.data.data.config[0]);
+            //this.bake_cookie('init', res.data.data.config[0]);
             cookies.set('_conChat', res.data.data.config[0], {path: '/', sameSite: 'None'});
         }).catch(function (error) {
-          this.bake_cookie('init', false);
+          //this.bake_cookie('init', false);
+          const cookies = new Cookies();
+          cookies.set('_conChat', false, {path: '/', sameSite: 'None'});
         }).then(function () {
+
         });
 
         console.log(cookies.get('_conChat'));
@@ -83,11 +87,11 @@ export default class Login extends Component {
         //console.log(this.read_cookie('init'));
         //console.log(config.get('chat_welcome_inputs'));
 
-        if(this.read_cookie('init') == false){
+        if(cookies('_conChat') == false){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
-            const _init = this.read_cookie('init');
+            const _init = cookies('_conChat');
             this.setState({welcomeInputs: _init.start_conversation});
             this.setState({welcomeMessageInit: _init.welcome_message_init});
         }
