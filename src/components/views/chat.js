@@ -131,11 +131,11 @@ export default class Login extends Component {
           }).catch(function (error) {
             if(typeof error.response.status != 'undefined'){
                 if(error.response.status == 403){
-                    const cookies = new Cookies();
-                    cookies.remove('messages');
-                    cookies.remove('token');
-                    cookies.remove('key_temp');
-                    cookies.remove('confChatInit');
+                    //const cookies = new Cookies();
+                    //cookies.remove('messages');
+                    //cookies.remove('token');
+                    //cookies.remove('key_temp');
+                    //cookies.remove('confChatInit');
                 }
             }
           }).then(function () {
