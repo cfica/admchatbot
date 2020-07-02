@@ -45,7 +45,7 @@ export default class Login extends Component {
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
-    console.log(this.read_cookie('token'));
+    //console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
     if(true == false){
     }else{
@@ -67,18 +67,21 @@ export default class Login extends Component {
                 'x-dsi-restful-init' : init
               }}
         ).then(res => {
+            console.log(res.data.data.config[0]);
             this.bake_cookie('init', res.data.data.config[0]);
         }).catch(function (error) {
           this.bake_cookie('init', false);
         }).then(function () {
         });
 
+        print(this.read_cookie('init'));
+        print(config.get('chat_welcome_inputs'));
+
         if(this.read_cookie('init') == false){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
             const _init = this.read_cookie('init');
-            console.log(_init);
             this.setState({welcomeInputs: _init.start_conversation});
             this.setState({welcomeMessageInit: _init.welcome_message_init});
         }
