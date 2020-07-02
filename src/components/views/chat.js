@@ -74,8 +74,8 @@ export default class Login extends Component {
         }).then(function () {
         });
 
-        print(this.read_cookie('init'));
-        print(config.get('chat_welcome_inputs'));
+        console.log(this.read_cookie('init'));
+        console.log(config.get('chat_welcome_inputs'));
 
         if(this.read_cookie('init') == false){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
