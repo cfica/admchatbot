@@ -30,6 +30,7 @@ export default class Login extends Component {
   bake_cookie(name, value) {
     var cookie = [name, '=', JSON.stringify(value), ';SameSite=None; Secure; domain_.', window.location.host.toString(), '; path=/;'].join('');
     document.cookie = cookie;
+    console.log(cookie);
   }
 
   // reads a cookie according to the given name
