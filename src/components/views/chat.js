@@ -5,6 +5,7 @@ import axios from 'axios';
 import  { Redirect } from 'react-router-dom';
 import { browserHistory } from 'react-router';
 import './../css/belisa.css';
+import Cookies from 'universal-cookie';
 
 export default class Login extends Component {
   constructor(props){
@@ -45,6 +46,7 @@ export default class Login extends Component {
   }
 
   componentDidMount(){
+    const cookies = new Cookies();
     const client_id = this.props.location.query.i;
     //console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
@@ -68,17 +70,18 @@ export default class Login extends Component {
                 'x-dsi-restful-init' : init
               }}
         ).then(res => {
-            console.log(res.data.data.config[0]);
+            //console.log(res.data.data.config[0]);
             this.bake_cookie('init', res.data.data.config[0]);
+            cookies.set('init', res.data.data.config[0]);
         }).catch(function (error) {
           this.bake_cookie('init', false);
         }).then(function () {
         });
 
-        console.log(document.cookie);
+        console.log(cookies.get('init'));
 
-        console.log(this.read_cookie('init'));
-        console.log(config.get('chat_welcome_inputs'));
+        //console.log(this.read_cookie('init'));
+        //console.log(config.get('chat_welcome_inputs'));
 
         if(this.read_cookie('init') == false){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
