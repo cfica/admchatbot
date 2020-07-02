@@ -47,6 +47,14 @@ export default class Login extends Component {
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
+
+    /*const cookies = new Cookies();
+    cookies.remove('messages');
+    cookies.remove('token');
+    cookies.remove('key_temp');
+    cookies.remove('confChatInit');
+    this.delCookie();*/
+
     if(this._vldParamasGet() == false){
     //if(true == false){
     }else{
@@ -129,15 +137,15 @@ export default class Login extends Component {
               this.setMessage('_res', res.data.data.response);
               form.reset();
           }).catch(function (error) {
-            if(typeof error.response.status != 'undefined'){
-                if(error.response.status == 403){
+            //if(typeof error.response.status != 'undefined'){
+                //if(error.response.status == 403){
                     //const cookies = new Cookies();
                     //cookies.remove('messages');
                     //cookies.remove('token');
                     //cookies.remove('key_temp');
                     //cookies.remove('confChatInit');
-                }
-            }
+                //}
+            //}
           }).then(function () {
                 // always executed
           });
