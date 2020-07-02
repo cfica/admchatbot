@@ -45,6 +45,7 @@ export default class Login extends Component {
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
+    console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
     if(true == false){
     }else{
@@ -77,6 +78,7 @@ export default class Login extends Component {
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
             const _init = this.read_cookie('init');
+            console.log(_init);
             this.setState({welcomeInputs: _init.start_conversation});
             this.setState({welcomeMessageInit: _init.welcome_message_init});
         }
