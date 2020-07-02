@@ -47,7 +47,6 @@ export default class Login extends Component {
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
-    //console.log(this.read_cookie('token'));
     //if(this._vldParamasGet() == false){
     if(true == false){
     }else{
@@ -98,12 +97,13 @@ export default class Login extends Component {
   }
 
   setMessage(_type,message){
+    const cookies = new Cookies();
     const item = {'type' : _type,'msg' : message};
-    var oldItems = this.read_cookie('messages') || [];
+    var oldItems = cookies.get('messages') || [];
     const items = oldItems.slice();
     items.push(item);
-    this.bake_cookie("messages", items);
-    this.setState({'listMessages' : this.read_cookie('messages')});
+    cookies.set('messages', items, {path: '/', sameSite: 'None'});
+    this.setState({'listMessages' : cookies.get('messages')});
   }
 
   _handleSend = (event)=>{
@@ -118,12 +118,12 @@ export default class Login extends Component {
           //
           this.setState({validated : false});
           var _dataPost = {"message" : this.state.inputMessage};
-          //const token = this.props.location.query.i;
+          const cookies = new Cookies();
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization' : 'Bearer ' + this.read_cookie('token'),
-                'x-dsi-restful' : this.read_cookie('key_temp')
+                'Authorization' : 'Bearer ' + cookies.get('token'),
+                'x-dsi-restful' : cookies.get('key_temp')
               }}
           ).then(res => {
               this.setMessage('_res', res.data.data.response);
@@ -131,17 +131,18 @@ export default class Login extends Component {
           }).catch(function (error) {
             if(typeof error.response.status != 'undefined'){
                 if(error.response.status == 403){
-                    document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    document.cookie = ['init', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    const cookies = new Cookies();
+                    cookies.remove('messages');
+                    cookies.remove('token');
+                    cookies.remove('key_temp');
+                    cookies.remove('confChatInit');
                 }
             }
           }).then(function () {
                 // always executed
           });
 
-          if(this.read_cookie('token') == ''){
+          if(cookies.get('token') == ''){
             this.setState({showContHello : true});
             this.setState({showContChat : false});
           }
@@ -168,12 +169,13 @@ export default class Login extends Component {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
              /*##*/
-             this.bake_cookie('token', res.data.data.token);
-             this.bake_cookie('key_temp', res.data.data.key_temp);
-             if(this.read_cookie('init') == false){
+             const cookies = new Cookies();
+             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'None'});
+             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'None'});
+             if(cookies.get('confChatInit') == false){
               this.setMessage('_res', config.get('chat_welcome_message_start'));
              }else{
-                const _init = this.read_cookie('init');
+                const _init = cookies.get('confChatInit');
                 this.setMessage('_res', _init.welcome_message);
              }
         }).catch(function (error) {
