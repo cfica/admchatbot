@@ -68,11 +68,11 @@ export default class Login extends Component {
               }}
         ).then(res => {
             const cookies = new Cookies();
-            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'lax'});
+            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none'});
         }).catch(function (error) {
           //this.bake_cookie('init', false);
           const cookies = new Cookies();
-          cookies.set('confChatInit', false, {path: '/', sameSite: 'lax'});
+          cookies.set('confChatInit', false, {path: '/', sameSite: 'none'});
         }).then(function () {
         });
 
@@ -102,7 +102,7 @@ export default class Login extends Component {
     var oldItems = cookies.get('messages') || [];
     const items = oldItems.slice();
     items.push(item);
-    cookies.set('messages', items, {path: '/', sameSite: 'lax'});
+    cookies.set('messages', items, {path: '/', sameSite: 'none'});
     this.setState({'listMessages' : cookies.get('messages')});
   }
 
@@ -170,8 +170,8 @@ export default class Login extends Component {
              this.setState({showContChat : true});
              /*##*/
              const cookies = new Cookies();
-             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'lax'});
-             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'lax'});
+             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'none'});
+             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'none'});
              if(cookies.get('confChatInit') == false){
               this.setMessage('_res', config.get('chat_welcome_message_start'));
              }else{
