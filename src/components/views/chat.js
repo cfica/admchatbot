@@ -72,7 +72,7 @@ export default class Login extends Component {
         ).then(res => {
             //console.log(res.data.data.config[0]);
             this.bake_cookie('init', res.data.data.config[0]);
-            cookies.set('_conChat', res.data.data.config[0]);
+            cookies.set('_conChat', res.data.data.config[0], {path: '/', sameSite: 'None'});
         }).catch(function (error) {
           this.bake_cookie('init', false);
         }).then(function () {
