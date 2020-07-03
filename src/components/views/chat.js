@@ -62,7 +62,9 @@ export default class Login extends Component {
       console.log(cookies.get('token'));
       console.log(cookies.get('confChatInit'));
 
-      if(cookies.get('token') != undefined && cookies.get('confChatInit') != undefined){
+      if(cookies.get('token') != undefined &&
+         cookies.get('confChatInit') != undefined &&
+         cookies.get('messages') != undefined){
         //console.log(cookies.get('token'));
         //console.log(cookies.get('messages'));
         this.setState({showContHello : false});
