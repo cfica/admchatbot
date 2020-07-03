@@ -42,10 +42,10 @@ export default class BaseWords extends Component {
 	          pageCountWords: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	delete_cookie('token');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
 	}
 
@@ -58,10 +58,10 @@ export default class BaseWords extends Component {
 	          pageCountPatterns: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	delete_cookie('token');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
 	}
 
@@ -71,10 +71,10 @@ export default class BaseWords extends Component {
 	    .then(res => {
 	    	this.setState({logTraining : res.data.data.items});
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	delete_cookie('token');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
 
 	}
@@ -118,10 +118,10 @@ export default class BaseWords extends Component {
 	    	this.loadPatterns();
 	    	this.loadWords();
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	delete_cookie('token');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
 	    this.setState({showModalConfirm : false});
 	}
@@ -137,10 +137,10 @@ export default class BaseWords extends Component {
 	    .then(res => {
 	    	//algo
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	delete_cookie('token');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
 	    this.loadLogTraining();
 	}
