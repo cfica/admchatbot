@@ -155,10 +155,10 @@ export default class Login extends Component {
             if(error.response){
                 if(error.response.status == 403){
                     const cookies = new Cookies();
-                    cookies.remove('messages',this.state.cookieOptions);
-                    cookies.remove('token',this.state.cookieOptions);
-                    cookies.remove('key_temp',this.state.cookieOptions);
-                    cookies.remove('confChatInit',this.state.cookieOptions);
+                    cookies.remove('messages',{path: '/', sameSite: 'none', secure: true});
+                    cookies.remove('token',{path: '/', sameSite: 'none', secure: true});
+                    cookies.remove('key_temp',{path: '/', sameSite: 'none', secure: true});
+                    cookies.remove('confChatInit',{path: '/', sameSite: 'none', secure: true});
                     //document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
                     //document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
                     //document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
