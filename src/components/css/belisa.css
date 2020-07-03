@@ -93,3 +93,39 @@ body {
 .contHello{
 	padding: 50px
 }
+
+
+@media only screen and (min-width: 768px) {
+}
+
+@media only screen and (max-width: 767px) {
+    /* phones */
+}
+
+@media only screen and (max-width: 767px) and (orientation: portrait) {
+    /* portrait phones */
+}
+
+@media (max-width: 480px) {
+	.contentResponse{
+		height: 90vh;
+		min-height: 90vh;
+		margin-bottom: 10px;
+	}
+
+	.contentSend{
+		bottom: 0px;
+	}
+}
+
+@media (max-width: 320px) {
+	.contentResponse{
+		height: 89vh;
+		min-height: 89vh;
+		margin-bottom: 10px;
+	}
+
+	.contentSend{
+		bottom: 2px;
+	}
+}
