@@ -29,7 +29,7 @@ export default class Login extends Component {
     };
   }
 
-  bake_cookie(name, value) {
+  /*bake_cookie(name, value) {
     var cookie = [name, '=', JSON.stringify(value), ';SameSite=None; Secure; domain_.', window.location.host.toString(), '; path=/;'].join('');
     document.cookie = cookie;
     //console.log(cookie);
@@ -44,7 +44,7 @@ export default class Login extends Component {
 
   delete_cookie(name) {
     document.cookie = [name, '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-  }
+  }*/
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
@@ -109,12 +109,12 @@ export default class Login extends Component {
     }
   }
 
-  delCookie(){
+  /*delCookie(){
       this.delete_cookie('token');
       this.delete_cookie('key_temp');
       this.delete_cookie('messages');
       this.delete_cookie('init');
-  }
+  }*/
 
   setMessage(_type,message){
     const cookies = new Cookies();
