@@ -33,7 +33,7 @@ export default class Clients extends Component {
 	      showModalClient: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      token: read_cookie('token'),
+	      token: cookies.get('tokenAdm'),
 	      showModalConfigChatbot : false,
 	      idClient: '',
 	      errorSaveForm: '',
