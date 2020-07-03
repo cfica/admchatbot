@@ -10,13 +10,15 @@ import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
 import { browserHistory } from 'react-router';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import Cookies from 'universal-cookie';
+//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 
 export default class AccessChat extends Component {
 	constructor(props) {
 	    super(props);
-	    if(read_cookie('token') == ''){
+	    const cookies = new Cookies();
+	    if(cookies.get('tokenAdm') == ''){
 	      browserHistory.push('/login');
 	    }
 
@@ -24,7 +26,7 @@ export default class AccessChat extends Component {
 	      perPage: 10,
 	      itemsAccess: [],
 	      offset: 0,
-	      token: read_cookie('token')
+	      token: cookies.get('tokenAdm')
 	    };
 	}
 

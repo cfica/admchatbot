@@ -2,17 +2,19 @@ import React, { Component } from "react";
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import { browserHistory } from 'react-router';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
+import Cookies from 'universal-cookie';
 
 export default class ModalConfChat extends Component {
   		constructor(props) {
 		    super(props);
-		    if(read_cookie('token') == ''){
+		    const cookies = new Cookies();
+		    if(cookies.get('tokenAdm') == undefined){
 		      browserHistory.push('/login');
 		    }
 
@@ -20,7 +22,7 @@ export default class ModalConfChat extends Component {
 		      showModal : true,
 		      validated : false,
 		      errorSaveForm: "",
-		      token: read_cookie('token'),
+		      token: cookies.get('tokenAdm'),
 		      inputDomain : '',
 		      inputName : '',
 		      codeInitChat: ''
