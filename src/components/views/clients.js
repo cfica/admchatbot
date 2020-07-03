@@ -57,10 +57,10 @@ export default class Clients extends Component {
 	    .then(res => {
 	    	this.setState({items: res.data.data.items,pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),});
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	delete_cookie('token');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
 	}
 
