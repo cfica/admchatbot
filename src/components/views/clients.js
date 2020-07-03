@@ -13,12 +13,14 @@ import ModalToConfirm from './components/confirm';
 import MessageResult from './components/message-result';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import Cookies from 'universal-cookie';
 
 export default class Clients extends Component {
 	constructor(props) {
 	    super(props);
-	    if(read_cookie('token') == ''){
+	    const cookies = new Cookies();
+	    if(cookies.get('tokenAdm') == undefined){
 	      browserHistory.push('/login');
 	    }
 

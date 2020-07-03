@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import { browserHistory } from 'react-router';
+import Cookies from 'universal-cookie';
 import {DropdownButton, Dropdown, ButtonGroup} from 'react-bootstrap';
 
 export default class SidebarAction extends Component {
@@ -11,7 +12,8 @@ export default class SidebarAction extends Component {
   }
 
   _handleLogout = (event)=>{
-    delete_cookie('token');
+    const cookies = new Cookies();
+    remove('tokenAdm');
     browserHistory.push('/login');
   }
 
