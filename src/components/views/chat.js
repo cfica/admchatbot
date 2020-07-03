@@ -160,7 +160,7 @@ export default class Login extends Component {
                 // always executed
           });
 
-          if(cookies.get('token') == ''){
+          if(cookies.get('token') === undefined){
             this.setState({showContHello : true});
             this.setState({showContChat : false});
           }
