@@ -25,7 +25,8 @@ export default class Login extends Component {
       inputTelephone: '',
       welcomeInputs:[],
       welcomeMessageInit: '',
-      confChatInit: ''
+      confChatInit: '',
+      cookieOptions: {path: '/', sameSite: 'none', secure: true}
     };
   }
 
@@ -84,11 +85,11 @@ export default class Login extends Component {
               }}
         ).then(res => {
             const cookies = new Cookies();
-            cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none', secure: true});
+            cookies.set('confChatInit', res.data.data.config[0], this.state.cookieOptions);
             this.setState({'confChatInit': res.data.data.config[0]});
         }).catch(function (error) {
           const cookies = new Cookies();
-          cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: true});
+          cookies.set('confChatInit', false, this.state.cookieOptions);
         }).then(function () {});
 
 
@@ -122,7 +123,7 @@ export default class Login extends Component {
     var oldItems = cookies.get('messages') || [];
     const items = oldItems.slice();
     items.push(item);
-    cookies.set('messages', items, {path: '/', sameSite: 'none', secure: true});
+    cookies.set('messages', items, this.state.cookieOptions);
     this.setState({'listMessages' : cookies.get('messages')});
     //console.log(this.state.listMessages);
   }
@@ -154,14 +155,14 @@ export default class Login extends Component {
             if(error.response){
                 if(error.response.status == 403){
                     const cookies = new Cookies();
-                    cookies.remove('messages');
-                    cookies.remove('token');
-                    cookies.remove('key_temp');
-                    cookies.remove('confChatInit');
-                    document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    document.cookie = ['confChatInit', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    cookies.remove('messages',this.state.cookieOptions);
+                    cookies.remove('token',this.state.cookieOptions);
+                    cookies.remove('key_temp',this.state.cookieOptions);
+                    cookies.remove('confChatInit',this.state.cookieOptions);
+                    //document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    //document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    //document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    //document.cookie = ['confChatInit', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
                 }
             }
           }).then(function () {
@@ -196,8 +197,8 @@ export default class Login extends Component {
              this.setState({showContChat : true});
              /*##*/
              const cookies = new Cookies();
-             cookies.set('token', res.data.data.token, {path: '/', sameSite: 'none', secure: true});
-             cookies.set('key_temp', res.data.data.key_temp, {path: '/', sameSite: 'none', secure: true});
+             cookies.set('token', res.data.data.token, this.state.cookieOptions);
+             cookies.set('key_temp', res.data.data.key_temp, this.state.cookieOptions);
              
              if(cookies.get('confChatInit') == false){
               this.setMessage('_res', config.get('chat_welcome_message_start'));
