@@ -59,7 +59,8 @@ export default class Login extends Component {
     //if(true == false){
     }else{
       const cookies = new Cookies();
-      if(typeof cookies.get('token') != undefined){
+      console.log(cookies.get('token'));
+      if(cookies.get('token') != 'undefined'){
         //console.log(cookies.get('token'));
         //console.log(cookies.get('messages'));
         this.setState({showContHello : false});
