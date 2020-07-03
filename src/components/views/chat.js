@@ -24,7 +24,8 @@ export default class Login extends Component {
       inputEmail: '',
       inputTelephone: '',
       welcomeInputs:[],
-      welcomeMessageInit: ''
+      welcomeMessageInit: '',
+      confChatInit: ''
     };
   }
 
@@ -67,8 +68,6 @@ export default class Login extends Component {
       if(cookies.get('token') != undefined &&
          cookies.get('confChatInit') != undefined &&
          cookies.get('messages') != undefined){
-        //console.log(cookies.get('token'));
-        //console.log(cookies.get('messages'));
         this.setState({showContHello : false});
         this.setState({showContChat : true});
         this.setState({'listMessages' : cookies.get('messages')});
@@ -86,11 +85,16 @@ export default class Login extends Component {
         ).then(res => {
             const cookies = new Cookies();
             cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none', secure: true});
+            this.setState({'confChatInit': res.data.data.config[0]});
         }).catch(function (error) {
           const cookies = new Cookies();
           cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: true});
-        }).then(function () {
-        });
+        }).then(function () {});
+
+
+        console.log('result:');
+        console.log(cookies.get('confChatInit'));
+        console.log(this.state.confChatInit);
 
         //const cookies = new Cookies();
         if(cookies.get('confChatInit') == undefined){
