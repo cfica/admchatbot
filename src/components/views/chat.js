@@ -55,8 +55,8 @@ export default class Login extends Component {
     cookies.remove('confChatInit',{});
     this.delCookie();*/
 
-    //if(this._vldParamasGet() == false){
-    if(true == false){
+    if(this._vldParamasGet() == false){
+    //if(true == false){
     }else{
       const cookies = new Cookies();
       console.log(cookies.get('token'));
@@ -250,8 +250,8 @@ export default class Login extends Component {
 
   render() {
     //add recaptcha..
-    //if(this._vldParamasGet() == false){
-    if(true == false){
+    if(this._vldParamasGet() == false){
+    //if(true == false){
       return ('');
     }else{
         return (
