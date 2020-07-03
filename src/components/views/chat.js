@@ -146,10 +146,14 @@ export default class Login extends Component {
             if(error.response){
                 if(error.response.status == 403){
                     const cookies = new Cookies();
-                    cookies.remove('messages');
-                    cookies.remove('token');
-                    cookies.remove('key_temp');
-                    cookies.remove('confChatInit');
+                    //cookies.remove('messages');
+                    //cookies.remove('token');
+                    //cookies.remove('key_temp');
+                    //cookies.remove('confChatInit');
+                    document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
+                    document.cookie = ['confChatInit', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
                 }
             }
           }).then(function () {
@@ -178,7 +182,7 @@ export default class Login extends Component {
         axios.post(
           config.get('baseUrlApi')+'/api/v1/auth',
           JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
-          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + client_id,'x-dsi-time' : 18}}
+          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + client_id,'x-dsi-time' : 1800}}
         ).then(res => {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
