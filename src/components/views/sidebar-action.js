@@ -13,7 +13,7 @@ export default class SidebarAction extends Component {
 
   _handleLogout = (event)=>{
     const cookies = new Cookies();
-    cookies.remove('tokenAdm');
+    cookies.remove('tokenAdm',{path: '/', sameSite: 'none', secure: true});
     browserHistory.push('/login');
   }
 
