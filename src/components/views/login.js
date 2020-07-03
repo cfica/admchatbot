@@ -4,7 +4,8 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import  { Redirect } from 'react-router-dom';
 import { browserHistory } from 'react-router';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import Cookies from 'universal-cookie';
+//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 export default class Login extends Component {
   constructor(props){
@@ -15,7 +16,9 @@ export default class Login extends Component {
   }
 
   componentDidMount(){
-    if(read_cookie('token') != ''){
+    const cookies = new Cookies();
+    //cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: true});
+    if(cookies.get('tokenAdm') != undefined){
       browserHistory.push('/dashboard');
     }else{
       browserHistory.push('/');
