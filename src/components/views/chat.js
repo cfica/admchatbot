@@ -62,7 +62,7 @@ export default class Login extends Component {
       console.log(cookies.get('token'));
       console.log(cookies.get('confChatInit'));
 
-      if(cookies.get('token') != 'undefined'){
+      if(cookies.get('token') != undefined){
         //console.log(cookies.get('token'));
         //console.log(cookies.get('messages'));
         this.setState({showContHello : false});
@@ -89,7 +89,7 @@ export default class Login extends Component {
         });
 
         //const cookies = new Cookies();
-        if(cookies.get('confChatInit') === undefined){
+        if(cookies.get('confChatInit') == undefined){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
