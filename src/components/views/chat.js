@@ -59,9 +59,9 @@ export default class Login extends Component {
     //if(true == false){
     }else{
       const cookies = new Cookies();
-      if(typeof cookies.get('token') != 'undefined'){
-        console.log(cookies.get('token'));
-        console.log(cookies.get('messages'));
+      if(typeof cookies.get('token') != undefined){
+        //console.log(cookies.get('token'));
+        //console.log(cookies.get('messages'));
         this.setState({showContHello : false});
         this.setState({showContChat : true});
         this.setState({'listMessages' : cookies.get('messages')});
@@ -80,14 +80,13 @@ export default class Login extends Component {
             const cookies = new Cookies();
             cookies.set('confChatInit', res.data.data.config[0], {path: '/', sameSite: 'none', secure: false});
         }).catch(function (error) {
-          //this.bake_cookie('init', false);
           const cookies = new Cookies();
           cookies.set('confChatInit', false, {path: '/', sameSite: 'none', secure: false});
         }).then(function () {
         });
 
         //const cookies = new Cookies();
-        if(cookies.get('confChatInit') == undefined){
+        if(cookies.get('confChatInit') === undefined){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
@@ -114,7 +113,7 @@ export default class Login extends Component {
     items.push(item);
     cookies.set('messages', items, {path: '/', sameSite: 'none', secure: false});
     this.setState({'listMessages' : cookies.get('messages')});
-    console.log(this.state.listMessages);
+    //console.log(this.state.listMessages);
   }
 
   _handleSend = (event)=>{
@@ -140,15 +139,16 @@ export default class Login extends Component {
               this.setMessage('_res', res.data.data.response);
               form.reset();
           }).catch(function (error) {
-            //if(typeof error.response.status != 'undefined'){
-                //if(error.response.status == 403){
-                    //const cookies = new Cookies();
-                    //cookies.remove('messages');
-                    //cookies.remove('token');
-                    //cookies.remove('key_temp');
-                    //cookies.remove('confChatInit');
-                //}
-            //}
+            //console.log(error.response.status);
+            if(error.response){
+                if(error.response.status == 403){
+                    const cookies = new Cookies();
+                    cookies.remove('messages');
+                    cookies.remove('token');
+                    cookies.remove('key_temp');
+                    cookies.remove('confChatInit');
+                }
+            }
           }).then(function () {
                 // always executed
           });
@@ -175,7 +175,7 @@ export default class Login extends Component {
         axios.post(
           config.get('baseUrlApi')+'/api/v1/auth',
           JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
-          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + client_id,'x-dsi-time' : 1800}}
+          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + client_id,'x-dsi-time' : 18}}
         ).then(res => {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
@@ -200,7 +200,7 @@ export default class Login extends Component {
 
   inIframe () {
       try {
-          return window.self !== window.top;
+          return window.self != window.top;
       } catch (e) {
           return true;
       }
