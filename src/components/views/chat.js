@@ -119,7 +119,7 @@ export default class Login extends Component {
 
   setMessage(_type,message){
     const cookies = new Cookies();
-    const item = {'type' : _type,'msg' : message};
+    const item = {'type' : _type,'msg' : message.response, type_resp: message.type};
     var oldItems = cookies.get('messages') || [];
     const items = oldItems.slice();
     items.push(item);
@@ -135,7 +135,7 @@ export default class Login extends Component {
           event.stopPropagation();
           this.setState({validated : true});
         }else{
-          this.setMessage('_req', this.state.inputMessage);
+          this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
           this.setState({inputMessage : ''});
           //
           this.setState({validated : false});
@@ -148,7 +148,7 @@ export default class Login extends Component {
                 'x-dsi-restful' : cookies.get('key_temp')
               }}
           ).then(res => {
-              this.setMessage('_res', res.data.data.response);
+              this.setMessage('_res', res.data.data);
               form.reset();
           }).catch(function (error) {
             //console.log(error.response.status);
@@ -197,10 +197,10 @@ export default class Login extends Component {
              cookies.set('key_temp', res.data.data.key_temp, this.state.cookieOptions);
              
              if(cookies.get('confChatInit') == false){
-              this.setMessage('_res', config.get('chat_welcome_message_start'));
+              this.setMessage('_res', {type: 'Text', response: config.get('chat_welcome_message_start')});
              }else{
                 const _init = cookies.get('confChatInit');
-                this.setMessage('_res', _init.welcome_message);
+                this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
              }
         }).catch(function (error) {
               //this.setState({errorSaveForm : true});
@@ -302,16 +302,27 @@ export default class Login extends Component {
                                       </div>
                                     );
                                   }else if(item.type == '_res'){
-                                    return (
-                                        <div key={index} className="contentMessageChat">
-                                               <div>
-                                                   <div className="contentUser"><h5>Belisa</h5></div>
-                                                   <div className="contentMsg">
-                                                   <span>{item.msg}</span>
+                                    if(item.type_resp == 'Text'){
+                                        return (
+                                            <div key={index} className="contentMessageChat">
+                                                   <div>
+                                                       <div className="contentUser"><h5>Belisa</h5></div>
+                                                       <div className="contentMsg">
+                                                       <span>{item.msg}</span>
+                                                       </div>
                                                    </div>
-                                               </div>
-                                        </div>
-                                    );
+                                            </div>
+                                        );
+                                    }else if(item.type_resp == 'Html'){
+                                        return (
+                                            <div key={index} className="contentMessageChat">
+                                                   <div>
+                                                       <div className="contentUser"><h5>Belisa</h5></div>
+                                                       <div className="contentMsg" dangerouslySetInnerHTML={{__html: item.msg}}></div>
+                                                   </div>
+                                            </div>
+                                        );
+                                    }
                                   }
                                 })}
                               </div>
