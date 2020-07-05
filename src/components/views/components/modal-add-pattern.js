@@ -6,6 +6,7 @@ import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import Cookies from 'universal-cookie';
 import EditorHtml from './editorHtml';
+import SingleOptions from './singleOptions';
 
 export default class ModalToLearn extends Component {
   		constructor(props) {
@@ -85,7 +86,7 @@ export default class ModalToLearn extends Component {
 		
 		/*INPUT ADD RESPONSE*/
 		_handleonTypeResponse = (event) =>{
-			this.setState({responseTypeValue : event.target.value});
+			    this.setState({responseTypeValue : event.target.value});
 			//if(event.target.value == 'Text'){
 				this.setState({showResponseType : event.target.value});
 			//}else{
@@ -238,6 +239,7 @@ export default class ModalToLearn extends Component {
 														    <option value="">Select</option>
 														    <option value="Text">Text</option>
 														    <option value="Form">Form</option>
+														    <option value="Slide">Slide</option>
 														    <option value="Html">Html</option>
 														    <option value="Single-option">Single option</option>
 														    <option value="Multiple-choices">Multiple choices</option>
@@ -292,6 +294,15 @@ export default class ModalToLearn extends Component {
 														   valueCode={this.state.responseTypeHtml}
 														/>
 													</div>
+											    </Col>
+										    </Form.Row>
+									    }
+
+
+									    {this.state.showResponseType == 'Single-option' &&
+										    <Form.Row>
+									        	<Col xs={12}>
+									                <SingleOptions/>
 											    </Col>
 										    </Form.Row>
 									    }
