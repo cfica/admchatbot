@@ -1,5 +1,5 @@
 const config = {
-    baseUrlApp: 'https://app-v1.acyr.cl.cl',
+    baseUrlApp: 'https://app-v1.acyr.cl',
     baseUrlApi: 'https://api-v1.acyr.cl',
     baseUrlAuth : 'https://api-v1.acyr.cl',
     staticFrontChat : 'https://api-v1.acyr.cl/static',
