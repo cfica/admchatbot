@@ -192,6 +192,7 @@ export default class BaseWords extends Component {
 						                  <th>ID</th>
 						                  <th>Tag</th>
 						                  <th>Patterns</th>
+						                  <th>Type Response</th>
 						                  <th>Responses</th>
 						                  <th>Action</th>
 						                </tr>
@@ -214,15 +215,25 @@ export default class BaseWords extends Component {
 						                    	
 						                    </td>
 
-						                    <td>
-						                    	<ol>
-						                    		{item.responses.map((item1) => 
-						                    			<li>
-							                    			<span>{item1}</span>
-							                    		</li>
-							                    	)}
-						                    	</ol>
-						                    </td>
+						                    
+							                <td>{item.responses.type}</td>
+
+							                {item.responses.type == 'Text' &&
+							                    <td>
+							                    	<ol>
+							                    		{item.responses.value.map((item1) => 
+							                    			<li>
+								                    			<span>{item1}</span>
+								                    		</li>
+								                    	)}
+							                    	</ol>
+							                    </td>
+							                }
+
+							                {item.responses.type == 'Html' &&
+							                	<td></td>
+							                }
+
 						                    <td>
 						                    	<a href="#" onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)}><span>Delete</span></a>
 						                    </td>

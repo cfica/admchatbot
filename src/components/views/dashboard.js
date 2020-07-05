@@ -5,7 +5,7 @@ import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './sidebar-menu';
 import SidebarAction from './sidebar-action';
 import { browserHistory } from 'react-router';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import Cookies from 'universal-cookie';
 
 export default class Dashboard extends Component {

@@ -57,8 +57,8 @@ export default class Login extends Component {
     cookies.remove('confChatInit',{});
     this.delCookie();*/
 
-    if(this._vldParamasGet() == false){
-    //if(true == false){
+    //if(this._vldParamasGet() == false){
+    if(true == false){
     }else{
       const cookies = new Cookies();
       console.log(cookies.get('token'));
@@ -159,10 +159,6 @@ export default class Login extends Component {
                     cookies.remove('token',{path: '/', sameSite: 'none', secure: true});
                     cookies.remove('key_temp',{path: '/', sameSite: 'none', secure: true});
                     cookies.remove('confChatInit',{path: '/', sameSite: 'none', secure: true});
-                    //document.cookie = ['token', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    //document.cookie = ['messages', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    //document.cookie = ['key_temp', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-                    //document.cookie = ['confChatInit', '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
                 }
             }
           }).then(function () {
@@ -255,8 +251,8 @@ export default class Login extends Component {
 
   render() {
     //add recaptcha..
-    if(this._vldParamasGet() == false){
-    //if(true == false){
+    //if(this._vldParamasGet() == false){
+    if(true == false){
       return ('');
     }else{
         return (
