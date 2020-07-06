@@ -1,6 +1,102 @@
 import React, { Component } from "react";
 import {Modal,Button,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 
+export class ResponseForm extends Component {
+	constructor(props) {
+	    super(props);
+	    this.state = {};
+	}
+
+	render() {
+		return (
+			<Form noValidate validated="" onSubmit="">
+		    	<span>{this.props.messageData.textDescription}</span>
+		    	<div className="contentForm">
+		    		{this.props.messageData.inputs.map((x, i) => {
+		    			if(x.type == 'Text'){
+		    				return(
+		    					<Form.Row key={i} className="inputText">
+									<Col xs={12}>
+									    	<Form.Group controlId="formBasicText">
+											    <Form.Control size="sm" required name="label" type="text" value="" onChange=""  placeholder={x.label}  />
+											    <Form.Label >{x.label}</Form.Label>
+											</Form.Group>
+									</Col>
+								</Form.Row>
+		    				);
+		    			}else if(x.type == 'Multi-Choices'){
+		    				return (
+		    					<Form.Row key={i} className="Multi-Choices">
+									<Col xs={12}>
+									    {/*<div class="customCheckbox">
+											<ul class="ks-cboxtags">*/}
+												    {x.items.map((x1, i1) => {
+												    	{/*return (
+												    		<label className="containerCheckbox">{x1}
+															  <input type="checkbox"/>
+															  <span className="checkmark"></span>
+															</label>
+												    	);*/}
+
+												    	{/*return (
+															<li key={i1}><input type="checkbox" id={"checkbox"+ i+i1} value={x1}/><label for={"checkbox"+i +i1}>{x1}</label></li>
+												    	);*/}
+
+												    	return (
+												    		  <div class="inputGroup">
+															    <input id={"checkbox"+ i+i1} name={"option"+ i+i1} type="checkbox"/>
+															    <label className="inputCheckbox" for={"checkbox"+ i+i1}>{x1}</label>
+															  </div>
+												    	);
+												    	
+												    })}
+									    	{/*</ul>
+										</div>*/}
+									</Col>
+								</Form.Row>
+		    				);
+		    			}else if(x.type == 'Single-Option-Choice'){
+		    					return (
+			    					<Form.Row key={i} className="Single-Option-Choice">
+										<Col xs={12}>
+										    {x.items.map((x1, i1) => {
+										    	{/*return (
+										    		<label class="containerRadio">{x1}
+													  <input type="radio" checked="checked" name="radio"/>
+													  <span class="checkmark"></span>
+													</label>
+										    	);*/}
+
+										    	return (
+										    		  <div class="inputGroup">
+													    <input id={"radio"+ i+i1} name="radio" type="radio"/>
+													    <label className="inputRadio" for={"radio"+ i+i1}>{x1}</label>
+													  </div>
+										    	);
+
+										    })}
+										</Col>
+									</Form.Row>
+			    				);
+		    			}else if(x.type == 'TextArea'){	
+		    				return (
+		    					<Form.Row key={i} className="Single-Option-Choice">
+									<Col xs={12}>
+									    	<Form.Group controlId="formBasicText">
+											    <Form.Control size="sm" as="textarea" rows="3" placeholder={x.label} />
+											    <Form.Label >{x.label}</Form.Label>
+											</Form.Group>
+									</Col>
+								</Form.Row>
+		    				);
+		    			}
+		    		})}
+		    	</div>
+		    </Form>
+		);
+	}
+}
+
 export class InputsTypeForm extends Component {
   		constructor(props) {
 		    super(props);
