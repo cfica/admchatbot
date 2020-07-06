@@ -234,6 +234,10 @@ export default class BaseWords extends Component {
 							                	<td></td>
 							                }
 
+							                {item.responses.type == 'Form' &&
+							                	<td></td>
+							                }
+
 						                    <td>
 						                    	<a href="#" onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)}><span>Delete</span></a>
 						                    </td>

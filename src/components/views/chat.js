@@ -6,6 +6,7 @@ import  { Redirect } from 'react-router-dom';
 import { browserHistory } from 'react-router';
 import './../css/belisa.css';
 import Cookies from 'universal-cookie';
+import Utils from './utils';
 
 export default class Login extends Component {
   constructor(props){
@@ -29,23 +30,6 @@ export default class Login extends Component {
       cookieOptions: {path: '/', sameSite: 'none', secure: true}
     };
   }
-
-  /*bake_cookie(name, value) {
-    var cookie = [name, '=', JSON.stringify(value), ';SameSite=None; Secure; domain_.', window.location.host.toString(), '; path=/;'].join('');
-    document.cookie = cookie;
-    //console.log(cookie);
-  }
-
-  // reads a cookie according to the given name
-  read_cookie(name) {
-    var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
-    result = result != null ? JSON.parse(result[1]) : [];
-    return result;
-  }
-
-  delete_cookie(name) {
-    document.cookie = [name, '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/; domain.', window.location.host.toString()].join('');
-  }*/
 
   componentDidMount(){
     const client_id = this.props.location.query.i;
@@ -110,12 +94,6 @@ export default class Login extends Component {
     }
   }
 
-  /*delCookie(){
-      this.delete_cookie('token');
-      this.delete_cookie('key_temp');
-      this.delete_cookie('messages');
-      this.delete_cookie('init');
-  }*/
 
   setMessage(_type,message){
     const cookies = new Cookies();
@@ -140,6 +118,16 @@ export default class Login extends Component {
           //
           this.setState({validated : false});
           var _dataPost = {"message" : this.state.inputMessage};
+          //console.log(Utils._encodeData(_dataPost));
+          console.log(process.env.BASE_URL_APP);
+          console.log(process.env.BASE_URL_API);
+          console.log(process.env.BASE_URL_AUTH);
+          console.log(process.env.STATIC_FRONT_CHAT);
+          console.log(process.env.CLIENT_ID);
+          console.log(process.env.CHAT_WELCOME_MESSAGE_INIT);
+          console.log(process.env.CHAT_WELCOME_MESSAGE_START);
+          console.log(process.env.CHAT_WELCOME_INPUTS);
+          
           const cookies = new Cookies();
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
               {headers: {

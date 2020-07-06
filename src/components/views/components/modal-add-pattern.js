@@ -119,6 +119,20 @@ export default class ModalToLearn extends Component {
 		handleSubmitFormAddPattern = (event) =>{
 			event.preventDefault();
 			const form = event.currentTarget;
+			const _valueResponse = '';
+   		    if(this.state.showResponseType == 'Text'){
+   		    	this._valueResponse = this.state.listResponseTextAdd;
+   		    }else if(this.state.showResponseType == 'Html'){
+   		    	this._valueResponse = this.state.responseTypeHtml;
+   		    }else if(this.state.showResponseType == 'Form'){
+   		    	this._valueResponse = this.state.valuesDataForm;
+   		    }
+			var _dataPost = {
+   		    	"tag" : this.state.searchTerm,
+   		    	"patterns" : this.state.listPatternsAdd,
+   		    	"responses" : {"type" : this.state.showResponseType, "value" : this._valueResponse}
+   		    };
+   		    console.log(_dataPost);
 		    if (form.checkValidity() === false || 
 		    	this.state.valueResponseTextHidden.length == 0 ||
 		    	this.state.valuePatternHidden.length == 0 
@@ -131,18 +145,9 @@ export default class ModalToLearn extends Component {
 		    }else{
 		    	this.setState({validated : false});
 	 			
-	   		    const _valueResponse = '';
-	   		    if(this.state.showResponseType == 'Text'){
-	   		    	this._valueResponse = this.state.listResponseTextAdd;
-	   		    }else if(this.state.showResponseType == 'Html'){
-	   		    	this._valueResponse = this.state.responseTypeHtml;
-	   		    }
+	   		    
 
-	   		    var _dataPost = {
-	   		    	"tag" : this.state.searchTerm,
-	   		    	"patterns" : this.state.listPatternsAdd,
-	   		    	"responses" : {"type" : this.state.showResponseType, "value" : this._valueResponse}
-	   		    };
+	   		    
 	   		    //this.state.responseTypeValue
 	   		    axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern', 
 	   		    	JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
@@ -357,7 +362,7 @@ export default class ModalToLearn extends Component {
 										</Tabs>
 
 										
-										<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>
+										{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>*/}
 						        </Modal.Body>
 						        
 						        <Modal.Footer>

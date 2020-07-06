@@ -44,6 +44,8 @@ export class InputsTypeForm extends Component {
 											<Col xs={6}>
 										    	<Form.Control size="sm" name="validation" as="select" onChange={e => this.handleInputChange(e, i)}>
 											        <option value="">Choose Validation...</option>
+											        <option value="RUT">RUT</option>
+											        <option value="String">String</option>
 											        <option value="Email">Email</option>
 											        <option value="Telephone">Telephone</option>
 											        <option value="Number">Number</option>
@@ -89,7 +91,7 @@ export class InputsTypeForm extends Component {
 														      aria-describedby="basic-addon2"
 														    />
 														    <InputGroup.Append>
-														      <Button size="sm" onClick={() => this.addItemMultiChoice(x.label, i)} variant="outline-secondary">Add</Button>
+														      <Button size="sm" onClick={() => {this.addItemMultiChoice(x.label, i); x.label = '';}} variant="outline-secondary">Add</Button>
 														    </InputGroup.Append>
 														</InputGroup>
 									                 </Form.Group>
