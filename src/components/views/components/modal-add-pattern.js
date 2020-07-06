@@ -7,6 +7,9 @@ import { browserHistory } from 'react-router';
 import Cookies from 'universal-cookie';
 import EditorHtml from './editorHtml';
 import SingleOptions from './singleOptions';
+import MultiChoices from './multiChoices';
+import ChatForm from './chatForm';
+import Preview from './preview';
 
 export default class ModalToLearn extends Component {
   		constructor(props) {
@@ -35,7 +38,9 @@ export default class ModalToLearn extends Component {
 		      responseTypeHtml : '',
 		      validated : false,
 		      errorSaveForm: "",
-		      token: cookies.get('tokenAdm')
+		      token: cookies.get('tokenAdm'),
+		      listOptionsMChoices: [],
+		      valuesDataForm: ''
 		    };
 		}
 
@@ -167,6 +172,10 @@ export default class ModalToLearn extends Component {
 			this.setState({responseTypeHtml: code});
 		}
 
+		dataForm = (data) =>{
+			this.setState({valuesDataForm: data});
+		}
+
   		render() {
 				return (
 				  	<div className="content-button">
@@ -176,137 +185,179 @@ export default class ModalToLearn extends Component {
 						        <Modal.Header closeButton>
 						          <Modal.Title>Add Pattern</Modal.Title>
 						        </Modal.Header>
+
 						        <Modal.Body>
-					                    <Form.Row>
-					                        <Col xs={4}>
-							                    <Form.Group  controlId="formBasicTag">
-										            <Form.Label >1.- Tag</Form.Label>
-										            <Form.Control required size="sm" type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search Tag" />
-										            {this.state.showFilterInput &&
-										                <div className="contFilterList">
-										                	<ListGroup variant="flush">
-										                    	{this.state.searchResults.map(item => (
-														          <ListGroup.Item action href="#link1">{item}</ListGroup.Item>
-														        ))}
-															</ListGroup>
-										                </div>
-										            }
-										            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-										            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-										            <Form.Text className="text-muted">
-										              This tag must be unique. Example, hello_how_are_you
-										            </Form.Text>
-										        </Form.Group>
-										    </Col>
-									    </Form.Row>
 
-									    <Form.Row>
-									        <Col xs={4}>
-									                <Form.Group  controlId="formBasicPatterns">
-									                    <Form.Label >2.- Patterns</Form.Label>
-														<InputGroup className="mb-3">
-														    <FormControl value={this.state.valuePattern} onChange={this._handonchangeInputPattern} size="sm"
-														      placeholder="Add Pattern"
-														      aria-label="Add Pattern"
-														      aria-describedby="basic-addon2"
-														    />
-														    <InputGroup.Append>
-														      <Button size="sm" onClick={this._handleonAddPattern} variant="outline-secondary">Add</Button>
-														    </InputGroup.Append>
-														</InputGroup>
-														<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden} size="sm"/>
-									                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
-									                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
+						                <Tabs defaultActiveKey="tag" transition={false} id="noanim-tab-example">
+										  <Tab eventKey="tag" title="1) Tag">
+											    	<div>&nbsp;</div>
+											    	<Form.Row>
+								                        <Col xs={4}>
+										                    <Form.Group  controlId="formBasicTag">
+													            <Form.Label >Tag Name</Form.Label>
+													            <Form.Control required size="sm" type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search Tag" />
+													            {this.state.showFilterInput &&
+													                <div className="contFilterList">
+													                	<ListGroup variant="flush">
+													                    	{this.state.searchResults.map(item => (
+																	          <ListGroup.Item action href="#link1">{item}</ListGroup.Item>
+																	        ))}
+																		</ListGroup>
+													                </div>
+													            }
 
-									                    <ul className="listItemsSelected">
-													        {this.state.listPatternsAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
-									                    </ul>
+													            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+													            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+													            <Form.Text className="text-muted">
+													              This tag must be unique. Example, hello_how_are_you
+													            </Form.Text>
+													        </Form.Group>
+													    </Col>
+												    </Form.Row>
+										  </Tab>
+										  <Tab eventKey="pattern" title="2) Pattern">
+										            <div>&nbsp;</div>
+											    	<Form.Row>
+												        <Col xs={4}>
+												                <Form.Group  controlId="formBasicPatterns">
+												                    <Form.Label >Pattern</Form.Label>
+																	<InputGroup className="mb-3">
+																	    <FormControl value={this.state.valuePattern} onChange={this._handonchangeInputPattern} size="sm"
+																	      placeholder="Add Pattern"
+																	      aria-label="Add Pattern"
+																	      aria-describedby="basic-addon2"
+																	    />
+																	    <InputGroup.Append>
+																	      <Button size="sm" onClick={this._handleonAddPattern} variant="outline-secondary">Add</Button>
+																	    </InputGroup.Append>
+																	</InputGroup>
+																	<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden} size="sm"/>
+												                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
+												                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
 
-									                    <Form.Text className="text-muted">
-									                      Possible questions that the user will ask through the chat.
-									                    </Form.Text>
-									                 </Form.Group>
-									        </Col>
-									    </Form.Row>
+												                    <ul className="listItemsSelected">
+																        {this.state.listPatternsAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
+												                    </ul>
+
+												                    <Form.Text className="text-muted">
+												                      Possible questions that the user will ask through the chat.
+												                    </Form.Text>
+												                 </Form.Group>
+												        </Col>
+												    </Form.Row>
+										  </Tab>
+										  <Tab eventKey="response" title="3) Response">
+										                <div>&nbsp;</div>
+											   			<Form.Row>
+													        <Col xs={4}>
+													            <Form.Row>
+													                <Col xs={12}>
+														                <Form.Group  controlId="formBasicResponse">
+														                    <Form.Label >Type Response</Form.Label>
+														                    <div className="contentListGroupSelect">
+																			    <Form.Control required size="sm" as="select" onChange={this._handleonTypeResponse}>
+																				    <option value="">Select</option>
+																				    <option value="Text">Text</option>
+																				    <option value="Form">Form</option>
+																				    <option value="Slide">Slide</option>
+																				    <option value="Html">Html</option>
+																				    <option value="Single-option">Yes/No</option>
+																				    <option value="Multiple-choices">Multiple choices</option>
+																				    <option value="Data-Set">Data Set</option>
+																				</Form.Control>
+																				<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+																            	<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+														                    </div>
+																            <Form.Text className="text-muted">
+														                      Possible responses that the user will ask through the chat.
+														                    </Form.Text>
+														                </Form.Group>
+														         	</Col>
+																</Form.Row>
+
+												                {this.state.showResponseType == 'Text' &&
+													                <Form.Row>
+															        	<Col xs={12}>
+															                <div className="formTypeResponse">						
+																				<Form.Group  controlId="formBasicResponseText">
+																	                    <Form.Label >Responses</Form.Label>
+																						<InputGroup className="mb-3">
+																						    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
+																						      placeholder="Add Response"
+																						      aria-label="Add Response"
+																						      aria-describedby="basic-addon2"
+																						    />
+																						    <InputGroup.Append>
+																						      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
+																						    </InputGroup.Append>
+																						</InputGroup>
+
+																						<FormControl required type="hidden" name="valueResponseTextHidden" value={this.state.valueResponseTextHidden} size="sm"/>
+																						{this.state.valueResponseTextHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
+															                    		{this.state.valueResponseTextHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
+
+																	                    <ul className="listItemsSelected">
+																					        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
+																	                    </ul>
+																                </Form.Group>
+																			</div>
+																	    </Col>
+																    </Form.Row>
+																}
+
+																{this.state.showResponseType == 'Html' &&
+																    <Form.Row>
+															        	<Col xs={12}>
+															                <div className="formTypeResponse">						
+																				<EditorHtml 
+																				   onChangeValue={this.handleChangeValueHtmlCode} 
+																				   valueCode={this.state.responseTypeHtml}
+																				/>
+																			</div>
+																	    </Col>
+																    </Form.Row>
+															    }
 
 
-									    <Form.Row>
-									        <Col xs={4}>
-								                <Form.Group  controlId="formBasicResponse">
-								                    <Form.Label >3.- Type Response</Form.Label>
-								                    <div className="contentListGroupSelect">
-													    <Form.Control required size="sm" as="select" onChange={this._handleonTypeResponse}>
-														    <option value="">Select</option>
-														    <option value="Text">Text</option>
-														    <option value="Form">Form</option>
-														    <option value="Slide">Slide</option>
-														    <option value="Html">Html</option>
-														    <option value="Single-option">Single option</option>
-														    <option value="Multiple-choices">Multiple choices</option>
-														    <option value="Data-Set">Data Set</option>
-														</Form.Control>
-														<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-										            	<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-								                    </div>
-										            <Form.Text className="text-muted">
-								                      Possible responses that the user will ask through the chat.
-								                    </Form.Text>
-								                </Form.Group>
-								         	</Col>
-									    </Form.Row>
+															    {this.state.showResponseType == 'Single-option' &&
+																    <Form.Row>
+															        	<Col xs={12}>
+															                <SingleOptions/>
+																	    </Col>
+																    </Form.Row>
+															    }
 
-						                {this.state.showResponseType == 'Text' &&
-							                <Form.Row>
-									        	<Col xs={4}>
-									                <div className="formTypeResponse">						
-														<Form.Group  controlId="formBasicResponseText">
-											                    <Form.Label >Responses</Form.Label>
-																<InputGroup className="mb-3">
-																    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
-																      placeholder="Add Response"
-																      aria-label="Add Response"
-																      aria-describedby="basic-addon2"
-																    />
-																    <InputGroup.Append>
-																      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
-																    </InputGroup.Append>
-																</InputGroup>
+															    {this.state.showResponseType == 'Multiple-choices' &&
+																    <Form.Row>
+															        	<Col xs={12}>
+															                <MultiChoices/>
+																	    </Col>
+																    </Form.Row>
+															    }
 
-																<FormControl required type="hidden" name="valueResponseTextHidden" value={this.state.valueResponseTextHidden} size="sm"/>
-																{this.state.valueResponseTextHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
-									                    		{this.state.valueResponseTextHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
-
-											                    <ul className="listItemsSelected">
-															        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
-											                    </ul>
-										                </Form.Group>
-													</div>
-											    </Col>
-										    </Form.Row>
-										}
-
-										{this.state.showResponseType == 'Html' &&
-										    <Form.Row>
-									        	<Col xs={12}>
-									                <div className="formTypeResponse">						
-														<EditorHtml 
-														   onChangeValue={this.handleChangeValueHtmlCode} 
-														   valueCode={this.state.responseTypeHtml}
-														/>
-													</div>
-											    </Col>
-										    </Form.Row>
-									    }
+															    {this.state.showResponseType == 'Form' &&
+																    <Form.Row>
+															        	<Col xs={12}>
+															                <ChatForm dataForm={this.dataForm}/>
+																	    </Col>
+																    </Form.Row>
+															    }
+												         	</Col>
 
 
-									    {this.state.showResponseType == 'Single-option' &&
-										    <Form.Row>
-									        	<Col xs={12}>
-									                <SingleOptions/>
-											    </Col>
-										    </Form.Row>
-									    }
-					               
+												         	<Col xs={4}>
+												         		<Preview 
+												         		    textDescription={this.state.valueResponseText} 
+												         		    valueCode={this.state.responseTypeHtml}
+												         		    listOptions={this.state.listOptionsMChoices}
+												         		/>
+												         	</Col>
+													    </Form.Row>
+										  </Tab>
+										</Tabs>
+
+										
+										<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>
 						        </Modal.Body>
 						        
 						        <Modal.Footer>

@@ -27,47 +27,23 @@ Duis aliquam elit a mi imperdiet dictum. Aliquam vel elit faucibus, porta sem eg
   		render() {
 				return (
 					  <Row>
-					    <Col>
-					    	<h5>Editor Html</h5>
-						  	<div className="contentEditor container_editor_area">
-						  			<Editor
-						  			    placeholder="Type some code…"
-								        value={this.props.valueCode}
-								        onValueChange={code => this.props.onChangeValue(code)}
-								        highlight={code => highlight(code, languages.js)}
-								        padding={10}
-								        style={{
-								          fontFamily: '"Fira code", "Fira Mono", monospace',
-								          fontSize: 12,
-								        }}
-								        className="container__editor"
-								    />
-						  	</div>
-					    </Col>
-					    <Col>
-					    	<h5>Preview</h5>
-					  		<div className="contPreview">
-							  		<div className="contChat">
-										<div className="contentResponse">
-										    <div className="contentMessageClient">
-												<div>
-													<div className="contentUser"><h5>You</h5></div>
-													<div className="contentMsg"><span>Hello, I need information about ...</span></div>
-												</div>
-											</div>
-											<div className="contentMessageChat">
-												<div>
-													<div className="contentUser"><h5>Belisa</h5></div>
-													<div className="contentMsg">
-													    <span>Hello, gladly! The detail is as follows:</span>
-													    <div className="additionalInfo" dangerouslySetInnerHTML={{__html: this.props.valueCode}}></div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-					  		</div>
-					    </Col>
+						    <Col>
+						    	<h5>Editor Html</h5>
+							  	<div className="contentEditor container_editor_area">
+							  			<Editor
+							  			    placeholder="Type some code…"
+									        value={this.props.valueCode}
+									        onValueChange={code => this.props.onChangeValue(code)}
+									        highlight={code => highlight(code, languages.js)}
+									        padding={10}
+									        style={{
+									          fontFamily: '"Fira code", "Fira Mono", monospace',
+									          fontSize: 12,
+									        }}
+									        className="container__editor"
+									    />
+							  	</div>
+						    </Col>
 					  </Row>
 				);
   		}

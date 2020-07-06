@@ -414,7 +414,43 @@ a[data-toggle="collapse"] {
   max-width: none !important;
 }
 
+.contentMessageChat p, 
+.contentMessageChat ul, 
+.contentMessageChat span, 
+.contentMessageChat h1,
+.contentMessageChat h2,
+.contentMessageChat h3,
+.contentMessageChat h4,
+.contentMessageChat h5{
+  font-size: 1rem;
+  padding:0px;
+  margin:0px;
+  line-height: 1.2rem;
+}
+.contentMessageChat ul,
+.contentMessageChat ol{
+  padding-left: 15px;
+  padding-top:10px;
+}
 
+.contentMessageClient p, 
+.contentMessageClient ul, 
+.contentMessageClient span, 
+.contentMessageClient h1,
+.contentMessageClient h2,
+.contentMessageClient h3,
+.contentMessageClient h4,
+.contentMessageClient h5{
+  font-size: 1rem;
+  padding:0px;
+  margin:0px;
+  line-height: 1.2rem;
+}
+.contentMessageClient ul,
+.contentMessageClient ol{
+  padding-left: 15px;
+  padding-top:10px;
+}
 
 
 
@@ -423,7 +459,7 @@ a[data-toggle="collapse"] {
     overflow: hidden;
     overflow-x: hidden;
     box-shadow: 0 6px 9px 0 rgba(0,0,0,.5);
-    overflow-x: hidden;
+    max-height: 400px
 }
 
 .contPreview{
@@ -547,4 +583,50 @@ a[data-toggle="collapse"] {
   cursor: help;
 }
 /*EDITOR CODE*/
+
+
+
+.dispFlex{
+  display: flex;
+}
+
+.selActionOptionSingle{
+  margin-bottom: 0px;
+  margin-left: 10px
+}
+
+.selActionOptionSingle select{
+  padding: 0px
+}
+
+.inputMultiChoiseItems{
+  margin-bottom: 0px
+}
+
+.inputMultiChoiseItems .items > div{
+  padding-left: 10px;
+  padding-right: 10px
+}
+
+.inputMultiChoiseItems p{
+  margin: 0px;
+  padding: 0px;
+  border-bottom: 1px solid #cecece;
+  font-size: 0.9rem;
+}
+
+.contentInputsResponseForm .form-group{
+  margin-bottom: 5px
+}
+
+.contentInputsResponseForm{
+  padding: 20px;
+  padding-top: 0px
+}
+
+.contentInputsResponseForm label{
+  font-size: 0.9rem;
+  margin: 0px;
+  padding: 0px
+}
 
