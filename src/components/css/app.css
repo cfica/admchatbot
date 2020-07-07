@@ -452,6 +452,9 @@ a[data-toggle="collapse"] {
   padding-top:10px;
 }
 
+.was-validated .form-control:valid~.invalid-feedback {
+    display: none;
+}
 
 
 /*EDITOR CODE*/
@@ -705,20 +708,26 @@ label{
    font-weight: 700;
    height: 50px;
    padding-top: 20px;
-   padding-left: 15px;
+   padding-left: 10px;
    padding-right: 10px;
    padding-bottom: 2px;
-   padding-right: 60px
 }
- .form-control::placeholder {
+
+.contentSend .form-control{
+  padding-right: 60px
+}
+
+.form-control::placeholder {
    color: transparent;
 }
- .form-control:placeholder-shown ~ .form-label {
+
+.form-control:placeholder-shown ~ .form-label {
    font-size: 0.8rem;
    cursor: text;
    top: 17px;
    margin-left: 16px
 }
+
 .form-label {
    position: absolute;
    top: 3px;
@@ -730,9 +739,9 @@ label{
    font-weight: normal;
 }
  .form-control:focus {
-   padding-bottom: 6px;
-   font-weight: 700 !important;
-   border-width: 3px;
+   /*padding-bottom: 6px;
+   font-weight: 700;
+   border-width: 3px;*/
    /*border-image: linear-gradient(to right, #11998e, #38ef7d);
    border-image-slice: 1;*/
 }
@@ -743,7 +752,7 @@ label{
    transition: 0.2s;
    font-size: 0.8rem;
    /*color: #11998e;*/
-   font-weight: 700 !important;
+   font-weight: 700;
    margin-left: 16px
 }
 

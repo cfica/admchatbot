@@ -7,7 +7,7 @@ import { browserHistory } from 'react-router';
 import './../css/belisa.css';
 import Cookies from 'universal-cookie';
 import Utils from './utils';
-import {InputsTypeForm,ResponseForm} from './components/componentsUtils';
+import {InputsTypeForm,ResponseForm,Validation} from './components/componentsUtils';
 
 export default class Login extends Component {
   constructor(props){
@@ -35,27 +35,21 @@ export default class Login extends Component {
   componentDidMount(){
     const client_id = this.props.location.query.i;
 
-    /*const cookies = new Cookies();
-    cookies.remove('messages',this.state.cookieOptions);
-    cookies.remove('token',this.state.cookieOptions);
-    cookies.remove('key_temp',this.state.cookieOptions);
-    cookies.remove('confChatInit',this.state.cookieOptions);*/
+    /*localStorage.removeItem('messages');
+    localStorage.removeItem('token');
+    localStorage.removeItem('key_temp');
+    localStorage.removeItem('confChatInit');*/
 
     //if(this._vldParamasGet() == false){
     if(true == false){
     }else{
       const cookies = new Cookies();
-      console.log(cookies.get('token'));
-      console.log(cookies.get('confChatInit'));
-      console.log(cookies.get('messages'));
-      console.log(cookies.get('key_temp'));
-
-      if(cookies.get('token') != undefined &&
-         cookies.get('confChatInit') != undefined &&
-         cookies.get('messages') != undefined){
+      if(localStorage.getItem('token') != undefined &&
+         localStorage.getItem('confChatInit') != undefined &&
+         localStorage.getItem('messages') != undefined){
         this.setState({showContHello : false});
         this.setState({showContChat : true});
-        this.setState({'listMessages' : cookies.get('messages')});
+        this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
       }else{
         this.setState({showContHello : true});
         this.setState({showContChat : false});
@@ -68,25 +62,17 @@ export default class Login extends Component {
                 'x-dsi-restful-init' : init
               }}
         ).then(res => {
-            const cookies = new Cookies();
-            cookies.set('confChatInit', res.data.data.config[0], this.state.cookieOptions);
+            localStorage.setItem('confChatInit', JSON.stringify(res.data.data.config[0]));
             this.setState({'confChatInit': res.data.data.config[0]});
         }).catch(function (error) {
-          //const cookies = new Cookies();
-          //cookies.set('confChatInit', false, this.state.cookieOptions);
         }).then(function () {});
 
 
-        console.log('result:');
-        console.log(cookies.get('confChatInit'));
-        console.log(this.state.confChatInit);
-
-        //const cookies = new Cookies();
-        if(cookies.get('confChatInit') == undefined){
+        if(localStorage.getItem('confChatInit') == undefined){
             this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
             this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
         }else{
-            const _init = cookies.get('confChatInit');
+            const _init = JSON.parse(localStorage.getItem('confChatInit'));
             this.setState({welcomeInputs: _init.start_conversation});
             this.setState({welcomeMessageInit: _init.welcome_message_init});
         }
@@ -96,15 +82,15 @@ export default class Login extends Component {
 
 
   setMessage(_type,message){
-    const cookies = new Cookies();
     const item = {'type' : _type,'msg' : message.response, type_resp: message.type};
-    var oldItems = cookies.get('messages') || [];
+    var oldItems = JSON.parse(localStorage.getItem('messages')) || [];
     const items = oldItems.slice();
     items.push(item);
-    cookies.set('messages', items, this.state.cookieOptions);
-    this.setState({'listMessages' : cookies.get('messages')});
-    //console.log(this.state.listMessages);
+    localStorage.setItem('messages', JSON.stringify(items));
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
+
+
 
   _handleSend = (event)=>{
         event.preventDefault();
@@ -122,28 +108,26 @@ export default class Login extends Component {
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization' : 'Bearer ' + cookies.get('token'),
-                'x-dsi-restful' : cookies.get('key_temp')
+                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                'x-dsi-restful' : localStorage.getItem('key_temp')
               }}
           ).then(res => {
               this.setMessage('_res', res.data.data);
               form.reset();
           }).catch(function (error) {
-            //console.log(error.response.status);
             if(error.response){
                 if(error.response.status == 403){
-                    const cookies = new Cookies();
-                    cookies.remove('messages',{path: '/', sameSite: 'none', secure: true});
-                    cookies.remove('token',{path: '/', sameSite: 'none', secure: true});
-                    cookies.remove('key_temp',{path: '/', sameSite: 'none', secure: true});
-                    cookies.remove('confChatInit',{path: '/', sameSite: 'none', secure: true});
+                    localStorage.removeItem('messages');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('key_temp');
+                    localStorage.removeItem('confChatInit');
                 }
             }
           }).then(function () {
                 // always executed
           });
 
-          if(cookies.get('token') === undefined){
+          if(localStorage.getItem('token') == undefined){
             this.setState({showContHello : true});
             this.setState({showContChat : false});
           }
@@ -170,14 +154,13 @@ export default class Login extends Component {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
              /*##*/
-             const cookies = new Cookies();
-             cookies.set('token', res.data.data.token, this.state.cookieOptions);
-             cookies.set('key_temp', res.data.data.key_temp, this.state.cookieOptions);
+             localStorage.setItem('token', res.data.data.token);
+             localStorage.setItem('key_temp', res.data.data.key_temp);
              
-             if(cookies.get('confChatInit') == false){
+             if(localStorage.getItem('confChatInit') == undefined){
               this.setMessage('_res', {type: 'Text', response: config.get('chat_welcome_message_start')});
              }else{
-                const _init = cookies.get('confChatInit');
+                const _init = JSON.parse(localStorage.getItem('confChatInit'));
                 this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
              }
         }).catch(function (error) {
@@ -231,6 +214,18 @@ export default class Login extends Component {
     const _value = e.target.value;
     const _items = this.state.listMessages;
     _items[indexParent]['msg']['inputs'][index]['value'] = _value;
+    const _validation = _items[indexParent]['msg']['inputs'][index]['validation'];
+    /*validation*/
+    const _result = new Validation()._validation(_value, _validation);
+    _items[indexParent]['msg']['inputs'][index]['classValidation'] = _result._class;
+    _items[indexParent]['msg']['inputs'][index]['errorValidation'] = _result.error;
+    /*validation*/
+    this.setState({listMessages: _items});
+  }
+
+  statusValidation(result, item, index,indexParent){
+    const _items = this.state.listMessages;
+    _items[indexParent]['msg']['inputs'][index]['validation'] = result.error;
     this.setState({listMessages: _items});
   }
 
@@ -260,7 +255,7 @@ export default class Login extends Component {
       return ('');
     }else{
         return (
-            <div id="chat">
+            <div id="chat" >
                 {this.state.showContHello &&
                   <div className="contHello">
                       <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
@@ -275,12 +270,12 @@ export default class Login extends Component {
                         {this.state.welcomeInputs.map((item, index) => {
                             if(item == 'Email'){
                               return (<Form.Group controlId="formEmail">
-                                        <Form.Control required  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
+                                        <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
                                         <Form.Label >Enter Email</Form.Label>
                                       </Form.Group>);
                             }else if(item == 'Telephone'){
                               return (<Form.Group controlId="formTelephone">
-                                        <Form.Control required  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
+                                        <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
                                         <Form.Label >Enter Telephone</Form.Label>
                                       </Form.Group>);
                             }
@@ -334,10 +329,12 @@ export default class Login extends Component {
                                     }else if(item.type_resp == 'Form'){
                                         return (
                                             <div key={index} className="contentMessageChat">
-                                                   <div>
+                                                   <div key={"i"+index}>
                                                        <div className="contentUser"><h5>Belisa</h5></div>
                                                        <div className="contentMsg">
-                                                            <ResponseForm 
+                                                            <ResponseForm
+                                                                setMessage = {this.setMessage}
+                                                                statusValidation = {this.statusValidation}
                                                                 index = {index}
                                                                 messageData = {item.msg}
                                                                 inputChange = {this.inputChange}
@@ -354,19 +351,21 @@ export default class Login extends Component {
                               </div>
                               
                               <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
-                                  <Form.Group  controlId="sendMessage" className="contentSend">
-                                    <InputGroup>
-                                        <FormControl required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
-                                          aria-label="Add Message"
-                                          aria-describedby="basic-addon2"
-                                        />
-                                        <Form.Label >Message</Form.Label>
+                                  <div className="contentSend">
+                                    <Form.Group  controlId="sendMessage">
+                                      <InputGroup>
+                                          <FormControl required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
+                                            aria-label="Add Message"
+                                            aria-describedby="basic-addon2"
+                                          />
+                                          <Form.Label >Message</Form.Label>
 
-                                        <InputGroup.Append className="btnSend">
-                                          <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
-                                        </InputGroup.Append>
-                                    </InputGroup>
-                                  </Form.Group>
+                                          <InputGroup.Append className="btnSend">
+                                            <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
+                                          </InputGroup.Append>
+                                      </InputGroup>
+                                    </Form.Group>
+                                  </div>
                               </Form>
                         </div>
                   }
