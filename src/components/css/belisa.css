@@ -38,8 +38,13 @@ body {
 .contentSend .btnSend{
 	position: absolute;
 	right: 10px;
-	top: 5px;
+	top: 15px;
 	z-index: 5
+}
+
+.contentSend .form-control.is-invalid, 
+.contentSend .was-validated .form-control:invalid{
+	background-position: right calc(.375em + 3rem) center !important;
 }
 
 .contentSend .input-group .form-label{
@@ -50,7 +55,30 @@ body {
 	margin:0px;
 	padding: 0px;
 	border: none;
-}	
+}
+
+.contentSend .btnSend .btn-outline-secondary:focus, 
+.contentSend .btnSend .btn-outline-secondary:hover{
+	background: transparent;
+	box-shadow: none;
+	color: initial;
+	border: none;
+}
+
+.contentSend .btnSend .btn-outline-secondary.focus, .btn-outline-secondary:focus{
+ 	background: transparent;
+	box-shadow: none;
+	color: initial;
+	border: none;
+}
+
+.contentSend .btnSend .btn-outline-secondary:not(:disabled):not(.disabled).active, 
+.contentSend .btnSend .btn-outline-secondary:not(:disabled):not(.disabled):active, .show > .btn-outline-secondary.dropdown-toggle{
+	background: transparent;
+	box-shadow: none;
+	color: initial;
+	border: none;
+}
 
 .contentResponse{
 	overflow-y: auto;
