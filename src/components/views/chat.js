@@ -286,9 +286,11 @@ export default class Login extends Component {
                             }
                         })}
 
-                        <Button variant="primary" type="submit">
-                          Start Conversation
-                        </Button>
+                        <div className="contentBtn">
+                          <Button variant="outline-primary" type="submit">
+                            Start Conversation
+                          </Button>
+                        </div>
                       </Form>
                   </div>
                 }

@@ -111,6 +111,10 @@ body {
 	padding: 50px
 }
 
+.contentBtn button{
+	width: 100%
+}
+
 
 @media only screen and (min-width: 768px) {
 }
