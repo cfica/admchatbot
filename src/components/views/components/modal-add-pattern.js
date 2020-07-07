@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
-//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import { browserHistory } from 'react-router';
-import Cookies from 'universal-cookie';
 import EditorHtml from './editorHtml';
 import SingleOptions from './singleOptions';
 import MultiChoices from './multiChoices';
@@ -14,8 +12,7 @@ import Preview from './preview';
 export default class ModalToLearn extends Component {
   		constructor(props) {
 		    super(props);
-		    const cookies = new Cookies();
-		    if(cookies.get('tokenAdm') == undefined){
+		    if(localStorage.getItem('tokenAdm') == undefined){
 		      browserHistory.push('/login');
 		    }
 
@@ -38,7 +35,7 @@ export default class ModalToLearn extends Component {
 		      responseTypeHtml : '',
 		      validated : false,
 		      errorSaveForm: "",
-		      token: cookies.get('tokenAdm'),
+		      token: localStorage.getItem('tokenAdm'),
 		      listOptionsMChoices: [],
 		      valuesDataForm: ''
 		    };

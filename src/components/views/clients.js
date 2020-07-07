@@ -13,14 +13,11 @@ import ModalToConfirm from './components/confirm';
 import MessageResult from './components/message-result';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
-//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
-import Cookies from 'universal-cookie';
 
 export default class Clients extends Component {
 	constructor(props) {
 	    super(props);
-	    const cookies = new Cookies();
-	    if(cookies.get('tokenAdm') == undefined){
+	    if(localStorage.getItem('tokenAdm') == undefined){
 	      browserHistory.push('/login');
 	    }
 
@@ -33,7 +30,7 @@ export default class Clients extends Component {
 	      showModalClient: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      token: cookies.get('tokenAdm'),
+	      token: localStorage.getItem('tokenAdm'),
 	      showModalConfigChatbot : false,
 	      idClient: '',
 	      errorSaveForm: '',

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import config from 'react-global-configuration';
 import {Alert} from 'react-bootstrap';
-//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
-import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
 
@@ -16,16 +14,14 @@ export default class Contact extends Component {
 	    .then(res => {
 	    	//console.log(res);
 	    	if(typeof res.data.data.token != 'undefined'){
-	    		const cookies = new Cookies();
-	    		cookies.set('tokenAdm', res.data.data.token, {path: '/', sameSite: 'none', secure: true});
+	    		localStorage.setItem('tokenAdm', res.data.data.token);
 	    		browserHistory.push('/dashboard');
 	    	}else if(typeof res.data.data.err != 'undefined'){
 	    		browserHistory.push('/login');
 	    	}
 	    }).catch(function (error) {
 	    	if(error.response.status == 401){
-	    		const cookies = new Cookies();
-	    		cookies.remove('tokenAdm');
+	    		localStorage.removeItem('tokenAdm');
 	    		browserHistory.push('/login');
 	    	}
 		});

@@ -5,7 +5,6 @@ import axios from 'axios';
 import  { Redirect } from 'react-router-dom';
 import { browserHistory } from 'react-router';
 import './../css/belisa.css';
-import Cookies from 'universal-cookie';
 import Utils from './utils';
 import {InputsTypeForm,ResponseForm,Validation} from './components/componentsUtils';
 
@@ -43,7 +42,6 @@ export default class Login extends Component {
     //if(this._vldParamasGet() == false){
     if(true == false){
     }else{
-      const cookies = new Cookies();
       if(localStorage.getItem('token') != undefined &&
          localStorage.getItem('confChatInit') != undefined &&
          localStorage.getItem('messages') != undefined){

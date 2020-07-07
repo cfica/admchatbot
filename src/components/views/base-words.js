@@ -8,14 +8,12 @@ import ModalToLearn from './components/modal-add-pattern';
 import ModalToConfirm from './components/confirm';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
-//import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
-import Cookies from 'universal-cookie';
 
 export default class BaseWords extends Component {
 	constructor(props) {
 	    super(props);
 	    const cookies = new Cookies();
-	    if(cookies.get('tokenAdm') == undefined){
+	    if(localStorage.getItem('tokenAdm') == undefined){
 	      browserHistory.push('/login');
 	    }
 
@@ -29,7 +27,7 @@ export default class BaseWords extends Component {
 	      showModalConfirm: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      token: cookies.get('tokenAdm')
+	      token: localStorage.getItem('tokenAdm')
 	    };
 	}
 

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {Modal,Button,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
-import Cookies from 'universal-cookie';
 import axios from 'axios';
 import config from 'react-global-configuration';
 
@@ -11,7 +10,7 @@ export class Validation extends Component{
 	}
 
 	rut(value){
-		var Fn = {
+		var Fn = {ocal
 	        // Valida el rut con su cadena completa "XXXXXXXX-X"
 	        validaRut: function(rutCompleto) {
 	            if (rutCompleto.length >= 9 && rutCompleto.length <= 10) {
