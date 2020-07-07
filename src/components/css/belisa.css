@@ -18,17 +18,21 @@ body {
 
 #chat{
 	height: 100vh;
-	max-height: 100vh
 }
 
 .contentSend{
-	position: fixed !important;
-	bottom: 0%;
 	width: 100%;
-	margin: 0px !important;
+	margin: 0px;
 	padding: 0px;
 	background: #ffffff;
-	height: 45px !important;
+	position: fixed;
+	bottom: 0px;
+	height: 50px;
+	position: fixed;
+}
+
+.contentSend .form-group{
+	margin: 0px
 }
 
 .contentSend .btnSend{
@@ -49,10 +53,9 @@ body {
 }	
 
 .contentResponse{
-	height: 93vh;
-	min-height: 93vh;
 	overflow-y: auto;
 	background: #ffffff;
+	margin-bottom: 10px;
 }
 
 .contentSend .btn-group-lg > .btn, .btn-lg{
@@ -127,28 +130,28 @@ body {
     /* portrait phones */
 }
 
-@media (max-width: 480px) {
+@media only screen and (max-width: 414px) {
 	.contentResponse{
-		height: 90vh;
-		min-height: 90vh;
-		margin-bottom: 10px;
+		height: 89%
 	}
 
 	.contentSend{
-		bottom: 0px;
+		
 	}
 }
 
-@media (max-width: 320px) {
+@media only screen and (max-width: 320px) {
 	.contentResponse{
-		height: 89vh;
-		min-height: 89vh;
-		margin-bottom: 10px;
+		height: 86%
 	}
 
 	.contentSend{
-		bottom: 2px;
+	
 	}
+}
+
+.contChat{
+	height: 100%
 }
 
 
