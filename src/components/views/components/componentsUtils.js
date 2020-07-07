@@ -64,7 +64,7 @@ export class ResponseForm extends Component {
 			    					<Form.Row key={i} className="inputText">
 										<Col xs={12}>
 										    	<Form.Group controlId="formBasicText">
-												    <Form.Control size="sm" required name="label" type="text" value={x.value} onChange={e => this.handleInputChange(e, i)}  placeholder={x.label}  />
+												    <Form.Control size="sm" required name="label" type="text" value={x.value} onChange={e => this.handleInputChange(e, i)}/>
 												    <Form.Label >{x.label}</Form.Label>
 												</Form.Group>
 										</Col>
@@ -129,7 +129,7 @@ export class ResponseForm extends Component {
 			    					<Form.Row key={i} className="Single-Option-Choice">
 										<Col xs={12}>
 										    	<Form.Group controlId="formBasicText">
-												    <Form.Control required size="sm" value={x.value} onChange={e => this.handleInputChange(e, i)} as="textarea" rows="2" placeholder={x.label} />
+												    <Form.Control required size="sm" value={x.value} onChange={e => this.handleInputChange(e, i)} as="textarea" rows="2"/>
 												    <Form.Label >{x.label}</Form.Label>
 												</Form.Group>
 										</Col>

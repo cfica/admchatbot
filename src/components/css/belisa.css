@@ -31,6 +31,23 @@ body {
 	height: 45px !important;
 }
 
+.contentSend .btnSend{
+	position: absolute;
+	right: 10px;
+	top: 5px;
+	z-index: 5
+}
+
+.contentSend .input-group .form-label{
+	z-index: 5
+}
+
+.contentSend .btnSend > button{
+	margin:0px;
+	padding: 0px;
+	border: none;
+}	
+
 .contentResponse{
 	height: 93vh;
 	min-height: 93vh;
@@ -129,4 +146,6 @@ body {
 		bottom: 2px;
 	}
 }
+
+
 

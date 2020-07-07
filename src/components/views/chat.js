@@ -275,12 +275,12 @@ export default class Login extends Component {
                         {this.state.welcomeInputs.map((item, index) => {
                             if(item == 'Email'){
                               return (<Form.Group controlId="formEmail">
-                                        <Form.Control required  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" placeholder="Enter email" />
+                                        <Form.Control required  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
                                         <Form.Label >Enter Email</Form.Label>
                                       </Form.Group>);
                             }else if(item == 'Telephone'){
                               return (<Form.Group controlId="formTelephone">
-                                        <Form.Control required  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}} placeholder="Enter Telephone" />
+                                        <Form.Control required  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
                                         <Form.Label >Enter Telephone</Form.Label>
                                       </Form.Group>);
                             }
@@ -355,12 +355,12 @@ export default class Login extends Component {
                                   <Form.Group  controlId="sendMessage" className="contentSend">
                                     <InputGroup>
                                         <FormControl required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
-                                          placeholder="Add Message"
                                           aria-label="Add Message"
                                           aria-describedby="basic-addon2"
                                         />
+                                        <Form.Label >Message</Form.Label>
 
-                                        <InputGroup.Append>
+                                        <InputGroup.Append className="btnSend">
                                           <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
                                         </InputGroup.Append>
                                     </InputGroup>
