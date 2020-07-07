@@ -662,6 +662,7 @@ label{
 .contentForm{
   background: #ffffff;
   padding: 10px;
+  border:1px solid #ced4da;
 }
 
 .contentFormButton{}
