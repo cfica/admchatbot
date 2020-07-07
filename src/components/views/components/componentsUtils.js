@@ -10,7 +10,7 @@ export class Validation extends Component{
 	}
 
 	rut(value){
-		var Fn = {ocal
+		var Fn = {
 	        // Valida el rut con su cadena completa "XXXXXXXX-X"
 	        validaRut: function(rutCompleto) {
 	            if (rutCompleto.length >= 9 && rutCompleto.length <= 10) {
@@ -139,7 +139,6 @@ export class ResponseForm extends Component {
 		}else{
 			this.setState({validated : false});
 			var _dataPost = {"form" : this.props.messageData};
-            const cookies = new Cookies();
             axios.post(config.get('baseUrlApi')+'/api/v1/message-save-form',JSON.stringify(_dataPost), 
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',

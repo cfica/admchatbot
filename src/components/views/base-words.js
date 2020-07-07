@@ -12,7 +12,6 @@ import { browserHistory } from 'react-router';
 export default class BaseWords extends Component {
 	constructor(props) {
 	    super(props);
-	    const cookies = new Cookies();
 	    if(localStorage.getItem('tokenAdm') == undefined){
 	      browserHistory.push('/login');
 	    }

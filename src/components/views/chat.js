@@ -102,7 +102,6 @@ export default class Login extends Component {
           //
           this.setState({validated : false});
           var _dataPost = {"message" : this.state.inputMessage};
-          const cookies = new Cookies();
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
