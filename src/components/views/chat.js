@@ -269,16 +269,19 @@ export default class Login extends Component {
 
                         <Form.Group controlId="formName">
                           <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
+                          <Form.Label >Enter Name</Form.Label>
                         </Form.Group>
 
                         {this.state.welcomeInputs.map((item, index) => {
                             if(item == 'Email'){
                               return (<Form.Group controlId="formEmail">
                                         <Form.Control required  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" placeholder="Enter email" />
+                                        <Form.Label >Enter Email</Form.Label>
                                       </Form.Group>);
                             }else if(item == 'Telephone'){
                               return (<Form.Group controlId="formTelephone">
                                         <Form.Control required  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}} placeholder="Enter Telephone" />
+                                        <Form.Label >Enter Telephone</Form.Label>
                                       </Form.Group>);
                             }
                         })}

@@ -679,69 +679,82 @@ label{
   box-shadow: none;
 }
 
+.form-control:focus{
+  border-width: 1.5px !important
+}
+
 /**/
 .form-group {
    position: relative;
-   padding: 15px 0 0;
+   /*padding: 15px 0 0;*/
    margin-top: 10px;
    width: 100%;
    margin-bottom: 10px
 }
  .form-control {
    font-family: inherit;
-   width: 100%;
+   /*width: 100%;
    border: 0;
-   border-bottom: 2px solid #9b9b9b;
+   border-bottom: 2px solid #9b9b9b;*/
    outline: 0;
    font-size: 1rem;
    padding: 7px 0;
    /*background: transparent !important;*/
    transition: border-color 0.2s;
    font-weight: 700;
+   height: 50px;
+   padding-top: 20px;
+   padding-left: 15px;
+   padding-right: 10px;
+   padding-bottom: 2px
 }
  .form-control::placeholder {
    color: transparent;
 }
  .form-control:placeholder-shown ~ .form-label {
-   font-size: 1.3rem;
+   font-size: 0.8rem;
    cursor: text;
-   top: 20px;
+   top: 17px;
+   margin-left: 16px
 }
 .form-label {
    position: absolute;
-   top: 0;
+   top: 3px;
    display: block;
    transition: 0.2s;
-   font-size: 1rem;
-   color: #9b9b9b;
+   font-size: 0.8rem;
+   /*color: #9b9b9b;*/
+   margin-left: 15px;
+   font-weight: normal;
 }
  .form-control:focus {
    padding-bottom: 6px;
-   font-weight: 700;
+   font-weight: 700 !important;
    border-width: 3px;
    /*border-image: linear-gradient(to right, #11998e, #38ef7d);
    border-image-slice: 1;*/
 }
  .form-control:focus ~ .form-label {
    position: absolute;
-   top: 0;
+   top: 3px;
    display: block;
    transition: 0.2s;
-   font-size: 1rem;
-   color: #11998e;
-   font-weight: 700;
+   font-size: 0.8rem;
+   /*color: #11998e;*/
+   font-weight: 700 !important;
+   margin-left: 16px
 }
 
 /* reset input */
  .form-control:required, .form-control:invalid {
-   box-shadow: none;
+   /*box-shadow: none;*/
 }
 
 
 /*CUSTOM CHECKBOX*/
 .inputGroup {
    /*background-color: #fff;*/
-   border-bottom: 2px solid #9b9b9b;
+   border-bottom: 1px solid #ced4da;
    display: block;
    /*margin: 10px 0;*/
    position: relative;
@@ -751,14 +764,13 @@ label{
    width: 100%;
    display: block;
    text-align: left;
-   color: #3c454c;
    cursor: pointer;
    position: relative;
    z-index: 2;
    transition: color 200ms ease-in;
    overflow: hidden;
-   font-weight: 700;
-   font-size: 1rem
+   font-weight: normal;
+   font-size: 0.8rem
 }
  .inputGroup label:before {
    width: 10px;
@@ -779,7 +791,7 @@ label{
    width: 25px;
    height: 25px;
    content: '';
-   border: 2px solid #9b9b9b;
+   border: 1px solid #ced4da;
    background-color: #fff;
    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
    background-repeat: no-repeat;
@@ -797,7 +809,7 @@ label{
    width: 25px;
    height: 25px;
    content: '';
-   border: 2px solid #9b9b9b;
+   border: 1px solid #ced4da;
    background-color: #fff;
    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
    background-repeat: no-repeat;
@@ -814,7 +826,7 @@ label{
 
  .inputGroup input:checked ~ label {
    /*color: #fff;*/
-   color: #11998e;
+   font-weight: 700;
 }
  .inputGroup input:checked ~ label:before {
    transform: translate(-50%, -50%) scale3d(56, 56, 1);
@@ -822,7 +834,7 @@ label{
 }
  .inputGroup input:checked ~ label:after {
    background-color: #11998e;
-   border-color: #11998e;
+   border-color: #ced4da;
 }
  .inputGroup input {
    width: 25px;
@@ -847,7 +859,7 @@ label{
 }
 
 .customCheckbox  ul.ks-cboxtags li input[type="checkbox"]:focus + label {
-  border: 2px solid #11998e;
+  border: 1px solid #ced4da;
 
   /*border-image: linear-gradient(to right, #11998e, #38ef7d);
   border-image-slice: 1;*/
