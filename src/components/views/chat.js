@@ -36,11 +36,10 @@ export default class Login extends Component {
     const client_id = this.props.location.query.i;
 
     /*const cookies = new Cookies();
-    cookies.remove('messages',{});
-    cookies.remove('token',{});
-    cookies.remove('key_temp',{});
-    cookies.remove('confChatInit',{});
-    this.delCookie();*/
+    cookies.remove('messages',this.state.cookieOptions);
+    cookies.remove('token',this.state.cookieOptions);
+    cookies.remove('key_temp',this.state.cookieOptions);
+    cookies.remove('confChatInit',this.state.cookieOptions);*/
 
     //if(this._vldParamasGet() == false){
     if(true == false){
@@ -119,8 +118,6 @@ export default class Login extends Component {
           //
           this.setState({validated : false});
           var _dataPost = {"message" : this.state.inputMessage};
-          //console.log(Utils._encodeData(_dataPost));
-          //console.log(process.env.BASE_URL_APP);
           const cookies = new Cookies();
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
               {headers: {
@@ -230,6 +227,32 @@ export default class Login extends Component {
     }
   }
 
+  inputChange = (e, index, indexParent) =>{
+    const _value = e.target.value;
+    const _items = this.state.listMessages;
+    _items[indexParent]['msg']['inputs'][index]['value'] = _value;
+    this.setState({listMessages: _items});
+  }
+
+  inputChangeOptions = (value, item, indexItems, index, indexParent,type) =>{
+    const _items = this.state.listMessages;
+    const __items = _items[indexParent]['msg']['inputs'][index]['items'];
+    const __itemSelected = _items[indexParent]['msg']['inputs'][index]['items'][indexItems];
+    if(type == 'radio' || type == 'select'){ //value unique choice
+      __items.forEach(function(e, index){
+        __items[index]['value'] = false;
+      });
+      __itemSelected['value'] = true;
+    }else if (type == 'checkbox'){ //multi value choice
+      if(!__itemSelected['value'] || __itemSelected['value'] == ""){
+        __itemSelected['value'] = true;
+      }else{
+        __itemSelected['value'] = false;
+      }
+    }
+    this.setState({listMessages: _items});
+  }
+
   render() {
     //add recaptcha..
     //if(this._vldParamasGet() == false){
@@ -309,9 +332,15 @@ export default class Login extends Component {
                                                    <div>
                                                        <div className="contentUser"><h5>Belisa</h5></div>
                                                        <div className="contentMsg">
-                                                            <ResponseForm messageData = {item.msg}/>
+                                                            <ResponseForm 
+                                                                index = {index}
+                                                                messageData = {item.msg}
+                                                                inputChange = {this.inputChange}
+                                                                inputChangeOptions = {this.inputChangeOptions}
+                                                            />
                                                        </div>
                                                    </div>
+                                                   {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
                                             </div>
                                         );
                                     }

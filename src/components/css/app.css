@@ -630,6 +630,9 @@ a[data-toggle="collapse"] {
   padding: 0px
 }
 
+label{
+  margin-bottom: 0px
+}
 
 
 
@@ -657,10 +660,24 @@ a[data-toggle="collapse"] {
 }
 
 .contentForm{
-  /*background: #ffffff;*/
-  padding: 10px
+  background: #ffffff;
+  padding: 10px;
 }
 
+.contentFormButton{}
+.contentFormButton button{
+  width: 100%
+}
+
+
+.form-control.is-invalid:focus, .was-validated .form-control:invalid:focus{
+  box-shadow: none;
+}
+
+
+.form-control.is-valid:focus, .was-validated .form-control:valid:focus{
+  box-shadow: none;
+}
 
 /**/
 .form-group {
@@ -668,6 +685,7 @@ a[data-toggle="collapse"] {
    padding: 15px 0 0;
    margin-top: 10px;
    width: 100%;
+   margin-bottom: 10px
 }
  .form-control {
    font-family: inherit;
@@ -675,11 +693,11 @@ a[data-toggle="collapse"] {
    border: 0;
    border-bottom: 2px solid #9b9b9b;
    outline: 0;
-   font-size: 1.3rem;
-   color: #fff;
+   font-size: 1rem;
    padding: 7px 0;
-   background: transparent !important;
+   /*background: transparent !important;*/
    transition: border-color 0.2s;
+   font-weight: 700;
 }
  .form-control::placeholder {
    color: transparent;
@@ -701,8 +719,8 @@ a[data-toggle="collapse"] {
    padding-bottom: 6px;
    font-weight: 700;
    border-width: 3px;
-   border-image: linear-gradient(to right, #11998e, #38ef7d);
-   border-image-slice: 1;
+   /*border-image: linear-gradient(to right, #11998e, #38ef7d);
+   border-image-slice: 1;*/
 }
  .form-control:focus ~ .form-label {
    position: absolute;
@@ -720,88 +738,16 @@ a[data-toggle="collapse"] {
 }
 
 
-/*CHECKBOX CUSTOM*/
-.containerCheckbox {
-  display: block;
-  position: relative;
-  padding-left: 30px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  font-weight: bold;
-  background: #ffffff
-}
-
-/* Hide the browser's default checkbox */
-.containerCheckbox input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* Create a custom checkbox */
-.containerCheckbox .checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #eee;
-}
-
-/* On mouse-over, add a grey background color */
-.containerCheckbox:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-/* When the checkbox is checked, add a blue background */
-.containerCheckbox input:checked ~ .checkmark {
-  background-color: #2196F3;
-}
-
-/* Create the checkmark/indicator (hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the checkmark when checked */
-.containerCheckbox input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the checkmark/indicator */
-.containerCheckbox .checkmark:after {
-  left: 7px;
-  top: 5px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-/*CHECKBOX CUSTOM*/
-
-
-
 /*CUSTOM CHECKBOX*/
 .inputGroup {
-   background-color: #fff;
+   /*background-color: #fff;*/
+   border-bottom: 2px solid #9b9b9b;
    display: block;
-   margin: 10px 0;
+   /*margin: 10px 0;*/
    position: relative;
 }
  .inputGroup label {
-   padding: 12px 30px;
+   padding: 7px 0px;
    width: 100%;
    display: block;
    text-align: left;
@@ -811,13 +757,15 @@ a[data-toggle="collapse"] {
    z-index: 2;
    transition: color 200ms ease-in;
    overflow: hidden;
+   font-weight: 700;
+   font-size: 1rem
 }
  .inputGroup label:before {
    width: 10px;
    height: 10px;
    border-radius: 50%;
    content: '';
-   background-color: #5562eb;
+   /*background-color: #5562eb;*/
    position: absolute;
    left: 50%;
    top: 50%;
@@ -828,17 +776,17 @@ a[data-toggle="collapse"] {
 }
 
 .inputGroup .inputCheckbox:after {
-   width: 32px;
-   height: 32px;
+   width: 25px;
+   height: 25px;
    content: '';
-   border: 2px solid #d1d7dc;
+   border: 2px solid #9b9b9b;
    background-color: #fff;
    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
    background-repeat: no-repeat;
-   background-position: 2px 3px;
+   /*background-position: 2px 3px;*/
    z-index: 2;
    position: absolute;
-   right: 30px;
+   right: 0px;
    top: 50%;
    transform: translateY(-50%);
    cursor: pointer;
@@ -846,18 +794,18 @@ a[data-toggle="collapse"] {
 }
 
 .inputGroup .inputRadio:after {
-   width: 32px;
-   height: 32px;
+   width: 25px;
+   height: 25px;
    content: '';
-   border: 2px solid #d1d7dc;
+   border: 2px solid #9b9b9b;
    background-color: #fff;
    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
    background-repeat: no-repeat;
-   background-position: 2px 3px;
+   /*background-position: 2px 3px;*/
    border-radius: 50%;
    z-index: 2;
    position: absolute;
-   right: 30px;
+   right: 0px;
    top: 50%;
    transform: translateY(-50%);
    cursor: pointer;
@@ -865,19 +813,20 @@ a[data-toggle="collapse"] {
 }
 
  .inputGroup input:checked ~ label {
-   color: #fff;
+   /*color: #fff;*/
+   color: #11998e;
 }
  .inputGroup input:checked ~ label:before {
    transform: translate(-50%, -50%) scale3d(56, 56, 1);
    opacity: 1;
 }
  .inputGroup input:checked ~ label:after {
-   background-color: #54e0c7;
-   border-color: #54e0c7;
+   background-color: #11998e;
+   border-color: #11998e;
 }
  .inputGroup input {
-   width: 32px;
-   height: 32px;
+   width: 25px;
+   height: 25px;
    order: 1;
    z-index: 2;
    position: absolute;
@@ -903,3 +852,4 @@ a[data-toggle="collapse"] {
   /*border-image: linear-gradient(to right, #11998e, #38ef7d);
   border-image-slice: 1;*/
 }
+/*CUSTOM CHECKBOX*/

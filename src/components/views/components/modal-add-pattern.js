@@ -133,6 +133,7 @@ export default class ModalToLearn extends Component {
    		    	"responses" : {"type" : this.state.showResponseType, "value" : this._valueResponse}
    		    };
    		    console.log(_dataPost);
+
 		    if (form.checkValidity() === false || 
 		    	this.state.valueResponseTextHidden.length == 0 ||
 		    	this.state.valuePatternHidden.length == 0 
@@ -144,10 +145,6 @@ export default class ModalToLearn extends Component {
 		      this.setState({validated : true});
 		    }else{
 		    	this.setState({validated : false});
-	 			
-	   		    
-
-	   		    
 	   		    //this.state.responseTypeValue
 	   		    axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern', 
 	   		    	JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})

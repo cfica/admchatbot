@@ -50,7 +50,7 @@ export default class ChatForm extends Component {
 		btnAddInput = () => {
 			const _type = this.state.changeTypeInput;
 			const _items = this.state.inputs;
-			let _item = {type: _type, 'label' : '', validation: '', items: []};
+			let _item = {type: _type, label : '', value: '', validation: '', items: []};
 			_items.push(_item);
 			this.setState({inputs: _items});
 			/*#*/
