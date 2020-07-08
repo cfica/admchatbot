@@ -26,56 +26,61 @@ export default class Login extends Component {
       inputTelephone: '',
       welcomeInputs:[],
       welcomeMessageInit: '',
-      confChatInit: '',
-      cookieOptions: {path: '/', sameSite: 'none', secure: true}
+      confChatInit: ''
     };
   }
 
   componentDidMount(){
-    const client_id = this.props.location.query.i;
+      const client_id = this.props.location.query.i;
+      /*localStorage.removeItem('messages');
+      localStorage.removeItem('token');
+      localStorage.removeItem('key_temp');
+      localStorage.removeItem('confChatInit');*/
 
-    /*localStorage.removeItem('messages');
-    localStorage.removeItem('token');
-    localStorage.removeItem('key_temp');
-    localStorage.removeItem('confChatInit');*/
-
-    //if(this._vldParamasGet() == false){
-    if(true == false){
-    }else{
-      if(localStorage.getItem('token') != undefined &&
-         localStorage.getItem('confChatInit') != undefined &&
-         localStorage.getItem('messages') != undefined){
-        this.setState({showContHello : false});
-        this.setState({showContChat : true});
-        this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+      //if(this._vldParamasGet() == false){
+      if(true == false){
       }else{
-        this.setState({showContHello : true});
-        this.setState({showContChat : false});
-        const client_id = this.props.location.query.i;
-        const init = this.props.location.query.init;
-        axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}), 
-              {headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'x-dsi-restful-i' : client_id,
-                'x-dsi-restful-init' : init
-              }}
-        ).then(res => {
-            localStorage.setItem('confChatInit', JSON.stringify(res.data.data.config[0]));
-            this.setState({'confChatInit': res.data.data.config[0]});
-        }).catch(function (error) {
-        }).then(function () {});
-
-
-        if(localStorage.getItem('confChatInit') == undefined){
-            this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
-            this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
+        if(localStorage.getItem('token') != undefined &&
+           localStorage.getItem('confChatInit') != undefined &&
+           localStorage.getItem('messages') != undefined){
+          this.setState({showContHello : false});
+          this.setState({showContChat : true});
+          this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
         }else{
-            const _init = JSON.parse(localStorage.getItem('confChatInit'));
-            this.setState({welcomeInputs: _init.start_conversation});
-            this.setState({welcomeMessageInit: _init.welcome_message_init});
+          this.setState({showContHello : true});
+          this.setState({showContChat : false});
+          const client_id = this.props.location.query.i;
+          const init = this.props.location.query.init;
+          this.getSettings(client_id, init);
+          //console.log(this.state.confChatInit);
+          if(localStorage.getItem('confChatInit') == undefined){
+              this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
+              this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
+          }else{
+              const _init = JSON.parse(localStorage.getItem('confChatInit'));
+              this.setState({welcomeInputs: _init.start_conversation});
+              this.setState({welcomeMessageInit: _init.welcome_message_init});
+          }
         }
       }
-    }
+  }
+
+  async getSettings(client_id, init){
+    axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}), 
+          {headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'x-dsi-restful-i' : client_id,
+            'x-dsi-restful-init' : init
+          }}
+    ).then(res => {
+        localStorage.setItem('confChatInit', JSON.stringify(res.data.data.config[0]));
+        this.setState({'confChatInit': res.data.data.config[0]});
+    }).catch(function (error) {
+    }).then(function () {});
+  }
+
+  componentWillUpdate(){
+      console.log(this.state.confChatInit);
   }
 
 
