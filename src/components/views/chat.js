@@ -16,9 +16,9 @@ export default class Login extends Component {
       errorSaveForm: '',
       inputMessage: '',
       listMessages: [],
-      'token' : '',
-      'key_temp' : '',
-      'client_id' : '',
+      token : '',
+      key_temp : '',
+      client_id : '',
       showContChat: false,
       showContHello: true,
       inputName: '',
@@ -28,9 +28,17 @@ export default class Login extends Component {
       welcomeMessageInit: '',
       confChatInit: ''
     };
+    
   }
 
   componentDidMount(){
+      this.initSettings();
+  }
+
+  componentDidUpdate(){}
+
+
+  initSettings = () =>{
       const client_id = this.props.location.query.i;
       /*localStorage.removeItem('messages');
       localStorage.removeItem('token');
@@ -52,7 +60,10 @@ export default class Login extends Component {
           const client_id = this.props.location.query.i;
           const init = this.props.location.query.init;
           this.getSettings(client_id, init);
-          //console.log(this.state.confChatInit);
+          
+          console.log(localStorage.getItem('confChatInit'));
+          console.log(this.state.confChatInit);
+
           if(localStorage.getItem('confChatInit') == undefined){
               this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
               this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
@@ -63,26 +74,16 @@ export default class Login extends Component {
           }
         }
       }
+      return null;
   }
 
   async getSettings(client_id, init){
-    axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}), 
-          {headers: {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'x-dsi-restful-i' : client_id,
-            'x-dsi-restful-init' : init
-          }}
-    ).then(res => {
-        localStorage.setItem('confChatInit', JSON.stringify(res.data.data.config[0]));
-        this.setState({'confChatInit': res.data.data.config[0]});
-    }).catch(function (error) {
-    }).then(function () {});
+    const response = await axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}});
+    const data = await response;
+    const result = data.data.data.config[0]; 
+    localStorage.setItem('confChatInit', JSON.stringify(result));
+    this.setState({'confChatInit': result});
   }
-
-  componentWillUpdate(){
-      console.log(this.state.confChatInit);
-  }
-
 
   setMessage = (_type,message) =>{
     const item = {'type' : _type,'msg' : message.response, type_resp: message.type};
@@ -92,8 +93,6 @@ export default class Login extends Component {
     localStorage.setItem('messages', JSON.stringify(items));
     this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
-
-
 
   _handleSend = (event)=>{
         event.preventDefault();
@@ -261,22 +260,19 @@ export default class Login extends Component {
                 {this.state.showContHello &&
                   <div className="contHello">
                       <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
-
                         <div dangerouslySetInnerHTML={{__html: this.state.welcomeMessageInit}}></div>
-
                         <Form.Group controlId="formName">
                           <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                           <Form.Label >Enter Name</Form.Label>
                         </Form.Group>
-
                         {this.state.welcomeInputs.map((item, index) => {
                             if(item == 'Email'){
-                              return (<Form.Group controlId="formEmail">
+                              return (<Form.Group key={index} controlId="formEmail">
                                         <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
                                         <Form.Label >Enter Email</Form.Label>
                                       </Form.Group>);
                             }else if(item == 'Telephone'){
-                              return (<Form.Group controlId="formTelephone">
+                              return (<Form.Group key={index} controlId="formTelephone">
                                         <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
                                         <Form.Label >Enter Telephone</Form.Label>
                                       </Form.Group>);
