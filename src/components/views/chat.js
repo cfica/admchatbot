@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,useState, useEffect } from "react";
 import { Alert, Navbar, Nav, InputGroup,Modal, Collapse,Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import config from 'react-global-configuration';
 import axios from 'axios';
@@ -26,63 +26,53 @@ export default class Login extends Component {
       inputTelephone: '',
       welcomeInputs:[],
       welcomeMessageInit: '',
-      confChatInit: ''
+      confChatInit: {
+        welcome_message_init: '<p>Please complete the following information to start a conversation.</p>',
+        welcome_message: 'Hello, My name is BELISA and I am a virutal assistant. How I can help?',
+        header_message: 'BELISA, Virtual assistant',
+        start_conversation: ['Email', 'Telephone']
+      }
     };
-    
   }
 
   componentDidMount(){
+      const client_id = this.props.location.query.i;
+      const init = this.props.location.query.init;
+      this.getSettings(client_id, init);
       this.initSettings();
+      /*localStorage.removeItem('messages');
+      localStorage.removeItem('token');
+      localStorage.removeItem('key_temp');*/
   }
 
   componentDidUpdate(){}
 
+  //useEffect(() => {    document.title = 'You clicked 1 times';  });
 
   initSettings = () =>{
-      const client_id = this.props.location.query.i;
-      /*localStorage.removeItem('messages');
-      localStorage.removeItem('token');
-      localStorage.removeItem('key_temp');
-      localStorage.removeItem('confChatInit');*/
-
-      //if(this._vldParamasGet() == false){
       if(true == false){
       }else{
-        if(localStorage.getItem('token') != undefined &&
-           localStorage.getItem('confChatInit') != undefined &&
-           localStorage.getItem('messages') != undefined){
+        console.log(localStorage.getItem('token'));
+        if(localStorage.getItem('token') != undefined && localStorage.getItem('messages') != undefined){
           this.setState({showContHello : false});
           this.setState({showContChat : true});
           this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
-        }else{
-          this.setState({showContHello : true});
-          this.setState({showContChat : false});
-          const client_id = this.props.location.query.i;
-          const init = this.props.location.query.init;
-          this.getSettings(client_id, init);
-          
-          console.log(localStorage.getItem('confChatInit'));
-          console.log(this.state.confChatInit);
-
-          if(localStorage.getItem('confChatInit') == undefined){
-              this.setState({welcomeInputs: config.get('chat_welcome_inputs')});
-              this.setState({welcomeMessageInit: config.get('chat_welcome_message_init')});
-          }else{
-              const _init = JSON.parse(localStorage.getItem('confChatInit'));
-              this.setState({welcomeInputs: _init.start_conversation});
-              this.setState({welcomeMessageInit: _init.welcome_message_init});
-          }
         }
       }
       return null;
   }
 
   async getSettings(client_id, init){
-    const response = await axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}});
-    const data = await response;
-    const result = data.data.data.config[0]; 
-    localStorage.setItem('confChatInit', JSON.stringify(result));
-    //this.setState({'confChatInit': result});
+    var self = this;
+    function setData(response) {
+        self.setState({
+            confChatInit: response,
+        });
+    }
+    const result = await axios.get(config.get('baseUrlApi')+'/api/v1/setting-init',{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
+    .then(res => {
+      setData(res.data.data.config[0]);
+    });
   }
 
   setMessage = (_type,message) =>{
@@ -121,7 +111,6 @@ export default class Login extends Component {
                     localStorage.removeItem('messages');
                     localStorage.removeItem('token');
                     localStorage.removeItem('key_temp');
-                    localStorage.removeItem('confChatInit');
                 }
             }
           }).then(function () {
@@ -158,12 +147,12 @@ export default class Login extends Component {
              localStorage.setItem('token', res.data.data.token);
              localStorage.setItem('key_temp', res.data.data.key_temp);
              
-             if(localStorage.getItem('confChatInit') == undefined){
-              this.setMessage('_res', {type: 'Text', response: config.get('chat_welcome_message_start')});
-             }else{
-                const _init = JSON.parse(localStorage.getItem('confChatInit'));
+             //if(localStorage.getItem('confChatInit') == undefined){
+              //this.setMessage('_res', {type: 'Text', response: config.get('chat_welcome_message_start')});
+             //}else{
+                const _init = this.state.confChatInit;
                 this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
-             }
+             //}
         }).catch(function (error) {
               //this.setState({errorSaveForm : true});
         }).then(function () {
@@ -257,36 +246,37 @@ export default class Login extends Component {
     }else{
         return (
             <div id="chat" >
-                {this.state.showContHello &&
-                  <div className="contHello">
-                      <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
-                        <div dangerouslySetInnerHTML={{__html: this.state.welcomeMessageInit}}></div>
-                        <Form.Group controlId="formName">
-                          <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
-                          <Form.Label >Enter Name</Form.Label>
-                        </Form.Group>
-                        {this.state.welcomeInputs.map((item, index) => {
-                            if(item == 'Email'){
-                              return (<Form.Group key={index} controlId="formEmail">
-                                        <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
-                                        <Form.Label >Enter Email</Form.Label>
-                                      </Form.Group>);
-                            }else if(item == 'Telephone'){
-                              return (<Form.Group key={index} controlId="formTelephone">
-                                        <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
-                                        <Form.Label >Enter Telephone</Form.Label>
-                                      </Form.Group>);
-                            }
-                        })}
+                {this.state.showContHello && 
+                    <div className="contHello">
+                          <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
+                            <div dangerouslySetInnerHTML={{__html: this.state.welcomeMessageInit}}></div>
+                            <Form.Group controlId="formName">
+                              <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
+                              <Form.Label >Enter Name</Form.Label>
+                            </Form.Group>
+                            {this.state.confChatInit.start_conversation.map((item, index) => {
+                                if(item == 'Email'){
+                                  return (<Form.Group key={index} controlId="formEmail">
+                                            <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
+                                            <Form.Label >Enter Email</Form.Label>
+                                          </Form.Group>);
+                                }else if(item == 'Telephone'){
+                                  return (<Form.Group key={index} controlId="formTelephone">
+                                            <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
+                                            <Form.Label >Enter Telephone</Form.Label>
+                                          </Form.Group>);
+                                }
+                            })}
 
-                        <div className="contentBtn">
-                          <Button variant="outline-primary" type="submit">
-                            Start Conversation
-                          </Button>
-                        </div>
-                      </Form>
-                  </div>
+                            <div className="contentBtn">
+                              <Button variant="outline-primary" type="submit">
+                                Start Conversation
+                              </Button>
+                            </div>
+                          </Form>
+                    </div>
                 }
+                
 
                   {this.state.showContChat && 
                         <div className="contChat">
