@@ -289,16 +289,17 @@ export class InputsTypeForm extends Component {
 								return (
 									<div key={i}>
 										<Form.Row>
-											<Col xs={12}><Form.Label >Input Text</Form.Label></Col>
+											<Col xs={12}><strong >Input Text</strong></Col>
 										</Form.Row>
 										<Form.Row key={i} className="inputText">
 											<Col xs={5}>
 											    	<Form.Group controlId="formBasicText">
 													    <Form.Control size="sm" name="label" type="text" value={x.label} onChange={e => this.handleInputChange(e, i)}  placeholder="Enter Label" />
+													    <Form.Label>Enter Label</Form.Label>
 													</Form.Group>
 											</Col>
 											<Col xs={6}>
-										    	<Form.Control size="sm" name="validation" as="select" onChange={e => this.handleInputChange(e, i)}>
+										    	<Form.Control placeholder="Choose Validation" size="sm" name="validation" as="select" onChange={e => this.handleInputChange(e, i)}>
 											        <option value="">Choose Validation...</option>
 											        <option value="RUT">RUT</option>
 											        <option value="String">String</option>
@@ -306,6 +307,7 @@ export class InputsTypeForm extends Component {
 											        <option value="Telephone">Telephone</option>
 											        <option value="Number">Number</option>
 											    </Form.Control>
+											    <Form.Label>Choose Validation</Form.Label>
 											</Col>
 											<Col xs={1}>
 										    	<Button size="sm" onClick={() => this.deleteInput(i)} variant="secondary">X</Button>
@@ -317,12 +319,13 @@ export class InputsTypeForm extends Component {
 								return (
 									<div key={i}>
 										<Form.Row>
-											<Col xs={12}><Form.Label >TextArea</Form.Label></Col>
+											<Col xs={12}><strong>TextArea</strong></Col>
 										</Form.Row>
 										<Form.Row key={i} className="inputTextArea">
 											<Col xs={11}>
 											    	<Form.Group controlId="formBasicTextArea">
 													    <Form.Control size="sm" type="text" name="label" value={x.label}  onChange={e => this.handleInputChange(e, i)} placeholder="Enter Label" />
+													    <Form.Label>Enter Label</Form.Label>
 													</Form.Group>
 											</Col>
 											<Col xs={1}>
@@ -335,7 +338,7 @@ export class InputsTypeForm extends Component {
 								return (
 									<div key={i}>
 									    <Form.Row>
-											<Col xs={12}><Form.Label >{x.type.replace('-',' ')}</Form.Label></Col>
+											<Col xs={12}><strong>{x.type.replace('-',' ')}</strong></Col>
 										</Form.Row>
 										<Form.Row className="inputMultiChoise">
 									        <Col xs={11}>

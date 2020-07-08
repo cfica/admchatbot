@@ -691,7 +691,6 @@ label{
 .form-group {
    position: relative;
    /*padding: 15px 0 0;*/
-   margin-top: 10px;
    width: 100%;
    margin-bottom: 10px
 }
@@ -769,6 +768,7 @@ label{
    display: block;
    /*margin: 10px 0;*/
    position: relative;
+   margin-bottom: 10px
 }
  .inputGroup label {
    padding: 7px 0px;

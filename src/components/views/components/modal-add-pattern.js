@@ -193,8 +193,8 @@ export default class ModalToLearn extends Component {
 											    	<Form.Row>
 								                        <Col xs={4}>
 										                    <Form.Group  controlId="formBasicTag">
-													            <Form.Label >Tag Name</Form.Label>
 													            <Form.Control required size="sm" type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search Tag" />
+													            <Form.Label >Tag Name</Form.Label>
 													            {this.state.showFilterInput &&
 													                <div className="contFilterList">
 													                	<ListGroup variant="flush">
@@ -219,17 +219,15 @@ export default class ModalToLearn extends Component {
 											    	<Form.Row>
 												        <Col xs={4}>
 												                <Form.Group  controlId="formBasicPatterns">
-												                    <Form.Label >Pattern</Form.Label>
 																	<InputGroup className="mb-3">
 																	    <FormControl value={this.state.valuePattern} onChange={this._handonchangeInputPattern} size="sm"
-																	      placeholder="Add Pattern"
-																	      aria-label="Add Pattern"
-																	      aria-describedby="basic-addon2"
-																	    />
+																	      placeholder="Add Pattern"/>
+																	    <Form.Label >Add Pattern</Form.Label>
 																	    <InputGroup.Append>
 																	      <Button size="sm" onClick={this._handleonAddPattern} variant="outline-secondary">Add</Button>
 																	    </InputGroup.Append>
 																	</InputGroup>
+
 																	<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden} size="sm"/>
 												                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
 												                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
@@ -252,7 +250,6 @@ export default class ModalToLearn extends Component {
 													            <Form.Row>
 													                <Col xs={12}>
 														                <Form.Group  controlId="formBasicResponse">
-														                    <Form.Label >Type Response</Form.Label>
 														                    <div className="contentListGroupSelect">
 																			    <Form.Control required size="sm" as="select" onChange={this._handleonTypeResponse}>
 																				    <option value="">Select</option>
@@ -264,6 +261,7 @@ export default class ModalToLearn extends Component {
 																				    <option value="Multiple-choices">Multiple choices</option>
 																				    <option value="Data-Set">Data Set</option>
 																				</Form.Control>
+																				<Form.Label >Type Response</Form.Label>
 																				<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
 																            	<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 														                    </div>
@@ -279,17 +277,15 @@ export default class ModalToLearn extends Component {
 															        	<Col xs={12}>
 															                <div className="formTypeResponse">						
 																				<Form.Group  controlId="formBasicResponseText">
-																	                    <Form.Label >Responses</Form.Label>
+																	                    
 																						<InputGroup className="mb-3">
 																						    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
-																						      placeholder="Add Response"
-																						      aria-label="Add Response"
-																						      aria-describedby="basic-addon2"
-																						    />
+																						      placeholder="Add Response"/>
 																						    <InputGroup.Append>
 																						      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
 																						    </InputGroup.Append>
 																						</InputGroup>
+																						<Form.Label >Responses</Form.Label>
 
 																						<FormControl required type="hidden" name="valueResponseTextHidden" value={this.state.valueResponseTextHidden} size="sm"/>
 																						{this.state.valueResponseTextHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}

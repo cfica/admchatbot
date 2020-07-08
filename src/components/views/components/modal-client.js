@@ -74,10 +74,10 @@ export default class ModalClient extends Component {
 
 					        <Modal.Body>
 					        		    <Form.Group  controlId="formDomain">
-								            <Form.Label >Domain</Form.Label>
 								            <Form.Control required size="sm" 
 								                          type="text" value={this.state.inputDomain} 
 								                          onChange={this.changeDomain = (event)=>{this.setState({inputDomain: event.target.value});}} placeholder="Domain" />
+								            <Form.Label >Domain</Form.Label>
 								            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
 								            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 								            <Form.Text className="text-muted">
@@ -86,9 +86,9 @@ export default class ModalClient extends Component {
 								        </Form.Group>
 
 								        <Form.Group  controlId="formName">
-								            <Form.Label >Name</Form.Label>
 								            <Form.Control required size="sm" type="text" value={this.state.inputName} 
 								                          onChange={this.changeName = (event) => {this.setState({inputName: event.target.value})}} placeholder="Name" />
+								            <Form.Label >Name</Form.Label>
 								            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
 								            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 								            <Form.Text className="text-muted">

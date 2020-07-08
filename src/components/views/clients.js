@@ -256,13 +256,13 @@ export default class Clients extends Component {
 				        	    <Form.Row>
 				        	        <Col xs={4}>
 						        		<Form.Group required controlId="exampleForm.ControlSelect1">
-										    <Form.Label>Client</Form.Label>
-										    <Form.Control required as="select" onChange={this._handleSelectClient}>
+										    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
 										        <option value="">Select</option>
 											    {this.state.items.map((item) => 
 											      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
 								                )}
 										    </Form.Control>
+										    <Form.Label>Client</Form.Label>
 										  </Form.Group>
 						    		</Col>
 							    </Form.Row>
@@ -270,8 +270,8 @@ export default class Clients extends Component {
 				        	    <Form.Row>
 				        	        <Col xs={4}>
 				        				<Form.Group  controlId="formClientId">
-								            <Form.Label  size="sm">Client ID</Form.Label>
 								            <Form.Control size="sm" required  readOnly type="text" value={this.state.client_id}  placeholder="Client Id" />
+								            <Form.Label  size="sm">Client ID</Form.Label>
 								        </Form.Group>
 							        </Col>
 							    </Form.Row>
@@ -281,11 +281,11 @@ export default class Clients extends Component {
 							    <Form.Row>
 				        	        <Col xs={4}>
 				        				<Form.Group  controlId="formWelcomeMessage">
-								            <Form.Label  size="sm">Welcome message start conversation</Form.Label>
 								            <Form.Control required size="sm" type="text" 
 								            			  value={this.state.welcomeMessage}  
 								            			  onChange={this.changeName = (event) => {this.setState({welcomeMessage: event.target.value})}}
 								            			  placeholder="Welcome message" />
+								            <Form.Label  size="sm">Welcome message start conversation</Form.Label>
 								        </Form.Group>
 							        </Col>
 							    </Form.Row>
@@ -296,11 +296,11 @@ export default class Clients extends Component {
 							    <Form.Row>
 				        	        <Col xs={4}>
 				        				<Form.Group  controlId="formWelcomeMessage">
-								            <Form.Label  size="sm">Header Message</Form.Label>
 								            <Form.Control required size="sm" type="text" 
 								                          value={this.state.headerMessage}
 								                          onChange={this.changeName1 = (event) => {this.setState({headerMessage: event.target.value})}} 
 								                          placeholder="Header Message" />
+								            <Form.Label  size="sm">Header Message</Form.Label>
 								        </Form.Group>
 							        </Col>
 							    </Form.Row>
@@ -311,9 +311,9 @@ export default class Clients extends Component {
 							    <Form.Row>
 				        	        <Col xs={4}>
 				        				<Form.Group controlId="exampleForm.ControlTextarea1">
-										    <Form.Label>Welcome Message</Form.Label>
-										    <Form.Control required as="textarea" value={this.state.welcomeMessageInit} 
+										    <Form.Control placeholder="Welcome Message" required as="textarea" value={this.state.welcomeMessageInit} 
 										     onChange={this.changeName1 = (event) => {this.setState({welcomeMessageInit: event.target.value})}} rows="3" />
+										    <Form.Label>Welcome Message</Form.Label>
 										</Form.Group>
 							        </Col>
 							    </Form.Row>
@@ -324,7 +324,7 @@ export default class Clients extends Component {
 
 							    <Form.Row>
 							    	<Form.Group  controlId="formClientId">
-									        <Form.Label  size="sm">Request to start conversation</Form.Label>
+									        <strong  size="sm">Request to start conversation</strong>
 									</Form.Group>
 								</Form.Row>
 							    <Form.Row>

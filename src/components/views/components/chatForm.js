@@ -83,15 +83,15 @@ export default class ChatForm extends Component {
 				        <Form.Row>
 							<Col xs={12}>
 							    <Form.Group  controlId="formBasic">
-				                    <Form.Label >Type Input</Form.Label>
 									<InputGroup className="mb-3">
-									    <Form.Control required as="select" onChange={this.changeTypeInput}>
+									    <Form.Control placeholder="Type Input" required as="select" onChange={this.changeTypeInput}>
 									        <option value="">Choose...</option>
 									        <option value="Text">Text</option>
 									        <option value="Multi-Choices">Multi Choices</option>
 									        <option value="Single-Option-Choice">Single Option Choice</option>
 									        <option value="TextArea">TextArea</option>
 									    </Form.Control>
+									    <Form.Label >Type Input</Form.Label>
 									    <InputGroup.Append>
 									      <Button size="sm" onClick={this.btnAddInput} variant="outline-secondary">Add</Button>
 									    </InputGroup.Append>
@@ -115,8 +115,8 @@ export default class ChatForm extends Component {
 						<Form.Row>
 							<Col xs={12}>
 								<Form.Group controlId="formBasicEmail">
-								    <Form.Label>Description Text</Form.Label>
 								    <Form.Control required type="text" value={this.state.textDescription} onChange={this.changeTextDescription} placeholder="Enter Description" />
+								    <Form.Label>Description Text</Form.Label>
 								    <Form.Text className="text-muted">
 								    	We'll never share your email with anyone else.
 								    </Form.Text>
@@ -127,13 +127,13 @@ export default class ChatForm extends Component {
 						<Form.Row>
 							<Col xs={12}>
 								<Form.Group controlId="formBasicEmail">
-								    <Form.Label>Action Form</Form.Label>
-								    <Form.Control required as="select" defaultValue="Choose..." onChange={this.changeActionForm}>
+								    <Form.Control placeholder="Action Form" required as="select" defaultValue="Choose..." onChange={this.changeActionForm}>
 								        <option value="">Choose...</option>
 								        <option value="Save-Form">Save Form</option>
 								        <option value="Send-Email">Send Email</option>
 								        <option value="Integration">Integration</option>
 								    </Form.Control>
+								    <Form.Label>Action Form</Form.Label>
 								</Form.Group>
 						    </Col>
 						</Form.Row>
