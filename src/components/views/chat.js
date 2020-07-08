@@ -79,7 +79,7 @@ export default class Login extends Component {
   }
 
 
-  setMessage(_type,message){
+  setMessage = (_type,message) =>{
     const item = {'type' : _type,'msg' : message.response, type_resp: message.type};
     var oldItems = JSON.parse(localStorage.getItem('messages')) || [];
     const items = oldItems.slice();

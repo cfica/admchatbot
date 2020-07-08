@@ -151,7 +151,6 @@ export class ResponseForm extends Component {
               this.setState({showForm: false});
               form.reset();
             }).catch(function (error) {}).then(function () {});
-
 		}
 	}
 
@@ -165,102 +164,96 @@ export class ResponseForm extends Component {
 		this.props.inputChangeOptions(e.target.value, item, indexItems, index, this.props.index,type);
 	}
 
-	render() {
-		if(this.state.showForm){		
-			return (
-				<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
-			    	<span>{this.props.messageData.textDescription}</span>
-			    	<div className="contentForm">
-			    		{this.props.messageData.inputs.map((x, i) => {
-			    			if(x.type == 'Text'){
-			    				return(
-			    					<Form.Row key={i} className="inputText">
-										<Col xs={12}>
-										    	<Form.Group controlId="formBasicText">
-												    <Form.Control  className={x.classValidation ? x.classValidation : "form-control"} placeholder={x.label} size="sm" required name="label" type="text" value={x.value} onChange={e => this.handleInputChange(e, i)}/>
-												    <Form.Label >{x.label}</Form.Label>
-												</Form.Group>
+	render() {	
+		return (
+			<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
+		    	<span>{this.props.messageData.textDescription}</span>
+		    	<div className="contentForm">
+		    		{this.props.messageData.inputs.map((x, i) => {
+		    			if(x.type == 'Text'){
+		    				return(
+		    					<Form.Row key={"inputText"+i} className="inputText">
+									<Col key={i} xs={12}>
+									    	<Form.Group controlId="formBasicText">
+											    <Form.Control  className={x.classValidation ? x.classValidation : "form-control"} placeholder={x.label} size="sm" required name="label" type="text" value={x.value} onChange={e => this.handleInputChange(e, i)}/>
+											    <Form.Label >{x.label}</Form.Label>
+											</Form.Group>
+									</Col>
+								</Form.Row>
+		    				);
+		    			}else if(x.type == 'Multi-Choices'){
+		    				return (
+		    					<Form.Row key={i} className="Multi-Choices">
+									<Col key={i} xs={12}>
+									    {/*<div class="customCheckbox">
+											<ul class="ks-cboxtags">*/}
+												    {x.items.map((x1, i1) => {
+												    	{/*return (
+												    		<label className="containerCheckbox">{x1}
+															  <input type="checkbox"/>
+															  <span className="checkmark"></span>
+															</label>
+												    	);*/}
+
+												    	{/*return (
+															<li key={i1}><input type="checkbox" id={"checkbox"+ i+i1} value={x1}/><label for={"checkbox"+i +i1}>{x1}</label></li>
+												    	);*/}
+
+												    	return (
+												    		  <div key={i1} className="inputGroup">
+															    <Form.Control id={"checkbox"+ i+i1} value={x1.value} checked={x1.value} onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} name={"option"+ i+i1} type="checkbox"/>
+															    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
+															  </div>
+												    	);
+												    })}
+									    	{/*</ul>
+										</div>*/}
+									</Col>
+								</Form.Row>
+		    				);
+		    			}else if(x.type == 'Single-Option-Choice'){
+		    					return (
+			    					<Form.Row key={"Single-Option-Choice"+i} className="Single-Option-Choice">
+										<Col key={i} xs={12}>
+										    {x.items.map((x1, i1) => {
+										    	{/*return (
+										    		<label class="containerRadio">{x1}
+													  <input type="radio" checked="checked" name="radio"/>
+													  <span class="checkmark"></span>
+													</label>
+										    	);*/}
+
+										    	return (
+										    		  <div key={i1} className="inputGroup">
+													    <Form.Control id={"radio"+ i+i1} value={x1.label} onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} name="radio" type="radio"/>
+													    <label className="inputRadio" htmlFor={"radio"+ i+i1}>{x1.label}</label>
+													  </div>
+										    	);
+
+										    })}
 										</Col>
 									</Form.Row>
 			    				);
-			    			}else if(x.type == 'Multi-Choices'){
-			    				return (
-			    					<Form.Row key={i} className="Multi-Choices">
-										<Col xs={12}>
-										    {/*<div class="customCheckbox">
-												<ul class="ks-cboxtags">*/}
-													    {x.items.map((x1, i1) => {
-													    	{/*return (
-													    		<label className="containerCheckbox">{x1}
-																  <input type="checkbox"/>
-																  <span className="checkmark"></span>
-																</label>
-													    	);*/}
+		    			}else if(x.type == 'TextArea'){	
+		    				return (
+		    					<Form.Row key={i} className="Single-Option-Choice">
+									<Col key={i} xs={12}>
+									    	<Form.Group controlId="formBasicText">
+											    <Form.Control required size="sm" placeholder={x.label} value={x.value} onChange={e => this.handleInputChange(e, i)} as="textarea" rows="2"/>
+											    <Form.Label >{x.label}</Form.Label>
+											</Form.Group>
+									</Col>
+								</Form.Row>
+		    				);
+		    			}
+		    		})}
 
-													    	{/*return (
-																<li key={i1}><input type="checkbox" id={"checkbox"+ i+i1} value={x1}/><label for={"checkbox"+i +i1}>{x1}</label></li>
-													    	);*/}
-
-													    	return (
-													    		  <div className="inputGroup">
-																    <Form.Control id={"checkbox"+ i+i1} value={x1.value} checked={x1.value} onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} name={"option"+ i+i1} type="checkbox"/>
-																    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
-																  </div>
-													    	);
-													    })}
-										    	{/*</ul>
-											</div>*/}
-										</Col>
-									</Form.Row>
-			    				);
-			    			}else if(x.type == 'Single-Option-Choice'){
-			    					return (
-				    					<Form.Row key={i} className="Single-Option-Choice">
-											<Col xs={12}>
-											    {x.items.map((x1, i1) => {
-											    	{/*return (
-											    		<label class="containerRadio">{x1}
-														  <input type="radio" checked="checked" name="radio"/>
-														  <span class="checkmark"></span>
-														</label>
-											    	);*/}
-
-											    	return (
-											    		  <div className="inputGroup">
-														    <Form.Control id={"radio"+ i+i1} value={x1.label} onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} name="radio" type="radio"/>
-														    <label className="inputRadio" htmlFor={"radio"+ i+i1}>{x1.label}</label>
-														  </div>
-											    	);
-
-											    })}
-											</Col>
-										</Form.Row>
-				    				);
-			    			}else if(x.type == 'TextArea'){	
-			    				return (
-			    					<Form.Row key={i} className="Single-Option-Choice">
-										<Col xs={12}>
-										    	<Form.Group controlId="formBasicText">
-												    <Form.Control required size="sm" placeholder={x.label} value={x.value} onChange={e => this.handleInputChange(e, i)} as="textarea" rows="2"/>
-												    <Form.Label >{x.label}</Form.Label>
-												</Form.Group>
-										</Col>
-									</Form.Row>
-			    				);
-			    			}
-			    		})}
-
-			    		<div className="contentFormButton">
-				    		<Button size="sm" variant="outline-primary" type="submit">Save</Button>
-				    	</div>
+		    		<div className="contentFormButton">
+			    		<Button size="sm" variant="outline-primary" type="submit">Save</Button>
 			    	</div>
-			    </Form>
-			);
-		}else{
-			return(
-				<span>Gracias, usted ya ha enviado un formulari..</span>
-			);
-		}
+		    	</div>
+		    </Form>
+		);
 	}
 }
 
