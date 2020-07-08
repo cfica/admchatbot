@@ -26,7 +26,7 @@ body {
 	padding: 0px;
 	background: #ffffff;
 	position: fixed;
-	bottom: 0px;
+	bottom: 2px;
 	height: 50px;
 	position: fixed;
 }
@@ -40,6 +40,12 @@ body {
 	right: 10px;
 	top: 15px;
 	z-index: 5
+}
+
+.contentSend .form-control{
+	border-bottom: none;
+	border-left: none;
+	border-right: none;
 }
 
 .contentSend .form-control.is-invalid, 
