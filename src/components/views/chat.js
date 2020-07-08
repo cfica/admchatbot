@@ -30,7 +30,7 @@ export default class Login extends Component {
         welcome_message_init: '<p>Please complete the following information to start a conversation.</p>',
         welcome_message: 'Hello, My name is BELISA and I am a virutal assistant. How I can help?',
         header_message: 'BELISA, Virtual assistant',
-        start_conversation: ['Email', 'Telephone']
+        start_conversation: []
       }
     };
   }
