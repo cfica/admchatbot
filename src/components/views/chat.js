@@ -62,7 +62,7 @@ export default class Login extends Component {
       return null;
   }
 
-  async getSettings(client_id, init){
+  /*async getSettings(client_id, init){
     var self = this;
     function setData(response) {
         self.setState({
@@ -70,6 +70,19 @@ export default class Login extends Component {
         });
     }
     const result = await axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
+    .then(res => {
+      setData(res.data.data.config[0]);
+    });
+  }*/
+
+  getSettings(client_id, init){
+    var self = this;
+    function setData(response) {
+        self.setState({
+            confChatInit: response,
+        });
+    }
+    const result = axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
     .then(res => {
       setData(res.data.data.config[0]);
     });
