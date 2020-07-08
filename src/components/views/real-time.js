@@ -120,6 +120,7 @@ export default class RealTime extends Component {
 					                  <th>Action on Input</th>
 					                  <th>Input</th>
 					                  <th>Response</th>
+					                  <th>Type</th>
 					                  <th>User Agent</th>
 					                </tr>
 					              </thead>
@@ -135,7 +136,8 @@ export default class RealTime extends Component {
 					                      <a href="#" onClick={(e) => this.handleClickToBlock([item._id.$oid, item._input.message], e)}><span>To Block</span></a>
 					                    </td>
 					                    <td>{item._input.message}</td>
-					                    <td>{item._response}</td>
+					                    <td></td>
+					                    <td>{item.type}</td>
 					                    <td>{item._input.info.ip} / {item._input.info.user_agent}</td>
 					                  </tr>
 					                )}
