@@ -165,23 +165,14 @@ body {
 }
 
 @media only screen and (max-width: 414px) {
-	.contentResponse{
-		height: 89%
-	}
-
-	.contentSend{
-		
-	}
 }
 
 @media only screen and (max-width: 320px) {
-	.contentResponse{
-		height: 86%
-	}
+}
 
-	.contentSend{
-	
-	}
+.contentResponse{
+	height: calc(100% - 60px);
+	padding-top: 40px
 }
 
 .contChat{
