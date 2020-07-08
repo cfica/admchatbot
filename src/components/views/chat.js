@@ -69,7 +69,7 @@ export default class Login extends Component {
             confChatInit: response,
         });
     }
-    const result = await axios.get(config.get('baseUrlApi')+'/api/v1/setting-init',{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
+    const result = await axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
     .then(res => {
       setData(res.data.data.config[0]);
     });
