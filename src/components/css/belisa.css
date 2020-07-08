@@ -171,6 +171,13 @@ body {
 }
 
 .contentResponse{
+	/* Firefox */
+	height: -moz-calc(100% - 60px);
+	/* WebKit */
+	height: -webkit-calc(100% - 60px);
+	/* Opera */
+	height: -o-calc(100% - 60px);
+	/* Standard */
 	height: calc(100% - 60px);
 	padding-top: 40px
 }
