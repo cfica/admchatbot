@@ -82,7 +82,7 @@ export default class Login extends Component {
     const data = await response;
     const result = data.data.data.config[0]; 
     localStorage.setItem('confChatInit', JSON.stringify(result));
-    this.setState({'confChatInit': result});
+    //this.setState({'confChatInit': result});
   }
 
   setMessage = (_type,message) =>{
