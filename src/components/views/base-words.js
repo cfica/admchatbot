@@ -235,6 +235,10 @@ export default class BaseWords extends Component {
 							                	<td></td>
 							                }
 
+							                {item.responses.type == 'Slide' &&
+							                	<td></td>
+							                }
+
 						                    <td>
 						                    	<a href="#" onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)}><span>Delete</span></a>
 						                    </td>
