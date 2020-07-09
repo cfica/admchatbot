@@ -292,13 +292,13 @@ export class InputsTypeForm extends Component {
 											<Col xs={12}><strong >Input Text</strong></Col>
 										</Form.Row>
 										<Form.Row key={i} className="inputText">
-											<Col xs={5}>
+											<Col xs={4}>
 											    	<Form.Group controlId="formBasicText">
 													    <Form.Control size="sm" name="label" type="text" value={x.label} onChange={e => this.handleInputChange(e, i)}  placeholder="Enter Label" />
 													    <Form.Label>Enter Label</Form.Label>
 													</Form.Group>
 											</Col>
-											<Col xs={6}>
+											<Col xs={4}>
 										    	<Form.Control placeholder="Choose Validation" size="sm" name="validation" as="select" onChange={e => this.handleInputChange(e, i)}>
 											        <option value="">Choose Validation...</option>
 											        <option value="RUT">RUT</option>
@@ -322,7 +322,7 @@ export class InputsTypeForm extends Component {
 											<Col xs={12}><strong>TextArea</strong></Col>
 										</Form.Row>
 										<Form.Row key={i} className="inputTextArea">
-											<Col xs={11}>
+											<Col xs={4}>
 											    	<Form.Group controlId="formBasicTextArea">
 													    <Form.Control size="sm" type="text" name="label" value={x.label}  onChange={e => this.handleInputChange(e, i)} placeholder="Enter Label" />
 													    <Form.Label>Enter Label</Form.Label>
@@ -341,7 +341,7 @@ export class InputsTypeForm extends Component {
 											<Col xs={12}><strong>{x.type.replace('-',' ')}</strong></Col>
 										</Form.Row>
 										<Form.Row className="inputMultiChoise">
-									        <Col xs={11}>
+									        <Col xs={4}>
 									                <Form.Group  controlId="formAddOption">
 														<InputGroup className="mb-3">
 														    <FormControl value={x.label} name="label" onChange={(e)=>{ this.handleInputChange(e, i); this.setState({valueItemMultiChoice: e.target.value});}} size="sm"
@@ -362,7 +362,7 @@ export class InputsTypeForm extends Component {
 									    </Form.Row>
 
 									    <Form.Row className="inputMultiChoiseItems">
-									        <Col xs={12} className="items">
+									        <Col xs={4} className="items">
 									            <div>
 									            	{this.props.inputList[i].items.map((x, i1) => {
 										            	return (

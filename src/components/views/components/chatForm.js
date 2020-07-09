@@ -81,7 +81,7 @@ export default class ChatForm extends Component {
 				 <Row>
 				    <Col xs={12}>
 				        <Form.Row>
-							<Col xs={12}>
+							<Col xs={4}>
 							    <Form.Group  controlId="formBasic">
 									<InputGroup className="mb-3">
 									    <Form.Control placeholder="Type Input" required as="select" onChange={this.changeTypeInput}>
@@ -113,7 +113,7 @@ export default class ChatForm extends Component {
 						{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.inputs)}</div>*/}
 
 						<Form.Row>
-							<Col xs={12}>
+							<Col xs={4}>
 								<Form.Group controlId="formBasicEmail">
 								    <Form.Control required type="text" value={this.state.textDescription} onChange={this.changeTextDescription} placeholder="Enter Description" />
 								    <Form.Label>Description Text</Form.Label>
@@ -122,10 +122,8 @@ export default class ChatForm extends Component {
 								    </Form.Text>
 								</Form.Group>
 						    </Col>
-						</Form.Row>
 
-						<Form.Row>
-							<Col xs={12}>
+						    <Col xs={4}>
 								<Form.Group controlId="formBasicEmail">
 								    <Form.Control placeholder="Action Form" required as="select" defaultValue="Choose..." onChange={this.changeActionForm}>
 								        <option value="">Choose...</option>

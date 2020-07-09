@@ -876,3 +876,12 @@ label{
   border-image-slice: 1;*/
 }
 /*CUSTOM CHECKBOX*/
+
+
+.line{
+  padding-top: 10px
+}
+
+.colButton{
+  text-align: right;
+}

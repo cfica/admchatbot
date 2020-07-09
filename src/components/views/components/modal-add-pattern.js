@@ -7,6 +7,7 @@ import EditorHtml from './editorHtml';
 import SingleOptions from './singleOptions';
 import MultiChoices from './multiChoices';
 import ChatForm from './chatForm';
+import Slide from './slide';
 import Preview from './preview';
 
 export default class ModalToLearn extends Component {
@@ -246,9 +247,9 @@ export default class ModalToLearn extends Component {
 										  <Tab eventKey="response" title="3) Response">
 										                <div>&nbsp;</div>
 											   			<Form.Row>
-													        <Col xs={4}>
+													        <Col xs={9}>
 													            <Form.Row>
-													                <Col xs={12}>
+													                <Col xs={4}>
 														                <Form.Group  controlId="formBasicResponse">
 														                    <div className="contentListGroupSelect">
 																			    <Form.Control required size="sm" as="select" onChange={this._handleonTypeResponse}>
@@ -337,10 +338,18 @@ export default class ModalToLearn extends Component {
 																	    </Col>
 																    </Form.Row>
 															    }
+
+															    {this.state.showResponseType == 'Slide' &&
+																    <Form.Row>
+															        	<Col xs={12}>
+															                <Slide dataForm={this.dataForm}/>
+																	    </Col>
+																    </Form.Row>
+															    }
 												         	</Col>
 
 
-												         	<Col xs={4}>
+												         	<Col xs={3}>
 												         		<Preview 
 												         		    textDescription={this.state.valueResponseText} 
 												         		    valueCode={this.state.responseTypeHtml}
