@@ -119,45 +119,38 @@ export default class ModalToLearn extends Component {
 			event.preventDefault();
 			const form = event.currentTarget;
 			const _valueResponse = '';
-   		    if(this.state.showResponseType == 'Text'){
-   		    	this._valueResponse = this.state.listResponseTextAdd;
-   		    }else if(this.state.showResponseType == 'Html'){
-   		    	this._valueResponse = this.state.responseTypeHtml;
-   		    }else if(this.state.showResponseType == 'Form'){
-   		    	this._valueResponse = this.state.valuesDataForm;
-   		    }else if(this.state.showResponseType == 'Slide'){
-   		    	const FormData = require('form-data');
-   		    	const fs = require('fs');
-   		    	/***/
-   		    	const formData = new FormData();
-   		    	formData.append('tag', this.state.searchTerm);
-   		    	formData.append('patterns', this.state.listPatternsAdd);
-   		    	formData.append('responses', {"type" : this.state.showResponseType, "value" : this.state.valueDataSlide});
-   		    	//formData.append('yinyang.png', fs.createReadStream('./yinyang.png'));
-				this.state.valueDataSlide.forEach((file, i) => {
-			      formData.append(i, file.imageFile)
-			    });
-
-				const _config = { headers: { 'Content-Type': 'multipart/form-data' } };
-				const res = axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern-slide', formData,_config)
-				.then(response => console.log(response))
-    			.catch(errors => console.log(errors));
-
-   		    	/*this.state.valueDataSlide.forEach((file, i) => {
-			      formData.append(i, file)
-			    })
-   		    	this._valueResponse = this.state.valueDataSlide;*/
-   		    }
-
-			var _dataPost = {
+			const _url = config.get('baseUrlApi')+'/api/v1/add-pattern';
+			const _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
+   		    const _dataPost = {
    		    	"tag" : this.state.searchTerm,
    		    	"patterns" : this.state.listPatternsAdd,
    		    	"responses" : {"type" : this.state.showResponseType, "value" : this._valueResponse}
    		    };
+   		    /****/
+   		    if(this.state.showResponseType == 'Text'){
+   		    	this._dataPost.responses.value = this.state.listResponseTextAdd;
+   		    	this._dataPost = JSON.stringify(this._dataPost);
+   		    }else if(this.state.showResponseType == 'Html'){
+   		    	this._dataPost.responses.value = this.state.responseTypeHtml;
+   		    	this._dataPost = JSON.stringify(this._dataPost);
+   		    }else if(this.state.showResponseType == 'Form'){
+   		    	this._dataPost.responses.value = this.state.valuesDataForm;
+   		    	this._dataPost = JSON.stringify(this._dataPost);
+   		    }else if(this.state.showResponseType == 'Slide'){
+   		    	const FormData = require('form-data');
+   		    	this._url = config.get('baseUrlApi')+'/api/v1/add-pattern-slide';
+   		    	this._config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization' : 'Bearer ' + this.state.token} };
+   		    	/***/
+   		    	this._dataPost = new FormData();
+   		    	this._dataPost.append('tag', this.state.searchTerm);
+   		    	this._dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
+   		    	this._dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
+				this.state.valueDataSlide.forEach((file, i) => {
+			      this._dataPost.append('file'+i, file.imageFile)
+			    });
+   		    }
 
-   		    console.log(_dataPost);
-
-		    /*if (form.checkValidity() === false || 
+		    if (form.checkValidity() === false || 
 		    	this.state.valueResponseTextHidden.length == 0 ||
 		    	this.state.valuePatternHidden.length == 0 
 		    ) {
@@ -168,8 +161,7 @@ export default class ModalToLearn extends Component {
 		      this.setState({validated : true});
 		    }else{
 		    	this.setState({validated : false});
-	   		    axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern', 
-	   		    	JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	   		    axios.post(this._url,this._dataPost, this._config)
 			    .then(res => {
 			    	this.setState({errorSaveForm : false});
 			    	this.setState({searchTerm : ''});
@@ -183,7 +175,7 @@ export default class ModalToLearn extends Component {
 		      		this.setState({valuePatternHidden : ''});
 			    	form.reset();
 			    }).catch(function (error) {this.setState({errorSaveForm : true});}).then(function () {});
-		    }*/
+		    }
 		}
 
 		handleChangeValueHtmlCode = (code) => {

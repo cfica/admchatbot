@@ -10,9 +10,9 @@ export default class Slide extends Component {
 		      inputLink: '',
 		      inputDescription:'',
 		      validated : false,
-		      imageFile: React.createRef(),
+		      imageFile: '',
 		      errorSaveForm: '',
-		      collect: [{link: '', description: '', imageFile: React.createRef()}]
+		      collect: [{link: '', description: '', imageFile: React.createRef(), 'namefile':''}]
 		    };
 		}
 
@@ -32,8 +32,18 @@ export default class Slide extends Component {
 			this.props.dataSlide(list);
 		}
 
+		handleFileChange = (e,i)=>{
+			//console.log(e.target.files[0]);
+			const value = e.target.files[0];
+			const list = this.state.collect;
+			list[i]['imageFile'] = value;
+			list[i]['namefile'] = value.name;
+			this.setState({collect: list});
+			this.props.dataSlide(list);
+		}
+
 		add = (e) =>{
-			const item = {link: '', description: '', imageFile: React.createRef()};
+			const item = {link: '', description: '', imageFile: '', 'namefile': ''};
 			const list = this.state.collect;
 			list.push(item);
 			this.setState({collect: list});
@@ -59,8 +69,8 @@ export default class Slide extends Component {
 										    data-browse="Image (PNG/JPG)"
 										    custom
 										    required
-										    ref={x.imageFile}
-										    onChange={e => this.handleInputChange(e, i)}
+										    accept="image/x-png,image/jpeg"
+										    onChange={e => this.handleFileChange(e, i)}
 										    name="imageFile"
 										/>
 										<Form.Text className="text-muted">
