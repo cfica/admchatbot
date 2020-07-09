@@ -39,7 +39,9 @@ export default class ModalToLearn extends Component {
 		      token: localStorage.getItem('tokenAdm'),
 		      listOptionsMChoices: [],
 		      valuesDataForm: {},
-		      valueDataSlide: {}
+		      valueDataSlide: {},
+		      clients: [],
+		      client: ''
 		    };
 		}
 
@@ -98,6 +100,10 @@ export default class ModalToLearn extends Component {
 			//}
 		}
 
+		componentDidMount(){
+			this.loadClients();
+		}
+
 		/*INPUT ADD RESPONSE TEXT*/
 		_handleChangeInputResponseText = (event)=>{
 			var _value = event.target.value;
@@ -121,7 +127,9 @@ export default class ModalToLearn extends Component {
 			const _valueResponse = '';
 			const _url = config.get('baseUrlApi')+'/api/v1/add-pattern';
 			const _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
+   		    //console.log(this.state.client);
    		    const _dataPost = {
+   		    	"client": this.state.client,
    		    	"tag" : this.state.searchTerm,
    		    	"patterns" : this.state.listPatternsAdd,
    		    	"responses" : {"type" : this.state.showResponseType, "value" : this._valueResponse}
@@ -142,6 +150,7 @@ export default class ModalToLearn extends Component {
    		    	this._config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization' : 'Bearer ' + this.state.token} };
    		    	/***/
    		    	this._dataPost = new FormData();
+   		    	this._dataPost.append('client', this.state.client);
    		    	this._dataPost.append('tag', this.state.searchTerm);
    		    	this._dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
    		    	this._dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
@@ -149,6 +158,8 @@ export default class ModalToLearn extends Component {
 			      this._dataPost.append('file'+i, file.imageFile)
 			    });
    		    }
+
+   		    //console.log(this._dataPost);
 
 		    if (form.checkValidity() === false || 
 		    	this.state.valueResponseTextHidden.length == 0 ||
@@ -190,6 +201,23 @@ export default class ModalToLearn extends Component {
 			this.setState({valueDataSlide: data});
 		}
 
+		_handleSelectClient = (event) =>{
+			var _value = event.target.value;
+			this.setState({client: _value});
+		}
+
+		loadClients() {
+		    axios.get(config.get('baseUrlApi')+'/api/v1/clients?limit=10&offset=0', {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+		    .then(res => {
+		    	this.setState({clients: res.data.data.items});
+		    }).catch(function (error) {
+		    	//if(error.response.status == 401){
+		    	//	delete_cookie('token');
+		    	//	browserHistory.push('/login');
+		    	//}
+			});
+		}
+
   		render() {
 				return (
 				  	<div className="content-button">
@@ -205,6 +233,20 @@ export default class ModalToLearn extends Component {
 						                <Tabs defaultActiveKey="tag" transition={false} id="noanim-tab-example">
 										  <Tab eventKey="tag" title="1) Tag">
 											    	<div>&nbsp;</div>
+											    	<Form.Row>
+									        	        <Col xs={4}>
+											        		<Form.Group required controlId="exampleForm.ControlSelect1">
+															    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
+															        <option value="">Select</option>
+																    {this.state.clients.map((item) => 
+																      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
+													                )}
+															    </Form.Control>
+															    <Form.Label>Client</Form.Label>
+															  </Form.Group>
+											    		</Col>
+												    </Form.Row>
+
 											    	<Form.Row>
 								                        <Col xs={4}>
 										                    <Form.Group  controlId="formBasicTag">

@@ -12,7 +12,7 @@ export default class Slide extends Component {
 		      validated : false,
 		      imageFile: '',
 		      errorSaveForm: '',
-		      collect: [{link: '', description: '', imageFile: React.createRef(), 'namefile':''}]
+		      collect: [{link: '', description: '', imageFile: '', 'namefile':''}]
 		    };
 		}
 
