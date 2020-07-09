@@ -20,10 +20,10 @@ export default class Contact extends Component {
 	    		browserHistory.push('/login');
 	    	}
 	    }).catch(function (error) {
-	    	if(error.response.status == 401){
-	    		localStorage.removeItem('tokenAdm');
-	    		browserHistory.push('/login');
-	    	}
+	    	//if(error.response.status == 401){
+	    	//	localStorage.removeItem('tokenAdm');
+	    	//	browserHistory.push('/login');
+	    	//}
 		});
     }
     

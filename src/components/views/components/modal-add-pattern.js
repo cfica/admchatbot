@@ -38,7 +38,8 @@ export default class ModalToLearn extends Component {
 		      errorSaveForm: "",
 		      token: localStorage.getItem('tokenAdm'),
 		      listOptionsMChoices: [],
-		      valuesDataForm: ''
+		      valuesDataForm: {},
+		      valueDataSlide: {}
 		    };
 		}
 
@@ -124,15 +125,39 @@ export default class ModalToLearn extends Component {
    		    	this._valueResponse = this.state.responseTypeHtml;
    		    }else if(this.state.showResponseType == 'Form'){
    		    	this._valueResponse = this.state.valuesDataForm;
+   		    }else if(this.state.showResponseType == 'Slide'){
+   		    	const FormData = require('form-data');
+   		    	const fs = require('fs');
+   		    	/***/
+   		    	const formData = new FormData();
+   		    	formData.append('tag', this.state.searchTerm);
+   		    	formData.append('patterns', this.state.listPatternsAdd);
+   		    	formData.append('responses', {"type" : this.state.showResponseType, "value" : this.state.valueDataSlide});
+   		    	//formData.append('yinyang.png', fs.createReadStream('./yinyang.png'));
+				this.state.valueDataSlide.forEach((file, i) => {
+			      formData.append(i, file.imageFile)
+			    });
+
+				const _config = { headers: { 'Content-Type': 'multipart/form-data' } };
+				const res = axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern-slide', formData,_config)
+				.then(response => console.log(response))
+    			.catch(errors => console.log(errors));
+
+   		    	/*this.state.valueDataSlide.forEach((file, i) => {
+			      formData.append(i, file)
+			    })
+   		    	this._valueResponse = this.state.valueDataSlide;*/
    		    }
+
 			var _dataPost = {
    		    	"tag" : this.state.searchTerm,
    		    	"patterns" : this.state.listPatternsAdd,
    		    	"responses" : {"type" : this.state.showResponseType, "value" : this._valueResponse}
    		    };
+
    		    console.log(_dataPost);
 
-		    if (form.checkValidity() === false || 
+		    /*if (form.checkValidity() === false || 
 		    	this.state.valueResponseTextHidden.length == 0 ||
 		    	this.state.valuePatternHidden.length == 0 
 		    ) {
@@ -143,7 +168,6 @@ export default class ModalToLearn extends Component {
 		      this.setState({validated : true});
 		    }else{
 		    	this.setState({validated : false});
-	   		    //this.state.responseTypeValue
 	   		    axios.post(config.get('baseUrlApi')+'/api/v1/add-pattern', 
 	   		    	JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 			    .then(res => {
@@ -158,14 +182,8 @@ export default class ModalToLearn extends Component {
 			    	this.setState({valueResponseTextHidden : ''});
 		      		this.setState({valuePatternHidden : ''});
 			    	form.reset();
-			    })
-			    .catch(function (error) {
-				    this.setState({errorSaveForm : true});
-				})
-				.then(function () {
-				    // always executed
-				});
-		    }
+			    }).catch(function (error) {this.setState({errorSaveForm : true});}).then(function () {});
+		    }*/
 		}
 
 		handleChangeValueHtmlCode = (code) => {
@@ -174,6 +192,10 @@ export default class ModalToLearn extends Component {
 
 		dataForm = (data) =>{
 			this.setState({valuesDataForm: data});
+		}
+
+		dataSlide = (data) =>{
+			this.setState({valueDataSlide: data});
 		}
 
   		render() {
@@ -275,7 +297,7 @@ export default class ModalToLearn extends Component {
 
 												                {this.state.showResponseType == 'Text' &&
 													                <Form.Row>
-															        	<Col xs={12}>
+															        	<Col xs={4}>
 															                <div className="formTypeResponse">						
 																				<Form.Group  controlId="formBasicResponseText">
 																	                    
@@ -342,7 +364,7 @@ export default class ModalToLearn extends Component {
 															    {this.state.showResponseType == 'Slide' &&
 																    <Form.Row>
 															        	<Col xs={12}>
-															                <Slide dataForm={this.dataForm}/>
+															                <Slide dataSlide={this.dataSlide}/>
 																	    </Col>
 																    </Form.Row>
 															    }
@@ -361,7 +383,7 @@ export default class ModalToLearn extends Component {
 										</Tabs>
 
 										
-										{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>*/}
+										<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valueDataSlide)}</div>
 						        </Modal.Body>
 						        
 						        <Modal.Footer>
