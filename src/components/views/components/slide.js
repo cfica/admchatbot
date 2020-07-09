@@ -1,9 +1,54 @@
 import React, { Component } from "react";
-import {Modal,Button,Table,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
+import {Modal,Button,Table,Carousel,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
 
-export default class Slide extends Component {
+export class GetSlide extends Component {
+	constructor(props) {
+	    super(props);
+	    this.state = {
+	      inputLink: '',
+	      inputDescription:'',
+	      validated : false,
+	      imageFile: '',
+	      errorSaveForm: '',
+	      collect: [{link: '', description: '', imageFile: '', 'namefile':''}]
+	    };
+	}
+
+	componentDidMount(){
+
+	}
+
+	render() {
+		return (
+			<div>
+			    <Carousel>
+			        {this.props.messageData.map((item, i) => {
+						  return(
+						  		<Carousel.Item>
+								    <a href={item.link}>
+									    <img
+									      className="d-block w-100"
+									      src={config.get('baseUrlApi')+'/'+item.file}
+									      alt="First slide"
+									    />
+								    </a>
+								    <Carousel.Caption>
+								      <h3>{item.title}</h3>
+								      <p>{item.description}</p>
+								    </Carousel.Caption>
+
+								</Carousel.Item>
+						  );
+				    })}
+				</Carousel>
+			</div>
+		);
+    }
+}
+
+export class Slide extends Component {
   		constructor(props) {
 		    super(props);
 		    this.state = {
@@ -12,7 +57,7 @@ export default class Slide extends Component {
 		      validated : false,
 		      imageFile: '',
 		      errorSaveForm: '',
-		      collect: [{link: '', description: '', imageFile: '', 'namefile':''}]
+		      collect: [{'title': '', link: '', description: '', imageFile: '', 'namefile':''}]
 		    };
 		}
 
@@ -43,7 +88,7 @@ export default class Slide extends Component {
 		}
 
 		add = (e) =>{
-			const item = {link: '', description: '', imageFile: '', 'namefile': ''};
+			const item = {'title': '', link: '', description: '', imageFile: '', 'namefile': ''};
 			const list = this.state.collect;
 			list.push(item);
 			this.setState({collect: list});
@@ -62,11 +107,11 @@ export default class Slide extends Component {
 				  	    {this.state.collect.map((x, i) => {
 					  		return(
 					  			<Row key={i}>
-									<Col xs={3}>
+									<Col xs={2}>
 										<Form.File 
 										    id="custom-file-translate-html"
-										    label="Image (PNG/JPG)"
-										    data-browse="Image (PNG/JPG)"
+										    label="To Choose"
+										    data-browse="To Choose"
 										    custom
 										    required
 										    accept="image/x-png,image/jpeg"
@@ -78,12 +123,22 @@ export default class Slide extends Component {
 									    </Form.Text>
 								    </Col>
 
-								    <Col xs={4}>
+								    <Col xs={2}>
+										<Form.Group controlId="formDescription">
+										    <Form.Control required type="text" value={x.inputTitle} name="title" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Title" />
+										    <Form.Label>Title</Form.Label>
+										    <Form.Text className="text-muted">
+										    	Well never share your email with anyone else.
+										    </Form.Text>
+										</Form.Group>
+								    </Col>
+
+								    <Col xs={3}>
 										<Form.Group controlId="formDescription">
 										    <Form.Control required type="text" value={x.inputDescription} name="description" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Description" />
 										    <Form.Label>Description Text</Form.Label>
 										    <Form.Text className="text-muted">
-										    	We'll never share your email with anyone else.
+										    	Well never share your email with anyone else.
 										    </Form.Text>
 										</Form.Group>
 								    </Col>

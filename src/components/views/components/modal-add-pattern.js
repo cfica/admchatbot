@@ -7,7 +7,7 @@ import EditorHtml from './editorHtml';
 import SingleOptions from './singleOptions';
 import MultiChoices from './multiChoices';
 import ChatForm from './chatForm';
-import Slide from './slide';
+import {Slide} from './slide';
 import Preview from './preview';
 
 export default class ModalToLearn extends Component {

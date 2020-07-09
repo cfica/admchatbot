@@ -6,6 +6,7 @@ import  { Redirect } from 'react-router-dom';
 import { browserHistory } from 'react-router';
 import './../css/belisa.css';
 import Utils from './utils';
+import {GetSlide} from './components/slide';
 import {InputsTypeForm,ResponseForm,Validation} from './components/componentsUtils';
 
 export default class Login extends Component {
@@ -45,7 +46,9 @@ export default class Login extends Component {
       localStorage.removeItem('key_temp');*/
   }
 
-  componentDidUpdate(){}
+  componentDidUpdate(){
+    
+  }
 
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
 
@@ -340,6 +343,21 @@ export default class Login extends Component {
                                                                 messageData = {item.msg}
                                                                 inputChange = {this.inputChange}
                                                                 inputChangeOptions = {this.inputChangeOptions}
+                                                            />
+                                                       </div>
+                                                   </div>
+                                                   {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
+                                            </div>
+                                        );
+                                    }else if(item.type_resp == 'Slide'){
+                                        return (
+                                            <div key={index} className="contentMessageChat">
+                                                   <div key={"i"+index}>
+                                                       <div className="contentUser"><h5>Belisa</h5></div>
+                                                       <div className="contentMsg">
+                                                            <GetSlide
+                                                                index = {index}
+                                                                messageData = {item.msg}
                                                             />
                                                        </div>
                                                    </div>
