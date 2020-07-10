@@ -154,7 +154,7 @@ export default class ModalToLearn extends Component {
    		    	this._dataPost.append('tag', this.state.searchTerm);
    		    	this._dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
    		    	this._dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
-				this.state.valueDataSlide.forEach((file, i) => {
+				this.state.valueDataSlide['items'].forEach((file, i) => {
 			      this._dataPost.append('file'+i, file.imageFile)
 			    });
    		    }
@@ -176,7 +176,6 @@ export default class ModalToLearn extends Component {
 			    .then(res => {
 			    	this.setState({errorSaveForm : false});
 			    	this.setState({searchTerm : ''});
-			    	this.setState({valueResponseTextHidden : ''});
 			    	this.setState({valuePatternHidden : ''});
 			    	this.setState({listResponseTextAdd : []});
 			    	this.setState({listPatternsAdd : []});

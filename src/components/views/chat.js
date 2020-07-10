@@ -47,7 +47,7 @@ export default class Login extends Component {
   }
 
   componentDidUpdate(){
-    
+
   }
 
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
@@ -355,6 +355,7 @@ export default class Login extends Component {
                                                    <div key={"i"+index}>
                                                        <div className="contentUser"><h5>Belisa</h5></div>
                                                        <div className="contentMsg">
+                                                            <span>{item.msg.textResponse}</span>
                                                             <GetSlide
                                                                 index = {index}
                                                                 messageData = {item.msg}

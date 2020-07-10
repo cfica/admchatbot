@@ -24,7 +24,7 @@ export class GetSlide extends Component {
 		return (
 			<div>
 			    <Carousel>
-			        {this.props.messageData.map((item, i) => {
+			        {this.props.messageData.items.map((item, i) => {
 						  return(
 						  		<Carousel.Item>
 								    <a href={item.link}>
@@ -38,7 +38,6 @@ export class GetSlide extends Component {
 								      <h3>{item.title}</h3>
 								      <p>{item.description}</p>
 								    </Carousel.Caption>
-
 								</Carousel.Item>
 						  );
 				    })}
@@ -57,7 +56,11 @@ export class Slide extends Component {
 		      validated : false,
 		      imageFile: '',
 		      errorSaveForm: '',
-		      collect: [{'title': '', link: '', description: '', imageFile: '', 'namefile':''}]
+		      collect: {
+		      	textResponse: '', 
+		      	items: [{'title': '', link: '', description: '', imageFile: '', 'namefile':''}]
+		      },
+		      inputMessage: ''
 		    };
 		}
 
@@ -71,40 +74,55 @@ export class Slide extends Component {
 
 		handleInputChange = (e,i)=>{
 			const {name, value} = e.target;
-			const list = this.state.collect;
-			list[i][name] = value;
-			this.setState({collect: list});
-			this.props.dataSlide(list);
+			const _collect = this.state.collect;
+			_collect['items'][i][name] = value;
+			this.setState({collect: _collect});
+			this.props.dataSlide(_collect);
 		}
 
 		handleFileChange = (e,i)=>{
 			//console.log(e.target.files[0]);
 			const value = e.target.files[0];
-			const list = this.state.collect;
-			list[i]['imageFile'] = value;
-			list[i]['namefile'] = value.name;
-			this.setState({collect: list});
-			this.props.dataSlide(list);
+			const _collect = this.state.collect;
+			_collect['items'][i]['imageFile'] = value;
+			_collect['items'][i]['namefile'] = value.name;
+			this.setState({collect: _collect});
+			this.props.dataSlide(_collect);
 		}
 
 		add = (e) =>{
 			const item = {'title': '', link: '', description: '', imageFile: '', 'namefile': ''};
-			const list = this.state.collect;
-			list.push(item);
-			this.setState({collect: list});
+			const _collect = this.state.collect;
+			_collect['items'].push(item);
+			this.setState({collect: _collect});
 		}
 
 		del = (i) =>{
-			const list = this.state.collect;
-		    list.splice(i, 1);
-		    this.setState({collect: list});
+			const _collect = this.state.collect;
+		    _collect['items'].splice(i, 1);
+		    this.setState({collect: _collect});
 		}
 
+		handleChangeMessage = (e)=>{
+			const _collect = this.state.collect;
+			this.setState({inputMessage: e.target.value});
+			_collect['textResponse'] = e.target.value;
+			this.setState({collect: _collect});
+		}
 
   		render() {
 				return (
 				  	<div>
-				  	    {this.state.collect.map((x, i) => {
+				  	    <Row>
+				  	    	<Col xs={4}>
+				  	    		<Form.Group controlId="formMessage">
+								    <Form.Control required type="text" value={this.state.inputMessage} name="response" onChange={this.handleChangeMessage} placeholder="Enter Response" />
+								    <Form.Label>Response Text</Form.Label>
+								</Form.Group>
+				  	    	</Col>
+				  	    </Row>
+
+				  	    {this.state.collect.items.map((x, i) => {
 					  		return(
 					  			<Row key={i}>
 									<Col xs={2}>
