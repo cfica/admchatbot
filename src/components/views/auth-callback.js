@@ -7,24 +7,24 @@ import { browserHistory } from 'react-router';
 export default class Contact extends Component {
     constructor(props){
     	super(props);
-    	const _key = this.props.location.query.key;
-    	axios.post(
-    		config.get('baseUrlApi')+'/api/v1/validate-auth',JSON.stringify({}), 
-    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _key}})
+    	const _token = this.props.location.query.t;
+    	if(_token.length < 50){
+    		browserHistory.push('/login');
+    	}
+    	/*##*/
+    	var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _token}};
+    	axios.get(config.get('baseUrlApi')+'/api/v1/validate-auth',_config)
 	    .then(res => {
-	    	//console.log(res);
-	    	if(typeof res.data.data.token != 'undefined'){
-	    		localStorage.setItem('tokenAdm', res.data.data.token);
-	    		browserHistory.push('/dashboard');
-	    	}else if(typeof res.data.data.err != 'undefined'){
-	    		browserHistory.push('/login');
+	    	if(typeof res.data.data.status != 'undefined' && 
+	    	   res.data.data.status == 'ok'){
+	    	   localStorage.setItem('tokenAdm', _token);
+	    	   /*GET CONFIG USER IN REQUEST*/
+	    	   browserHistory.push('/dashboard');
 	    	}
+	    	browserHistory.push('/login');
 	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	localStorage.removeItem('tokenAdm');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    	browserHistory.push('/login');
+	    });
     }
     
     render() {
