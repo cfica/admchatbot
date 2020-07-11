@@ -9,7 +9,7 @@ export default class Login extends Component {
   constructor(props){
     super(props);
     this.state = {
-      urlAuth: config.get('baseUrlAuth')+'/oauth?client_id='+config.get('client_id')+'&redirect_uri='+config.get('baseUrlApp')+'/auth/callback&scope=read:current_user update:current_user_metadata'
+      urlAuth: config.get('baseUrlAuth')+'/oauth?redirect_uri='+config.get('baseUrlApp')+'/auth/callback'
     };
   }
 

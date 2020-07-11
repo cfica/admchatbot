@@ -20,7 +20,8 @@ export class FormUser extends Component {
 	    	email: '',
 	    	password: '',
 	    	client: '',
-	    	clients: []
+	    	clients: [],
+	    	typeUser: this.props.typeUser
 	    };
 	}
 
@@ -31,6 +32,9 @@ export class FormUser extends Component {
 
 	componentDidMount(){
 		this.loadClients();
+		if(this.state.typeUser == 'account'){
+			this.getUser(this.props.idUser, false);
+		}
 	}
 
 	getUser(_id, client){
@@ -92,21 +96,24 @@ export class FormUser extends Component {
 			<Modal show={this.state.showModal} onHide={this.handleClose}>
 		        <Form noValidate validated={this.state.validated} onSubmit={this.handleSave}>
 			        <Modal.Header closeButton>
-			          <Modal.Title>Add User</Modal.Title>
+			          <Modal.Title>{this.props.idUser ? 'Edit User' : 'Add User'}</Modal.Title>
 			        </Modal.Header>
 			        
 			        <Modal.Body>
 			        		<Form.Row>
 			        	        <Col xs={12}>
-					        		<Form.Group required controlId="clients">
-									    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
-									        <option value="">Select</option>
-										    {this.state.clients.map((item) => 
-										      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
-							                )}
-									    </Form.Control>
-									    <Form.Label>Client</Form.Label>
-									 </Form.Group>
+					        		
+					        		{this.state.typeUser != 'account' &&
+						        		<Form.Group required controlId="clients">
+										    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
+										        <option value="">Select</option>
+											    {this.state.clients.map((item) => 
+											      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
+								                )}
+										    </Form.Control>
+										    <Form.Label>Client</Form.Label>
+										 </Form.Group>
+					        		}
 
 
 					        		<Form.Group controlId="fullname">
@@ -115,7 +122,7 @@ export class FormUser extends Component {
 									</Form.Group>
 
 									<Form.Group controlId="email">
-									    <FormControl required value={this.state.email} onChange={e => this.setState({email: e.target.value})} type="email" size="sm" placeholder="Email"/>
+									    <FormControl disabled={this.props.idUser ? true : false} required value={this.state.email} onChange={e => this.setState({email: e.target.value})} type="email" size="sm" placeholder="Email"/>
 									    <Form.Label>Email</Form.Label>
 									</Form.Group>
 

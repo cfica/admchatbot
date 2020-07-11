@@ -8,23 +8,30 @@ export default class Contact extends Component {
     constructor(props){
     	super(props);
     	const _token = this.props.location.query.t;
-    	if(_token.length < 50){
+    	if(typeof _token == 'undefined'){
     		browserHistory.push('/login');
-    	}
-    	/*##*/
-    	var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _token}};
-    	axios.get(config.get('baseUrlApi')+'/api/v1/validate-auth',_config)
-	    .then(res => {
-	    	if(typeof res.data.data.status != 'undefined' && 
-	    	   res.data.data.status == 'ok'){
-	    	   localStorage.setItem('tokenAdm', _token);
-	    	   /*GET CONFIG USER IN REQUEST*/
-	    	   browserHistory.push('/dashboard');
+    	}else{
+    		if(_token.length < 50){
+	    		browserHistory.push('/login');
+	    		return false;
+	    	}else{
+		    	var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _token}};
+		    	axios.get(config.get('baseUrlApi')+'/api/v1/validate-auth',_config)
+			    .then(res => {
+			    	//console.log(res.data.data);
+			    	if(typeof res.data.data.scope != 'undefined'){
+			    	   localStorage.setItem('tokenAdm', _token);
+			    	   localStorage.setItem('_id', res.data.data._id);
+			    	   localStorage.setItem('scope', res.data.data.scope);
+			    	   browserHistory.push('/dashboard');
+			    	}else{
+			    		browserHistory.push('/login');
+			    	}
+			    }).catch(function (error) {
+			    	browserHistory.push('/login');
+			    });
 	    	}
-	    	browserHistory.push('/login');
-	    }).catch(function (error) {
-	    	browserHistory.push('/login');
-	    });
+    	}
     }
     
     render() {

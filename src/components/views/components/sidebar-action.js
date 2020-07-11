@@ -4,22 +4,43 @@ import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import { browserHistory } from 'react-router';
 import {DropdownButton, Dropdown, ButtonGroup} from 'react-bootstrap';
+import { FormUser } from './users';
 
 export default class SidebarAction extends Component {
-  componentDidMount(){
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            showEditAccount: false,
+            idUser: ''
+        };
+    }
 
-  _handleLogout = (event)=>{
-    localStorage.removeItem('tokenAdm');
-    browserHistory.push('/login');
-  }
+    componentDidMount(){
 
-  editAccount = (event)=>{
-    
-  }
+    }
 
-  render() {
-    return (
+    _handleLogout = (event)=>{
+        localStorage.removeItem('tokenAdm');
+        localStorage.removeItem('_id');
+        localStorage.removeItem('scope');
+        browserHistory.push('/login');
+    }
+
+    editAccount = (event)=>{
+        this.setState({showEditAccount: true});
+        this.setState({idUser: localStorage.getItem('_id')});
+    }
+
+    hiddenEditAccount = ()=>{
+        this.setState({showEditAccount: false});
+    }
+
+    successEditAccount = ()=>{
+        this.setState({showEditAccount: false});
+    }
+
+    render() {
+      return (
       	<nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
                 <button type="button" id="sidebarCollapse" className="btn btn-info">
@@ -43,6 +64,16 @@ export default class SidebarAction extends Component {
                             <Dropdown.Item eventKey="1" onClick={this.editAccount}>Edit Account</Dropdown.Item>
                             <Dropdown.Item eventKey="2" onClick={this._handleLogout}>Sign off</Dropdown.Item>
                         </DropdownButton>
+
+                        {this.state.showEditAccount && 
+                            <FormUser 
+                                hiddenModal = {this.hiddenEditAccount} 
+                                idUser={this.state.idUser}
+                                success={this.successEditAccount}
+                                typeUser="account"
+                            />
+                        }
+
                     </li>
                 </ul>
             </div>
