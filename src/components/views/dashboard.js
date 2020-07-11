@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
-import SidebarMenu from './sidebar-menu';
-import SidebarAction from './sidebar-action';
+import SidebarMenu from './components/sidebar-menu';
+import SidebarAction from './components/sidebar-action';
 import { browserHistory } from 'react-router';
 
 export default class Dashboard extends Component {

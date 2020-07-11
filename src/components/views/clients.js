@@ -2,17 +2,19 @@ import React, { Component } from "react";
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
-import SidebarMenu from './sidebar-menu';
-import SidebarAction from './sidebar-action';
+import SidebarMenu from './components/sidebar-menu';
+import SidebarAction from './components/sidebar-action';
 import { Alert, Navbar, Nav, DropdownButton,Dropdown,Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalClient from './components/modal-client';
 import ModalConfChat from './components/modal-confchat';
 import ModalToConfirm from './components/confirm';
+import {Users} from './components/users';
 import MessageResult from './components/message-result';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
+import * as Icon from 'react-bootstrap-icons';
 
 export default class Clients extends Component {
 	constructor(props) {
@@ -163,7 +165,7 @@ export default class Clients extends Component {
 	            <p>You can generate question patterns that can be asked by chat.</p>
 	            <div className="line"></div>
 	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
-		            <Button variant="secondary" onClick={this.handleShowModalClient}>Add Client</Button>
+		            <Button variant="secondary" onClick={this.handleShowModalClient}>Add Client <Icon.Plus size={25}/></Button>
 				</Jumbotron>
 
 				{this.state.showModalClient && 
@@ -213,11 +215,11 @@ export default class Clients extends Component {
 					                    <td>#{item.domain}</td>
 					                    <td>{item.name}</td>
 					                    <td>
-					                      
 					                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
 											    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
-											    <Dropdown.Item eventKey="2">Edit</Dropdown.Item>
-											    <Dropdown.Item eventKey="3">Delete</Dropdown.Item>
+											    <Dropdown.Item eventKey="2">Users</Dropdown.Item>
+											    <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
+											    <Dropdown.Item eventKey="3">Deactivate</Dropdown.Item>
 										  </DropdownButton>
 					                    </td>
 					                  </tr>
@@ -244,7 +246,7 @@ export default class Clients extends Component {
 				        </Tab.Pane>
 				        
 				        <Tab.Pane eventKey="users">
-				        	users
+				        	<Users/>
 				        </Tab.Pane>
 
 				        <Tab.Pane eventKey="config">

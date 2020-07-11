@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import SidebarMenu from './sidebar-menu';
-import SidebarAction from './sidebar-action';
+import SidebarMenu from './components/sidebar-menu';
+import SidebarAction from './components/sidebar-action';
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';

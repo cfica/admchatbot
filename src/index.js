@@ -19,6 +19,8 @@ config.setEnvironment('production');
 
 
 
+console.log(process.env.CLIENT_ID);
+
 ReactDOM.render(
   <Router history={browserHistory} routes={routes} />,
   document.querySelector('#root')

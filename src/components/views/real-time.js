@@ -3,8 +3,8 @@ import config from 'react-global-configuration';
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
-import SidebarMenu from './sidebar-menu';
-import SidebarAction from './sidebar-action';
+import SidebarMenu from './components/sidebar-menu';
+import SidebarAction from './components/sidebar-action';
 import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
@@ -136,7 +136,13 @@ export default class RealTime extends Component {
 					                      <a href="#" onClick={(e) => this.handleClickToBlock([item._id.$oid, item._input.message], e)}><span>To Block</span></a>
 					                    </td>
 					                    <td>{item._input.message}</td>
-					                    <td></td>
+					                    {item.type == 'Text' && 
+					                    	<td>{item._response}</td>
+					                    }
+
+					                    {item.type != 'Text' && 
+					                    	<td></td>
+					                    }
 					                    <td>{item.type}</td>
 					                    <td>{item._input.info.ip} / {item._input.info.user_agent}</td>
 					                  </tr>

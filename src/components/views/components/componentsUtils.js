@@ -1,7 +1,22 @@
 import React, { Component } from "react";
-import {Modal,Button,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
+import {Modal,Button,Badge,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
+
+export class Status extends Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {};
+	}
+
+	render(){
+       if(this.props.status == 'Active'){
+       		return (<h5><Badge variant="success">Active</Badge></h5>);
+       }else if(this.props.status == 'Inactive'){
+       		return (<h5><Badge variant="secondary">Inactive</Badge></h5>);
+       }
+	}
+}
 
 export class Validation extends Component{
 	constructor(props) {

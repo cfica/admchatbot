@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
+import * as Icon from 'react-bootstrap-icons';
 
 export default class SidebarMenu extends Component {
   componentDidMount(){
@@ -66,6 +67,10 @@ export default class SidebarMenu extends Component {
 		            	<a href="/clients">Clients</a>
 		            </li>
 
+		            <li>
+		            	<a href="/clients">Systems</a>
+		            </li>
+
 		            {/*<li className="active">
 		                <a href="#UsersSubmenu" data-toggle="collapse" aria-expanded="false">Users</a>
 		                <ul className="collapse list-unstyled" id="UsersSubmenu">
@@ -98,7 +103,7 @@ export default class SidebarMenu extends Component {
 		                </ul>
 		            </li>*/}
 
-		            <li className="active">
+		            {/*<li className="active">
 		                <a href="#SystemsSubmenu" data-toggle="collapse" aria-expanded="false">Systems</a>
 		                <ul className="collapse list-unstyled" id="SystemsSubmenu">
 		                    <li>
@@ -112,7 +117,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
 		            {/*
 	                <li>
@@ -127,15 +132,23 @@ export default class SidebarMenu extends Component {
 		            <p>Options Client</p>
 
 		            <li>
-		            	<a href="/dashboard">Dashboard</a>
+		            	<a href="/dashboard"><Icon.HouseFill size={15}/> Dashboard</a>
 		            </li>
 
 		            <li>
-		            	<a href="/real-time">Real Time</a>
+		            	<a href="/real-time"><Icon.ChatQuote size={20}/> Real Time</a>
 		            </li>
 
 		            <li>
-		            	<a href="/base-words">Words Base</a>
+		            	<a href="/base-words"><Icon.FileText size={20}/> Words Base</a>
+		            </li>
+
+		            <li>
+		            	<a href="/integrations"><Icon.Gear size={20}/> Integrations</a>
+		            </li>
+
+		            <li>
+		            	<a href="/report"><Icon.GraphUp size={20}/> Report</a>
 		            </li>
 
 		            {/*<li className="active">
@@ -185,7 +198,7 @@ export default class SidebarMenu extends Component {
 		                </ul>
 		            </li>*/}
 
-		            <li className="active">
+		            {/*<li className="active">
 		                <a href="#IntegrationsSubmenu" data-toggle="collapse" aria-expanded="false">Integrations</a>
 		                <ul className="collapse list-unstyled" id="IntegrationsSubmenu">
 		                    <li>
@@ -215,7 +228,7 @@ export default class SidebarMenu extends Component {
 		                        <a href="#">Home 3</a>
 		                    </li>
 		                </ul>
-		            </li>
+		            </li>*/}
 
 		            {/*<li className="active">
 		                <a href="#SmartActionsSubmenu" data-toggle="collapse" aria-expanded="false">Smart Actions</a>

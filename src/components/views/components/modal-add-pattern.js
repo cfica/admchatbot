@@ -54,26 +54,29 @@ export default class ModalToLearn extends Component {
 			var _value = event.target.value;
 			this.setState({searchTerm: _value});
 			if(this.state.searchTerm.length > 2){
-				axios.post(config.get('baseUrlApi')+'/api/v1/filter-tags', 
-				JSON.stringify({ tag: _value}), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-			    .then(res => {
-			    	var _items = [];
-			    	res.data.data.items.forEach(function(elem){
-			    		_items.push(elem.tag);
-			    	});
-			    	this.setState({resultFiler: _items});
-
-			    	if(_items.length > 0){
-				    	this.setState({showFilterInput: true});
-				    	this.setState({searchResults : _items});
-				    }else{
-				    	this.setState({showFilterInput: false});
-				    	this.setState({searchResults : []});
-				    }
-
-			    });
+				this.search(_value);
 			}
 		};
+
+
+		search = async val =>{
+			var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
+			const res = await axios.post(config.get('baseUrlApi')+'/api/v1/filter-tags',JSON.stringify({ tag: val}), _config);
+		    const data = await res.data.data.items;
+		    var _items = [];
+	    	data.forEach(function(elem){
+	    		_items.push(elem.tag);
+	    	});
+	    	this.setState({resultFiler: _items});
+
+	    	if(_items.length > 0){
+		    	this.setState({showFilterInput: true});
+		    	this.setState({searchResults : _items});
+		    }else{
+		    	this.setState({showFilterInput: false});
+		    	this.setState({searchResults : []});
+		    }
+		}
 		
 		_handonchangeInputPattern = (event)=>{
 			var _value = event.target.value;
