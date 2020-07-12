@@ -44,92 +44,7 @@ export default class SidebarMenu extends Component {
 		            <h3>bElisa</h3>
 		        </div>
 
-		        <ul className="list-unstyled CTAs">
-		            <p>Options Admin</p>
-
-		            {/*<li className="active">
-		                <a href="#ClientsSubmenu" data-toggle="collapse" aria-expanded="false">Clients</a>
-		                <ul className="collapse list-unstyled" id="ClientsSubmenu">
-		                    <li>
-				            	<a href="/base-words">Smart Actions</a>
-				            </li>
-				            
-		                    <li>
-		                        <a href="#">Home 2</a>
-		                    </li>
-		                    <li>
-		                        <a href="#">Home 3</a>
-		                    </li>
-		                </ul>
-		            </li>*/}
-
-		            <li>
-		            	<a href="/clients">Clients</a>
-		            </li>
-
-		            <li>
-		            	<a href="/clients">Systems</a>
-		            </li>
-
-		            {/*<li className="active">
-		                <a href="#UsersSubmenu" data-toggle="collapse" aria-expanded="false">Users</a>
-		                <ul className="collapse list-unstyled" id="UsersSubmenu">
-		                    <li>
-				            	<a href="/base-words">Smart Actions</a>
-				            </li>
-				            
-		                    <li>
-		                        <a href="#">Home 2</a>
-		                    </li>
-		                    <li>
-		                        <a href="#">Home 3</a>
-		                    </li>
-		                </ul>
-		            </li>
-
-		            <li className="active">
-		                <a href="#ApplicationSubmenu" data-toggle="collapse" aria-expanded="false">Application</a>
-		                <ul className="collapse list-unstyled" id="ApplicationSubmenu">
-		                    <li>
-				            	<a href="/base-words">Smart Actions</a>
-				            </li>
-				            
-		                    <li>
-		                        <a href="#">Home 2</a>
-		                    </li>
-		                    <li>
-		                        <a href="#">Home 3</a>
-		                    </li>
-		                </ul>
-		            </li>*/}
-
-		            {/*<li className="active">
-		                <a href="#SystemsSubmenu" data-toggle="collapse" aria-expanded="false">Systems</a>
-		                <ul className="collapse list-unstyled" id="SystemsSubmenu">
-		                    <li>
-				            	<a href="/base-words">Smart Actions</a>
-				            </li>
-				            
-		                    <li>
-		                        <a href="#">Users</a>
-		                    </li>
-		                    <li>
-		                        <a href="#">Home 3</a>
-		                    </li>
-		                </ul>
-		            </li>*/}
-
-		            {/*
-	                <li>
-	                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" className="download">Download source</a>
-	                </li>
-	                <li>
-	                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" className="article">Back to article</a>
-	                </li>*/}
-	            </ul>
-
 		        <ul className="list-unstyled components">
-		            <p>Options Client</p>
 
 		            <li>
 		            	<a href="/dashboard"><Icon.HouseFill size={15}/> Dashboard</a>
@@ -150,6 +65,16 @@ export default class SidebarMenu extends Component {
 		            <li>
 		            	<a href="/report"><Icon.GraphUp size={20}/> Report</a>
 		            </li>
+
+		            <li>
+		            	<a href="/clients">Clients</a>
+		            </li>
+
+		            {['admin'].includes(localStorage.getItem('scope')) &&
+			            <li>
+			            	<a href="/clients">Systems</a>
+			            </li>
+			        }
 
 		            {/*<li className="active">
 		                <a href="#realTimeSubmenu" data-toggle="collapse" aria-expanded="false">Real Time</a>

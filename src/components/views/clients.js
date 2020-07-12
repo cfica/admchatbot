@@ -164,9 +164,12 @@ export default class Clients extends Component {
 	            <h2>Clients</h2>
 	            <p>You can generate question patterns that can be asked by chat.</p>
 	            <div className="line"></div>
-	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
-		            <Button variant="secondary" onClick={this.handleShowModalClient}>Add Client <Icon.Plus size={25}/></Button>
-				</Jumbotron>
+	            
+	            {['admin'].includes(localStorage.getItem('scope')) &&
+		            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
+			            <Button variant="secondary" onClick={this.handleShowModalClient}>Add Client <Icon.Plus size={25}/></Button>
+					</Jumbotron>
+				}
 
 				{this.state.showModalClient && 
 		        	<ModalClient
@@ -179,9 +182,13 @@ export default class Clients extends Component {
 				  <Row>
 				    <Col sm={2}>
 				      <Nav variant="pills" className="flex-column">
-				        <Nav.Item>
-				          <Nav.Link eventKey="clients">Clients</Nav.Link>
-				        </Nav.Item>
+				        
+				        {['admin'].includes(localStorage.getItem('scope')) &&
+					        <Nav.Item>
+					          <Nav.Link eventKey="clients">Clients</Nav.Link>
+					        </Nav.Item>
+					    }
+
 				        <Nav.Item>
 				          <Nav.Link eventKey="users">Users</Nav.Link>
 				        </Nav.Item>
@@ -192,58 +199,60 @@ export default class Clients extends Component {
 				    </Col>
 				    <Col sm={10}>
 				      <Tab.Content>
-				        <Tab.Pane eventKey="clients">
-				            <section>
-				            {this.state.showModalConfigChatbot && 
-					        	<ModalConfChat
-					        	 hiddenModal = {this.hiddenModalConfigChatbot} 
-					        	 idSelected = {this.state.idClient}
-					        	/>
-					        }
+				        {['admin'].includes(localStorage.getItem('scope')) &&
+					        <Tab.Pane eventKey="clients">
+					            <section>
+					            {this.state.showModalConfigChatbot && 
+						        	<ModalConfChat
+						        	 hiddenModal = {this.hiddenModalConfigChatbot} 
+						        	 idSelected = {this.state.idClient}
+						        	/>
+						        }
 
-					            <Table id="itemTable" striped bordered hover size="sm">
-					              <thead>
-					                <tr>
-					                  <th>Domain</th>
-					                  <th>Name</th>
-					                  <th></th>
-					                </tr>
-					              </thead>
-					              <tbody>
-					                {this.state.items.map((item) => 
-					                  <tr key={item._id.$oid}>
-					                    <td>#{item.domain}</td>
-					                    <td>{item.name}</td>
-					                    <td>
-					                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-											    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
-											    <Dropdown.Item eventKey="2">Users</Dropdown.Item>
-											    <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
-											    <Dropdown.Item eventKey="3">Deactivate</Dropdown.Item>
-										  </DropdownButton>
-					                    </td>
-					                  </tr>
-					                )}
-					              </tbody>
-					            </Table>
+						            <Table id="itemTable" striped bordered hover size="sm">
+						              <thead>
+						                <tr>
+						                  <th>Domain</th>
+						                  <th>Name</th>
+						                  <th></th>
+						                </tr>
+						              </thead>
+						              <tbody>
+						                {this.state.items.map((item) => 
+						                  <tr key={item._id.$oid}>
+						                    <td>#{item.domain}</td>
+						                    <td>{item.name}</td>
+						                    <td>
+						                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
+												    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
+												    <Dropdown.Item eventKey="2">Users</Dropdown.Item>
+												    <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
+												    <Dropdown.Item eventKey="3">Deactivate</Dropdown.Item>
+											  </DropdownButton>
+						                    </td>
+						                  </tr>
+						                )}
+						              </tbody>
+						            </Table>
 
-					            <div id="react-paginate">
-						            <ReactPaginate
-							          previousLabel={'Anterior'}
-							          nextLabel={'Siguiente'}
-							          breakLabel={'...'}
-							          breakClassName={'break-me'}
-							          pageCount={this.state.pageCount}
-							          marginPagesDisplayed={2}
-							          pageRangeDisplayed={5}
-							          onPageChange={this.handlePageClickClients}
-							          containerClassName={'pagination'}
-							          subContainerClassName={'pages pagination'}
-							          activeClassName={'active'}
-							        />
-						        </div>
-					        </section>
-				        </Tab.Pane>
+						            <div id="react-paginate">
+							            <ReactPaginate
+								          previousLabel={'Anterior'}
+								          nextLabel={'Siguiente'}
+								          breakLabel={'...'}
+								          breakClassName={'break-me'}
+								          pageCount={this.state.pageCount}
+								          marginPagesDisplayed={2}
+								          pageRangeDisplayed={5}
+								          onPageChange={this.handlePageClickClients}
+								          containerClassName={'pagination'}
+								          subContainerClassName={'pages pagination'}
+								          activeClassName={'active'}
+								        />
+							        </div>
+						        </section>
+					        </Tab.Pane>
+					    }
 				        
 				        <Tab.Pane eventKey="users">
 				        	<Users/>
