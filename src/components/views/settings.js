@@ -161,7 +161,7 @@ export default class Settings extends Component {
 		    <SidebarMenu/>
 		    <div id="content">
 	            <SidebarAction/>
-	            <h2>Clients</h2>
+	            <h2>Settings</h2>
 	            <p>You can generate question patterns that can be asked by chat.</p>
 	            <div className="line"></div>
 	            

@@ -67,12 +67,12 @@ export default class SidebarMenu extends Component {
 		            </li>
 
 		            <li>
-		            	<a href="/settings">Settings</a>
+		            	<a href="/settings"><Icon.Gear size={20}/> Settings</a>
 		            </li>
 
 		            {['admin'].includes(localStorage.getItem('scope')) &&
 			            <li>
-			            	<a href="/system">Systems</a>
+			            	<a href="/system"><Icon.Gear size={20}/> Systems</a>
 			            </li>
 			        }
 

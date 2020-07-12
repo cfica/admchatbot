@@ -23,6 +23,7 @@ export default class Contact extends Component {
 			    	   localStorage.setItem('tokenAdm', _token);
 			    	   localStorage.setItem('_id', res.data.data._id);
 			    	   localStorage.setItem('scope', res.data.data.scope);
+			    	   localStorage.setItem('client', res.data.data.client);
 			    	   browserHistory.push('/dashboard');
 			    	}else{
 			    		browserHistory.push('/login');
