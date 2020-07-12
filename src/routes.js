@@ -9,7 +9,7 @@ import RealTime from './components/views/real-time';
 import BaseWords from './components/views/base-words';
 import AuthCallback from './components/views/auth-callback';
 import Logout from './components/views/logout';
-import Clients from './components/views/clients';
+import Settings from './components/views/settings';
 import AccessChat from './components/views/access-chat';
 
 export default (
@@ -20,7 +20,7 @@ export default (
     <Route path='widget/logout' component={Logout} />
     <Route path='widget/belisa' component={Chat} />
     <Route path='access-chat' component={AccessChat} />
-    <Route path='clients' component={Clients} />
+    <Route path='settings' component={Settings} />
     <Route path='base-words' component={BaseWords} />
     <Route path='contact' component={Contact} />
     <Route path='dashboard' component={Dashboard} />

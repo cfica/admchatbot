@@ -16,7 +16,7 @@ import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
 
-export default class Clients extends Component {
+export default class Settings extends Component {
 	constructor(props) {
 	    super(props);
 	    if(localStorage.getItem('tokenAdm') == undefined){
