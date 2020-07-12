@@ -21,7 +21,7 @@ export default class Contact extends Component {
 			    	//console.log(res.data.data);
 			    	if(typeof res.data.data.scope != 'undefined'){
 			    	   localStorage.setItem('tokenAdm', _token);
-			    	   localStorage.setItem('_id', res.data.data._id);
+			    	   localStorage.setItem('_id', res.data.data.user_id);
 			    	   localStorage.setItem('scope', res.data.data.scope);
 			    	   localStorage.setItem('client', res.data.data.client);
 			    	   browserHistory.push('/dashboard');

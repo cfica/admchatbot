@@ -24,6 +24,10 @@ export default class Settings extends Component {
 	    }
 
 	    this.state = {
+	      scope: ['admin'].includes(localStorage.getItem('scope')),
+	      token: localStorage.getItem('tokenAdm'),
+	      user_id: localStorage.getItem('_id'),
+	      client: localStorage.getItem('client'),
 	      error: null,
 	      perPage: 50,
 	      items: [],
@@ -32,7 +36,6 @@ export default class Settings extends Component {
 	      showModalClient: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      token: localStorage.getItem('tokenAdm'),
 	      showModalConfigChatbot : false,
 	      idClient: '',
 	      errorSaveForm: '',
@@ -75,6 +78,9 @@ export default class Settings extends Component {
 	componentDidMount(){
 	    this.loadClients();
 	    this.selectedCheckSettingChat = new Set();
+        if(!this.state.scope){
+			this.loadSettingChat(this.state.client);
+		}
 	}
 
 	handleShowModalClient = (event)=>{
@@ -86,7 +92,7 @@ export default class Settings extends Component {
 	};
 
 	handleGenConfigChat(id){
-		console.log(id);
+		//console.log(id);
 		this.setState({showModalConfigChatbot : true});	
 		this.setState({idClient : id});	
 	}
@@ -134,7 +140,10 @@ export default class Settings extends Component {
 	}
 
 	_handleSelectClient = (event) =>{
-		var _value = event.target.value;
+		this.loadSettingChat(event.target.value);
+	}
+
+	loadSettingChat(_value){
 		axios.post(
 			config.get('baseUrlApi')+'/api/v1/chat-settings',
 			JSON.stringify({'client' : _value}), 
@@ -165,7 +174,7 @@ export default class Settings extends Component {
 	            <p>You can generate question patterns that can be asked by chat.</p>
 	            <div className="line"></div>
 	            
-	            {['admin'].includes(localStorage.getItem('scope')) &&
+	            {this.state.scope &&
 		            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
 			            <Button variant="secondary" onClick={this.handleShowModalClient}>Add Client <Icon.Plus size={25}/></Button>
 					</Jumbotron>
@@ -178,12 +187,12 @@ export default class Settings extends Component {
 		        }
 
 		  		<br/>
-		  		<Tab.Container id="left-tabs-example" defaultActiveKey="clients">
+		  		<Tab.Container id="left-tabs-example" defaultActiveKey={this.state.scope ? 'clients' : 'users'}>
 				  <Row>
 				    <Col sm={2}>
 				      <Nav variant="pills" className="flex-column">
 				        
-				        {['admin'].includes(localStorage.getItem('scope')) &&
+				        {this.state.scope &&
 					        <Nav.Item>
 					          <Nav.Link eventKey="clients">Clients</Nav.Link>
 					        </Nav.Item>
@@ -199,7 +208,7 @@ export default class Settings extends Component {
 				    </Col>
 				    <Col sm={10}>
 				      <Tab.Content>
-				        {['admin'].includes(localStorage.getItem('scope')) &&
+				        {this.state.scope &&
 					        <Tab.Pane eventKey="clients">
 					            <section>
 					            {this.state.showModalConfigChatbot && 
@@ -264,19 +273,39 @@ export default class Settings extends Component {
 	            			<hr className="divide"></hr>
 				        	<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitSaveSettingsChat}>
 				        	    <MessageResult status ={this.state.errorSaveForm}/>
-				        	    <Form.Row>
-				        	        <Col xs={4}>
-						        		<Form.Group required controlId="exampleForm.ControlSelect1">
-										    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
-										        <option value="">Select</option>
-											    {this.state.items.map((item) => 
-											      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
-								                )}
-										    </Form.Control>
-										    <Form.Label>Client</Form.Label>
-										  </Form.Group>
-						    		</Col>
-							    </Form.Row>
+				        	    
+				        	    {this.state.scope && 
+					        	    <Form.Row>
+					        	        <Col xs={4}>
+							        		<Form.Group required controlId="exampleForm.ControlSelect1">
+											    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
+											        <option value="">Select</option>
+												    {this.state.items.map((item) => 
+												      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
+									                )}
+											    </Form.Control>
+											    <Form.Label>Client</Form.Label>
+											  </Form.Group>
+							    		</Col>
+								    </Form.Row>
+								}
+
+								{!this.state.scope &&
+									<Form.Row>
+					        	        <Col xs={4}>
+										     <Button variant="primary" onClick={(e) => this.handleGenConfigChat(this.state.client, e)}>Get code HEAD site</Button>
+									         <hr className="divide"></hr>
+									         {this.state.showModalConfigChatbot && 
+										        	<ModalConfChat
+										        	 hiddenModal = {this.hiddenModalConfigChatbot} 
+										        	 idSelected = {this.state.idClient}
+										        	/>
+										     }
+							         	</Col>
+								    </Form.Row>
+							    }
+
+							    
 
 				        	    <Form.Row>
 				        	        <Col xs={4}>
@@ -372,7 +401,6 @@ export default class Settings extends Component {
 							    <Button variant="primary" type="submit">
 								    Save Settings
 								</Button>
-
 				        	</Form>
 				        </Tab.Pane>
 				      </Tab.Content>

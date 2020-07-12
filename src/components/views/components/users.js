@@ -12,9 +12,10 @@ export class FormUser extends Component {
 	constructor(props) {
 	    super(props);
 	    this.state = {
+	    	scope: ['admin'].includes(localStorage.getItem('scope')),
+	    	token: localStorage.getItem('tokenAdm'),
 	    	showModal: true,
 	    	validated: false,
-	    	token: localStorage.getItem('tokenAdm'),
 	    	collect: {},
 	    	fullname: '',
 	    	email: '',
@@ -31,9 +32,12 @@ export class FormUser extends Component {
 	}
 
 	componentDidMount(){
-		this.loadClients();
-		if(this.state.typeUser == 'account'){
-			this.getUser(this.props.idUser, false);
+		if(this.state.scope){
+		 	this.loadClients();
+		}
+		
+		if(this.props.idUser){
+	        this.getUser(this.props.idUser, false);
 		}
 	}
 
@@ -59,7 +63,7 @@ export class FormUser extends Component {
    		    	"fullname" : this.state.fullname,
    		    	"email" : this.state.email,
    		    	"password" : this.state.password,
-   		    	"client" : this.state.client
+   		    	"client" : this.state.scope ? this.state.client : localStorage.getItem('client')
    		    };
    		    var _url = '/api/v1/add-user';
    		    if(this.props.idUser){
@@ -103,7 +107,7 @@ export class FormUser extends Component {
 			        		<Form.Row>
 			        	        <Col xs={12}>
 					        		
-					        		{this.state.typeUser != 'account' &&
+					        		{this.state.typeUser != 'account' && this.state.scope &&
 						        		<Form.Group required controlId="clients">
 										    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
 										        <option value="">Select</option>
@@ -155,9 +159,11 @@ export class Users extends Component {
 	      browserHistory.push('/login');
 	    }
 	    this.state = {
+	      scope: ['admin'].includes(localStorage.getItem('scope')),
+	      token: localStorage.getItem('tokenAdm'),
+	      user_id: localStorage.getItem('_id'),
 	      inputLink: '',
 	      inputDescription:'',
-	      token: localStorage.getItem('tokenAdm'),
 	      validated : false,
 	      imageFile: '',
 	      errorSaveForm: '',
@@ -181,8 +187,9 @@ export class Users extends Component {
 	}
 
 	loadUsers() {
-	    axios.get(config.get('baseUrlApi')+'/api/v1/users?limit='+this.state.perPage+'&offset='+this.state.offset, {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-	    .then(res => {
+		var _url = config.get('baseUrlApi')+'/api/v1/users?limit='+this.state.perPage+'&offset='+this.state.offset;
+		var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
+	    axios.get(_url, _config).then(res => {
 	    	this.setState({items: res.data.data.items,pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),});
 	    }).catch(function (error) {});
 	}
@@ -267,7 +274,10 @@ export class Users extends Component {
 	                    <td>
 	                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
 								    <Dropdown.Item eventKey="1" onClick={(e) => this.editUser(item)}>Edit</Dropdown.Item>
-								    <Dropdown.Item eventKey="2" onClick={(e) => this.deactivateUser(item)}>Deactivate</Dropdown.Item>
+								    {this.state.user_id != item._id.$oid && 
+								    	<Dropdown.Item eventKey="2" onClick={(e) => this.deactivateUser(item)}>Deactivate</Dropdown.Item>
+								    }
+
 							</DropdownButton>
 	                    </td>
 	                 </tr>

@@ -23,6 +23,7 @@ export default class SidebarAction extends Component {
         localStorage.removeItem('tokenAdm');
         localStorage.removeItem('_id');
         localStorage.removeItem('scope');
+        localStorage.removeItem('client');
         browserHistory.push('/login');
     }
 
