@@ -108,7 +108,7 @@ export default class RealTime extends Component {
 	            <Tabs defaultActiveKey="Messages" transition={false} id="noanim-tab-example">
 				  <Tab eventKey="Messages" title="Messages">
 				    		<h2>Real Time Chat</h2>
-				            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				            <p>Last messages</p>
 				            <div className="line"></div>
 				            <section>
 					          <section>
@@ -171,7 +171,7 @@ export default class RealTime extends Component {
 				  </Tab>
 				  <Tab eventKey="access" title="Access Chat">
 				    			<h2>Access Chat</h2>
-					            <p>Lorem ipsum dolor sit am lelit on proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					            <p>Last hits</p>
 					            <div className="line"></div>
 					            <section>
 						          <section>

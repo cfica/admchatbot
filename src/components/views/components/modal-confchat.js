@@ -37,13 +37,15 @@ export default class ModalConfChat extends Component {
 		    .then(res => {
 		    	const client_id = res.data.data.result[0].client_id;
 		    	const token_init = res.data.data.result[0].token_init;
+		    	const settings = res.data.data.settings;
 		    	this.setState({codeInitChat : this.codeInitChat(
 		    		client_id,
 		    		token_init,
 		    		id_client, 
 		    		config.get('staticFrontChat'),
 		    		config.get('baseUrlApp'), 
-		    		'app.min'
+		    		'app.min',
+		    		settings.header_message
 		    	)});
 		    }).catch(function (error) {
 		    	console.log(error);

@@ -116,7 +116,8 @@ export default class Login extends Component {
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
                 'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                'x-dsi-restful' : localStorage.getItem('key_temp')
+                'x-dsi-restful' : localStorage.getItem('key_temp'),
+                'x-dsi2-restful' : localStorage.getItem('client_id')
               }}
           ).then(res => {
               this.setMessage('_res', res.data.data);
@@ -127,6 +128,7 @@ export default class Login extends Component {
                     localStorage.removeItem('messages');
                     localStorage.removeItem('token');
                     localStorage.removeItem('key_temp');
+                    localStorage.removeItem('client_id');
                 }
             }
           }).then(function () {
@@ -162,13 +164,10 @@ export default class Login extends Component {
              /*##*/
              localStorage.setItem('token', res.data.data.token);
              localStorage.setItem('key_temp', res.data.data.key_temp);
+             localStorage.setItem('client_id', client_id);
              
-             //if(localStorage.getItem('confChatInit') == undefined){
-              //this.setMessage('_res', {type: 'Text', response: config.get('chat_welcome_message_start')});
-             //}else{
-                const _init = this.state.confChatInit;
-                this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
-             //}
+             const _init = this.state.confChatInit;
+             this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
         }).catch(function (error) {
               //this.setState({errorSaveForm : true});
         }).then(function () {

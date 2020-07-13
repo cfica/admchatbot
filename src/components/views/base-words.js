@@ -154,9 +154,7 @@ export default class BaseWords extends Component {
 	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
 		            <Button variant="primary" onClick="">Import Patterns</Button>{' '}
 		            
-		            {['admin'].includes(localStorage.getItem('scope')) &&
-		            	<Button variant="primary" onClick={this.handleTrain}>Train</Button>
-		            }
+		            <Button variant="primary" onClick={this.handleTrain}>Train</Button>{' '}
 
 		            <Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
 		            {this.state.showModalAddPattern && 

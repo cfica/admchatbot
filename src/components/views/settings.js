@@ -160,6 +160,7 @@ export default class Settings extends Component {
 	    		this.setState({welcomeMessage: res.data.data.config[0].welcome_message});
 	    		this.setState({headerMessage: res.data.data.config[0].header_message});
 	    		this.setState({checksSelected: res.data.data.config[0].start_conversation});
+	    		this.setState({welcomeMessageInit: res.data.data.config[0].welcome_message_init});
 	    	}
 	    });
 	}
@@ -171,7 +172,7 @@ export default class Settings extends Component {
 		    <div id="content">
 	            <SidebarAction/>
 	            <h2>Settings</h2>
-	            <p>You can generate question patterns that can be asked by chat.</p>
+	            <p>Application settings</p>
 	            <div className="line"></div>
 	            
 	            {this.state.scope &&
@@ -350,7 +351,7 @@ export default class Settings extends Component {
 
 							    <Form.Row>
 				        	        <Col xs={4}>
-				        				<Form.Group controlId="exampleForm.ControlTextarea1">
+				        				<Form.Group controlId="welcomeMessage">
 										    <Form.Control placeholder="Welcome Message" required as="textarea" value={this.state.welcomeMessageInit} 
 										     onChange={this.changeName1 = (event) => {this.setState({welcomeMessageInit: event.target.value})}} rows="3" />
 										    <Form.Label>Welcome Message</Form.Label>
