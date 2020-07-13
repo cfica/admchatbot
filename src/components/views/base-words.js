@@ -38,12 +38,7 @@ export default class BaseWords extends Component {
 	          items: res.data.data.items,
 	          pageCountWords: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    });
 	}
 
 	loadPatterns() {
@@ -54,12 +49,7 @@ export default class BaseWords extends Component {
 	          listPatterns: res.data.data.items,
 	          pageCountPatterns: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    }).catch(function (error) {});
 	}
 
 	loadLogTraining(){
@@ -67,12 +57,7 @@ export default class BaseWords extends Component {
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
 	    	this.setState({logTraining : res.data.data.items});
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    }).catch(function (error) {});
 
 	}
 
@@ -114,12 +99,7 @@ export default class BaseWords extends Component {
 	    .then(res => {
 	    	this.loadPatterns();
 	    	this.loadWords();
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    });
 	    this.setState({showModalConfirm : false});
 	}
 	handleClickDelPattern(_id){
@@ -133,12 +113,7 @@ export default class BaseWords extends Component {
 			{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
 	    	//algo
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    });
 	    this.loadLogTraining();
 	}
 
@@ -178,7 +153,7 @@ export default class BaseWords extends Component {
 					}
 
 				</Jumbotron>
-				<Tabs defaultActiveKey="patterns" id="uncontrolled-tab-example">
+				<Tabs defaultActiveKey="patterns">
 				  <Tab eventKey="patterns" title="Patterns">
 				  			<br/>
 						        <div className="line"></div>
@@ -189,6 +164,7 @@ export default class BaseWords extends Component {
 						              <thead>
 						                <tr>
 						                  <th>ID</th>
+						                  <th>Client</th>
 						                  <th>Tag</th>
 						                  <th>Patterns</th>
 						                  <th>Type Response</th>
@@ -200,6 +176,7 @@ export default class BaseWords extends Component {
 						                {this.state.listPatterns.map((item) => 
 						                  <tr key={item._id.$oid}>
 						                    <td>#{item.code}</td>
+						                    <td></td>
 						                    <td>{item.tag}</td>
 						                    <td>
 						                    	<ol>
@@ -279,6 +256,7 @@ export default class BaseWords extends Component {
 				              <thead>
 				                <tr>
 				                  <th>ID</th>
+				                  <th>Client</th>
 				                  <th>Tag</th>
 				                  <th>Category</th>
 				                  <th>Word</th>
@@ -289,6 +267,7 @@ export default class BaseWords extends Component {
 				                {this.state.items.map((item) => 
 				                  <tr key={item._id.$oid}>
 				                    <td>#{item.code}</td>
+				                    <td></td>
 				                    <td>{item.tag}</td>
 				                    <td>{item.category}</td>
 				                    <td>{item.word}</td>
