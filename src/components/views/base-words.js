@@ -45,6 +45,7 @@ export default class BaseWords extends Component {
 	    axios.get(config.get('baseUrlApi')+'/api/v1/patterns?limit='+this.state.perPage+'&offset='+this.state.offset, 
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
+	    	//console.log(res.data.data.items);
 	    	this.setState({
 	          listPatterns: res.data.data.items,
 	          pageCountPatterns: Math.ceil(res.data.data.total_count / res.data.data.limit),
@@ -176,7 +177,17 @@ export default class BaseWords extends Component {
 						                {this.state.listPatterns.map((item) => 
 						                  <tr key={item._id.$oid}>
 						                    <td>#{item.code}</td>
-						                    <td></td>
+						                    
+						                    
+						                    <td>
+						                    	{item._client.map((item1) => 
+					                    			<span>
+							                    		{item1.domain}
+						                    		</span>
+						                    	)}
+						                    </td>
+							                
+
 						                    <td>{item.tag}</td>
 						                    <td>
 						                    	<ol>
@@ -267,7 +278,13 @@ export default class BaseWords extends Component {
 				                {this.state.items.map((item) => 
 				                  <tr key={item._id.$oid}>
 				                    <td>#{item.code}</td>
-				                    <td></td>
+				                    <td>
+				                    	{item._client.map((item1) => 
+			                    			<span>
+					                    		{item1.domain}
+				                    		</span>
+				                    	)}
+				                    </td>
 				                    <td>{item.tag}</td>
 				                    <td>{item.category}</td>
 				                    <td>{item.word}</td>

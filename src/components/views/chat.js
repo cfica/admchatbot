@@ -264,7 +264,7 @@ export default class Login extends Component {
                 {this.state.showContHello && 
                     <div className="contHello">
                           <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
-                            <div dangerouslySetInnerHTML={{__html: this.state.welcomeMessageInit}}></div>
+                            <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
                             <Form.Group controlId="formName">
                               <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                               <Form.Label >Enter Name</Form.Label>

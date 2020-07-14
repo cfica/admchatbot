@@ -59,7 +59,8 @@ export default class ModalConfChat extends Component {
 			this.props.handleConfirm();
 		}
 
-		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage = 'BELISA, Virtual assistant'){
+		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage){
+			var _headerMessage = headerMessage == null ? 'BELISA, Virtual assistant' : headerMessage;
 			const code = `
 			<script type="text/javascript">
 			     (function(d) {
@@ -69,7 +70,7 @@ export default class ModalConfChat extends Component {
 			        bElisa.fileName = '`+fileName+`';
 			        bElisa.tokenToInit = '`+tokenToInit+`';
 			        bElisa.baseApp = '`+baseUrl+`';
-			        bElisa.headerMessage = '`+headerMessage+`';
+			        bElisa.headerMessage = '`+_headerMessage+`';
 			        var ref = d.getElementsByTagName('script')[0];
 			        var app, appId = 'app-bElisa';
 			        if (d.getElementById(appId)) return;

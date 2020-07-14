@@ -90,6 +90,7 @@ export default class ChatForm extends Component {
 									        <option value="Multi-Choices">Multi Choices</option>
 									        <option value="Single-Option-Choice">Single Option Choice</option>
 									        <option value="TextArea">TextArea</option>
+									        <option value="Schedule">Schedule</option>
 									    </Form.Control>
 									    <Form.Label >Type Input</Form.Label>
 									    <InputGroup.Append>

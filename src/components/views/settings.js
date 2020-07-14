@@ -15,6 +15,7 @@ import MessageResult from './components/message-result';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
+import {Validation, Status} from './components/componentsUtils';
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -49,7 +50,8 @@ export default class Settings extends Component {
 	      settingChat: {
 	      	client_id: '',
 	      	config: ''
-	      }
+	      },
+	      deactivateClient: false
 	    };
 	}
 
@@ -165,6 +167,26 @@ export default class Settings extends Component {
 	    });
 	}
 
+	deactivateClient(_id){
+		this.setState({deactivateClient: true});
+		this.setState({idClient : _id});
+	}
+
+	deactivateClientConfirm = ()=>{
+		axios.post(
+		    	config.get('baseUrlApi')+'/api/v1/deactivate-client', 
+		    	JSON.stringify({_id: this.state.idClient}), 
+		    	{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
+		).then(res => {
+			this.setState({deactivateClient: false});
+			this.loadClients();
+		});
+	}
+
+	deactivateClientClose = () =>{
+		this.setState({deactivateClient: false});
+	}
+
     render() {
       return (
         <div className="wrapper">
@@ -224,6 +246,7 @@ export default class Settings extends Component {
 						                <tr>
 						                  <th>Domain</th>
 						                  <th>Name</th>
+						                  <th>Status</th>
 						                  <th></th>
 						                </tr>
 						              </thead>
@@ -233,17 +256,26 @@ export default class Settings extends Component {
 						                    <td>#{item.domain}</td>
 						                    <td>{item.name}</td>
 						                    <td>
+						                      <Status status={item.status}/>
+						                    </td>
+						                    <td>
 						                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
 												    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
-												    <Dropdown.Item eventKey="2">Users</Dropdown.Item>
-												    <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
-												    <Dropdown.Item eventKey="3">Deactivate</Dropdown.Item>
+												    <Dropdown.Item eventKey="3" onClick={(e) => this.deactivateClient(item._id.$oid, e)}>Deactivate</Dropdown.Item>
 											  </DropdownButton>
 						                    </td>
 						                  </tr>
 						                )}
 						              </tbody>
 						            </Table>
+
+						            {this.state.deactivateClient && 
+								        <ModalToConfirm
+						                   handleConfirm={this.deactivateClientConfirm}
+						                   hiddenModal={this.deactivateClientClose}
+						                   message="Are you sure to deactivate this item?"
+						                />
+						            }
 
 						            <div id="react-paginate">
 							            <ReactPaginate

@@ -21,7 +21,7 @@ export default class RealTime extends Component {
 
 	    this.state = {
 	      error: null,
-	      perPage: 10,
+	      perPage: 50,
 	      items: [],
 	      offset: 0,
 	      showModalToLearn: false,
@@ -37,14 +37,9 @@ export default class RealTime extends Component {
 	    .then(res => {
 	    	this.setState({
 	          items: res.data.data.items,
-	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
+	          pageCountWords: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+	    });
 	}
 
 	loadAccess() {
@@ -55,12 +50,7 @@ export default class RealTime extends Component {
 	          itemsAccess: res.data.data.items,
 	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
-	    }).catch(function (error) {
-	    	/*if(error.response.status == 401){
-	    		delete_cookie('token');
-	    		browserHistory.push('/login');
-	    	}*/
-		});
+	    });
 	}
 
 	handlePageClickAccess = data => {
@@ -127,7 +117,14 @@ export default class RealTime extends Component {
 					              <tbody>
 					                {this.state.items.map((item) => 
 					                  <tr key={item._id.$oid}>
-					                  	<td>www.acyr.cl</td>
+					                  	<td>
+					                    	{item._client.map((item1) => 
+				                    			<span>
+						                    		{item1.client_domain}
+					                    		</span>
+					                    	)}
+					                    </td>
+
 					                  	<td>{item._created}</td>
 					                    <td>
 					                      {/* Here add the onClick for the action "remove it" on the span */}
@@ -156,7 +153,7 @@ export default class RealTime extends Component {
 							          nextLabel={'Siguiente'}
 							          breakLabel={'...'}
 							          breakClassName={'break-me'}
-							          pageCount={this.state.pageCount}
+							          pageCount={this.state.pageCountWords}
 							          marginPagesDisplayed={2}
 							          pageRangeDisplayed={5}
 							          onPageChange={this.handlePageClick}
@@ -178,6 +175,7 @@ export default class RealTime extends Component {
 						            <Table id="itemTable" striped bordered hover size="sm">
 						              <thead>
 						                <tr>
+						                  <th>Client</th>
 						                  <th>Client Id</th>
 						                  <th>Name</th>
 						                  <th>Email</th>
@@ -188,6 +186,7 @@ export default class RealTime extends Component {
 						              <tbody>
 						                {this.state.itemsAccess.map((item) => 
 						                  <tr key={item._id.$oid}>
+						                    <td>{item.client}</td>
 						                  	<td>{item.client_id}</td>
 						                  	<td>{item.name}</td>
 						                  	<td>{item.email}</td>

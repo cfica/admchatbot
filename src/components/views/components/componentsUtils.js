@@ -14,6 +14,8 @@ export class Status extends Component{
        		return (<h5><Badge variant="success">Active</Badge></h5>);
        }else if(this.props.status == 'Inactive'){
        		return (<h5><Badge variant="secondary">Inactive</Badge></h5>);
+       }else{
+       	   return (<h5><Badge variant="secondary">Inactive</Badge></h5>);
        }
 	}
 }
