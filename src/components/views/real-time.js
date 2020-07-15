@@ -5,7 +5,7 @@ import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './components/sidebar-menu';
 import SidebarAction from './components/sidebar-action';
-import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
@@ -20,6 +20,10 @@ export default class RealTime extends Component {
 	    }
 
 	    this.state = {
+    	  scope: ['admin'].includes(localStorage.getItem('scope')),
+          token: localStorage.getItem('tokenAdm'),
+          user_id: localStorage.getItem('_id'),
+          client: localStorage.getItem('client'),
 	      error: null,
 	      perPage: 50,
 	      items: [],
@@ -27,7 +31,6 @@ export default class RealTime extends Component {
 	      showModalToLearn: false,
 	      itemsAccess: [],
 	      patternSelected: [],
-	      token: localStorage.getItem('tokenAdm')
 	    };
 	}
 
@@ -105,7 +108,9 @@ export default class RealTime extends Component {
 					            <Table id="itemTable" striped bordered hover size="sm">
 					              <thead>
 					                <tr>
-					                  <th>Client</th>
+					                  {this.state.scope &&
+					                  	<th>Client</th>
+					                  }
 					                  <th>Created</th>
 					                  <th>Action on Input</th>
 					                  <th>Input</th>
@@ -117,20 +122,22 @@ export default class RealTime extends Component {
 					              <tbody>
 					                {this.state.items.map((item) => 
 					                  <tr key={item._id.$oid}>
-					                  	<td>
-					                    	{item._client.map((item1) => 
-				                    			<span>
-						                    		{item1.client_domain}
-					                    		</span>
-					                    	)}
-					                    </td>
+					                  	{this.state.scope &&
+						                  	<td>
+						                    	{item._client.map((item1) => 
+					                    			<span>
+							                    		{item1.client_domain}
+						                    		</span>
+						                    	)}
+						                    </td>
+						                }
 
 					                  	<td>{item._created}</td>
 					                    <td>
-					                      {/* Here add the onClick for the action "remove it" on the span */}
-					                      <a href="#" onClick={(e) => this.handleClickToLearn([item._id.$oid, item._input.message], e)}><span>To Learn</span></a> 
-					                      {' '}/{' '} 
-					                      <a href="#" onClick={(e) => this.handleClickToBlock([item._id.$oid, item._input.message], e)}><span>To Block</span></a>
+					                      <DropdownButton size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+										    <Dropdown.Item eventKey="1" onClick={(e) => this.handleClickToLearn([item._id.$oid, item._input.message], e)}>To Learn</Dropdown.Item>
+										    <Dropdown.Item eventKey="2" onClick={(e) => this.handleClickToBlock([item._id.$oid, item._input.message], e)}>To Lock</Dropdown.Item>
+										  </DropdownButton>
 					                    </td>
 					                    <td>{item._input.message}</td>
 					                    {item.type == 'Text' && 
@@ -175,8 +182,9 @@ export default class RealTime extends Component {
 						            <Table id="itemTable" striped bordered hover size="sm">
 						              <thead>
 						                <tr>
-						                  <th>Client</th>
-						                  <th>Client Id</th>
+						                  {this.state.scope &&
+						                  	<th>Client</th>
+						                  }
 						                  <th>Name</th>
 						                  <th>Email</th>
 						                  <th>Telephone</th>
@@ -186,8 +194,16 @@ export default class RealTime extends Component {
 						              <tbody>
 						                {this.state.itemsAccess.map((item) => 
 						                  <tr key={item._id.$oid}>
-						                    <td>{item.client}</td>
-						                  	<td>{item.client_id}</td>
+						                    {this.state.scope &&
+							                    <td>
+							                    	{item._client.map((item1) => 
+						                    			<span>
+								                    		{item1.client_domain}
+							                    		</span>
+							                    	)}
+							                    </td>
+							                }
+
 						                  	<td>{item.name}</td>
 						                  	<td>{item.email}</td>
 						                  	<td>{item.telephone}</td>

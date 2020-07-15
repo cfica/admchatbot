@@ -17,6 +17,10 @@ export default class BaseWords extends Component {
 	    }
 
 	    this.state = {
+	      scope: ['admin'].includes(localStorage.getItem('scope')),
+          token: localStorage.getItem('tokenAdm'),
+          user_id: localStorage.getItem('_id'),
+          client: localStorage.getItem('client'),
 	      error: null,
 	      perPage: 50,
 	      items: [],
@@ -26,7 +30,6 @@ export default class BaseWords extends Component {
 	      showModalConfirm: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      token: localStorage.getItem('tokenAdm')
 	    };
 	}
 
@@ -165,7 +168,9 @@ export default class BaseWords extends Component {
 						              <thead>
 						                <tr>
 						                  <th>ID</th>
-						                  <th>Client</th>
+						                  {this.state.scope &&
+						                  	<th>Client</th>
+						                  }
 						                  <th>Tag</th>
 						                  <th>Patterns</th>
 						                  <th>Type Response</th>
@@ -178,15 +183,15 @@ export default class BaseWords extends Component {
 						                  <tr key={item._id.$oid}>
 						                    <td>#{item.code}</td>
 						                    
-						                    
-						                    <td>
-						                    	{item._client.map((item1) => 
-					                    			<span>
-							                    		{item1.domain}
-						                    		</span>
-						                    	)}
-						                    </td>
-							                
+						                    {this.state.scope &&
+							                    <td>
+							                    	{item._client.map((item1) => 
+						                    			<span>
+								                    		{item1.domain}
+							                    		</span>
+							                    	)}
+							                    </td>
+							                }
 
 						                    <td>{item.tag}</td>
 						                    <td>
@@ -267,7 +272,9 @@ export default class BaseWords extends Component {
 				              <thead>
 				                <tr>
 				                  <th>ID</th>
-				                  <th>Client</th>
+				                  {this.state.scope &&
+				                  	<th>Client</th>
+				                  }
 				                  <th>Tag</th>
 				                  <th>Category</th>
 				                  <th>Word</th>
@@ -278,13 +285,15 @@ export default class BaseWords extends Component {
 				                {this.state.items.map((item) => 
 				                  <tr key={item._id.$oid}>
 				                    <td>#{item.code}</td>
-				                    <td>
-				                    	{item._client.map((item1) => 
-			                    			<span>
-					                    		{item1.domain}
-				                    		</span>
-				                    	)}
-				                    </td>
+				                    {this.state.scope &&
+					                    <td>
+					                    	{item._client.map((item1) => 
+				                    			<span>
+						                    		{item1.domain}
+					                    		</span>
+					                    	)}
+					                    </td>
+					                }
 				                    <td>{item.tag}</td>
 				                    <td>{item.category}</td>
 				                    <td>{item.word}</td>
