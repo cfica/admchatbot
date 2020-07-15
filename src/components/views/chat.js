@@ -22,6 +22,7 @@ export default class Login extends Component {
       client_id : '',
       showContChat: false,
       showContHello: true,
+      errorInit: false,
       inputName: '',
       inputEmail: '',
       inputTelephone: '',
@@ -65,19 +66,6 @@ export default class Login extends Component {
       return null;
   }
 
-  /*async getSettings(client_id, init){
-    var self = this;
-    function setData(response) {
-        self.setState({
-            confChatInit: response,
-        });
-    }
-    const result = await axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
-    .then(res => {
-      setData(res.data.data.config[0]);
-    });
-  }*/
-
   getSettings(client_id, init){
     var self = this;
     function setData(response) {
@@ -85,9 +73,16 @@ export default class Login extends Component {
             confChatInit: response,
         });
     }
-    const result = axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),{headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
+    const result = axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),
+      {headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
     .then(res => {
       setData(res.data.data.config[0]);
+    }).catch(error => {
+       if(error.response){
+          if(error.response.status == 401){
+            this.setState({errorInit: true});
+          }
+       }
     });
   }
 
@@ -151,25 +146,28 @@ export default class Login extends Component {
       }else{
         this.setState({validated : false});
         const client_id = this.props.location.query.i;
+        const init = this.props.location.query.init;
         var url = (window.location != window.parent.location)
                 ? document.referrer
                 : document.location.href;
         axios.post(
           config.get('baseUrlApi')+'/api/v1/auth',
           JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
-          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + client_id,'x-dsi-time' : 1800}}
+          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'x-dsi-restful-i' :  client_id,'x-dsi-restful-init' : init,'x-dsi-time' : 1800}}
         ).then(res => {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
-             /*##*/
              localStorage.setItem('token', res.data.data.token);
              localStorage.setItem('key_temp', res.data.data.key_temp);
              localStorage.setItem('client_id', client_id);
-             
              const _init = this.state.confChatInit;
              this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
-        }).catch(function (error) {
-              //this.setState({errorSaveForm : true});
+        }).catch(error => {
+            if(error.response){
+              if(error.response.status == 401){
+                this.setState({errorInit: true});
+              }
+            }
         }).then(function () {
               // always executed
         });
@@ -257,139 +255,148 @@ export default class Login extends Component {
     //add recaptcha..
     //if(this._vldParamasGet() == false){
     if(true == false){
-      return ('');
-    }else{
+      return (
+          <div style={{margin: "10px"}} role="alert" class="fade alert alert-danger show">
+               Oops, something is wrong. Please contact the administrator.
+          </div>
+      );
+    }else if(this.state.errorInit == false){
         return (
-            <div id="chat" >
-                {this.state.showContHello && 
-                    <div className="contHello">
-                          <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
-                            <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
-                            <Form.Group controlId="formName">
-                              <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
-                              <Form.Label >Enter Name</Form.Label>
-                            </Form.Group>
-                            {this.state.confChatInit.start_conversation.map((item, index) => {
-                                if(item == 'Email'){
-                                  return (<Form.Group key={index} controlId="formEmail">
-                                            <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
-                                            <Form.Label >Enter Email</Form.Label>
-                                          </Form.Group>);
-                                }else if(item == 'Telephone'){
-                                  return (<Form.Group key={index} controlId="formTelephone">
-                                            <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
-                                            <Form.Label >Enter Telephone</Form.Label>
-                                          </Form.Group>);
-                                }
-                            })}
+              <div id="chat" >
+                      {this.state.showContHello && 
+                          <div className="contHello">
+                                <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
+                                  <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
+                                  <Form.Group controlId="formName">
+                                    <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
+                                    <Form.Label >Enter Name</Form.Label>
+                                  </Form.Group>
+                                  {this.state.confChatInit.start_conversation.map((item, index) => {
+                                      if(item == 'Email'){
+                                        return (<Form.Group key={index} controlId="formEmail">
+                                                  <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
+                                                  <Form.Label >Enter Email</Form.Label>
+                                                </Form.Group>);
+                                      }else if(item == 'Telephone'){
+                                        return (<Form.Group key={index} controlId="formTelephone">
+                                                  <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
+                                                  <Form.Label >Enter Telephone</Form.Label>
+                                                </Form.Group>);
+                                      }
+                                  })}
 
-                            <div className="contentBtn">
-                              <Button variant="outline-primary" type="submit">
-                                Start Conversation
-                              </Button>
-                            </div>
-                          </Form>
-                    </div>
-                }
-                
-
-                  {this.state.showContChat && 
-                        <div className="contChat">
-                              <div className="contentResponse">
-                                {this.state.listMessages.map((item, index) => {
-                                  if(item.type == '_req'){
-                                    return (
-                                      <div key={index} className="contentMessageClient">
-                                          <div>
-                                             <div className="contentUser"><h5>You</h5></div>
-                                             <div className="contentMsg">
-                                                  <span>{item.msg}</span>
-                                             </div>
-                                          </div>
-                                      </div>
-                                    );
-                                  }else if(item.type == '_res'){
-                                    if(item.type_resp == 'Text'){
-                                        return (
-                                            <div key={index} className="contentMessageChat">
-                                                   <div>
-                                                       <div className="contentUser"><h5>Belisa</h5></div>
-                                                       <div className="contentMsg">
-                                                       <span>{item.msg}</span>
-                                                       </div>
-                                                   </div>
-                                            </div>
-                                        );
-                                    }else if(item.type_resp == 'Html'){
-                                        return (
-                                            <div key={index} className="contentMessageChat">
-                                                   <div>
-                                                       <div className="contentUser"><h5>Belisa</h5></div>
-                                                       <div className="contentMsg" dangerouslySetInnerHTML={{__html: item.msg}}></div>
-                                                   </div>
-                                            </div>
-                                        );
-                                    }else if(item.type_resp == 'Form'){
-                                        return (
-                                            <div key={index} className="contentMessageChat">
-                                                   <div key={"i"+index}>
-                                                       <div className="contentUser"><h5>Belisa</h5></div>
-                                                       <div className="contentMsg">
-                                                            <ResponseForm
-                                                                setMessage = {this.setMessage}
-                                                                statusValidation = {this.statusValidation}
-                                                                index = {index}
-                                                                messageData = {item.msg}
-                                                                inputChange = {this.inputChange}
-                                                                inputChangeOptions = {this.inputChangeOptions}
-                                                            />
-                                                       </div>
-                                                   </div>
-                                                   {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
-                                            </div>
-                                        );
-                                    }else if(item.type_resp == 'Slide'){
-                                        return (
-                                            <div key={index} className="contentMessageChat">
-                                                   <div key={"i"+index}>
-                                                       <div className="contentUser"><h5>Belisa</h5></div>
-                                                       <div className="contentMsg">
-                                                            <span>{item.msg.textResponse}</span>
-                                                            <GetSlide
-                                                                index = {index}
-                                                                messageData = {item.msg}
-                                                            />
-                                                       </div>
-                                                   </div>
-                                                   {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
-                                            </div>
-                                        );
-                                    }
-                                  }
-                                })}
-                              </div>
-                              
-                              <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
-                                  <div className="contentSend">
-                                    <Form.Group  controlId="sendMessage">
-                                      <InputGroup>
-                                          <FormControl required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
-                                            aria-label="Add Message"
-                                            aria-describedby="basic-addon2"
-                                          />
-                                          <Form.Label >Message</Form.Label>
-
-                                          <InputGroup.Append className="btnSend">
-                                            <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
-                                          </InputGroup.Append>
-                                      </InputGroup>
-                                    </Form.Group>
+                                  <div className="contentBtn">
+                                    <Button variant="outline-primary" type="submit">
+                                      Start Conversation
+                                    </Button>
                                   </div>
-                              </Form>
-                        </div>
-                  }
-            </div>
-          );
+                                </Form>
+                          </div>
+                      }
+                      
+                      {this.state.showContChat && 
+                              <div className="contChat">
+                                    <div className="contentResponse">
+                                      {this.state.listMessages.map((item, index) => {
+                                        if(item.type == '_req'){
+                                          return (
+                                            <div key={index} className="contentMessageClient">
+                                                <div>
+                                                   <div className="contentUser"><h5>You</h5></div>
+                                                   <div className="contentMsg">
+                                                        <span>{item.msg}</span>
+                                                   </div>
+                                                </div>
+                                            </div>
+                                          );
+                                        }else if(item.type == '_res'){
+                                          if(item.type_resp == 'Text'){
+                                              return (
+                                                  <div key={index} className="contentMessageChat">
+                                                         <div>
+                                                             <div className="contentUser"><h5>Belisa</h5></div>
+                                                             <div className="contentMsg">
+                                                             <span>{item.msg}</span>
+                                                             </div>
+                                                         </div>
+                                                  </div>
+                                              );
+                                          }else if(item.type_resp == 'Html'){
+                                              return (
+                                                  <div key={index} className="contentMessageChat">
+                                                         <div>
+                                                             <div className="contentUser"><h5>Belisa</h5></div>
+                                                             <div className="contentMsg" dangerouslySetInnerHTML={{__html: item.msg}}></div>
+                                                         </div>
+                                                  </div>
+                                              );
+                                          }else if(item.type_resp == 'Form'){
+                                              return (
+                                                  <div key={index} className="contentMessageChat">
+                                                         <div key={"i"+index}>
+                                                             <div className="contentUser"><h5>Belisa</h5></div>
+                                                             <div className="contentMsg">
+                                                                  <ResponseForm
+                                                                      setMessage = {this.setMessage}
+                                                                      statusValidation = {this.statusValidation}
+                                                                      index = {index}
+                                                                      messageData = {item.msg}
+                                                                      inputChange = {this.inputChange}
+                                                                      inputChangeOptions = {this.inputChangeOptions}
+                                                                  />
+                                                             </div>
+                                                         </div>
+                                                         {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
+                                                  </div>
+                                              );
+                                          }else if(item.type_resp == 'Slide'){
+                                              return (
+                                                  <div key={index} className="contentMessageChat">
+                                                         <div key={"i"+index}>
+                                                             <div className="contentUser"><h5>Belisa</h5></div>
+                                                             <div className="contentMsg">
+                                                                  <span>{item.msg.textResponse}</span>
+                                                                  <GetSlide
+                                                                      index = {index}
+                                                                      messageData = {item.msg}
+                                                                  />
+                                                             </div>
+                                                         </div>
+                                                         {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
+                                                  </div>
+                                              );
+                                          }
+                                        }
+                                      })}
+                                    </div>
+                                    
+                                    <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
+                                        <div className="contentSend">
+                                          <Form.Group  controlId="sendMessage">
+                                            <InputGroup>
+                                                <FormControl required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
+                                                  aria-label="Add Message"
+                                                  aria-describedby="basic-addon2"
+                                                />
+                                                <Form.Label >Message</Form.Label>
+
+                                                <InputGroup.Append className="btnSend">
+                                                  <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
+                                                </InputGroup.Append>
+                                            </InputGroup>
+                                          </Form.Group>
+                                        </div>
+                                    </Form>
+                              </div>
+                      }
+              </div>
+        );
+    }else{
+      return (
+        <div style={{margin: "10px"}} role="alert" class="fade alert alert-danger show">
+             Oops, something is wrong. Please contact the administrator.
+        </div>
+      );
     }
   }
 }
