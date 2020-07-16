@@ -17,9 +17,6 @@ export default class Login extends Component {
       errorSaveForm: '',
       inputMessage: '',
       listMessages: [],
-      token : '',
-      key_temp : '',
-      client_id : '',
       showContChat: false,
       showContHello: true,
       errorInit: false,
@@ -133,7 +130,7 @@ export default class Login extends Component {
           }).then(function () {
                 // always executed
           });
-
+          
           if(localStorage.getItem('token') == undefined){
             this.setState({showContHello : true});
             this.setState({showContChat : false});
