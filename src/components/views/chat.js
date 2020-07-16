@@ -54,9 +54,10 @@ export default class Login extends Component {
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
 
   initSettings = () =>{
-      if(true == false){
+      if(this._vldParamasGet() == false){
+      //if(true == false){
       }else{
-        console.log(localStorage.getItem('token'));
+        //console.log(localStorage.getItem('token'));
         if(localStorage.getItem('token') != undefined && localStorage.getItem('messages') != undefined){
           this.setState({showContHello : false});
           this.setState({showContChat : true});
@@ -74,7 +75,11 @@ export default class Login extends Component {
         });
     }
     const result = axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),
-      {headers: {'Content-Type': 'application/json;charset=UTF-8','x-dsi-restful-i' : client_id,'x-dsi-restful-init' : init}})
+      {headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+        'x-dsi-restful-i' : client_id,
+        'x-dsi-restful-init' : init
+      }})
     .then(res => {
       setData(res.data.data.config[0]);
     }).catch(error => {
@@ -152,7 +157,11 @@ export default class Login extends Component {
         axios.post(
           config.get('baseUrlApi')+'/api/v1/auth',
           JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
-          {headers: {'Content-Type': 'application/json;charset=UTF-8', 'x-dsi-restful-i' :  client_id,'x-dsi-restful-init' : init,'x-dsi-time' : 1800}}
+          {headers: {
+            'Content-Type': 'application/json;charset=UTF-8', 
+            'x-dsi-restful-i' :  client_id,
+            'x-dsi-restful-init' : init,'x-dsi-time' : 1800
+          }}
         ).then(res => {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
@@ -252,8 +261,8 @@ export default class Login extends Component {
 
   render() {
     //add recaptcha..
-    //if(this._vldParamasGet() == false){
-    if(true == false){
+    if(this._vldParamasGet() == false){
+    //if(true == false){
       return (
           <div style={{margin: "10px", width: "auto"}} role="alert" className="fade alert alert-danger show">
                Oops, something is wrong. Please contact the administrator.
