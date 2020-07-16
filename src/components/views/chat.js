@@ -8,6 +8,7 @@ import './../css/belisa.css';
 import Utils from './utils';
 import {GetSlide} from './components/slide';
 import {InputsTypeForm,ResponseForm,Validation} from './components/componentsUtils';
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default class Login extends Component {
   constructor(props){
@@ -30,8 +31,13 @@ export default class Login extends Component {
         welcome_message: 'Hello, My name is BELISA and I am a virutal assistant. How I can help?',
         header_message: 'BELISA, Virtual assistant',
         start_conversation: []
-      }
+      },
+      recaptchaRef: React.createRef()
     };
+  }
+
+  onChangeRecaptchaLogin(value){
+    console.log('recaptcha: '+value);
   }
 
   componentDidMount(){
@@ -130,7 +136,7 @@ export default class Login extends Component {
           }).then(function () {
                 // always executed
           });
-          
+
           if(localStorage.getItem('token') == undefined){
             this.setState({showContHello : true});
             this.setState({showContChat : false});
@@ -140,11 +146,14 @@ export default class Login extends Component {
 
   _handleStarChat = (event) =>{
       event.preventDefault();
+      this.state.recaptchaRef.current.execute();
       const form = event.currentTarget;
-      if (form.checkValidity() === false) {
+      const recaptchaValue = this.state.recaptchaRef.current.getValue();
+      if (form.checkValidity() === false || recaptchaValue.length == 0) {
           event.stopPropagation();
           this.setState({validated : true});
       }else{
+        //console.log(recaptchaValue);
         this.setState({validated : false});
         const client_id = this.props.location.query.i;
         const init = this.props.location.query.init;
@@ -270,32 +279,41 @@ export default class Login extends Component {
               <div id="chat" >
                       {this.state.showContHello && 
                           <div className="contHello">
-                                <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
-                                  <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
-                                  <Form.Group controlId="formName">
-                                    <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
-                                    <Form.Label >Enter Name</Form.Label>
-                                  </Form.Group>
-                                  {this.state.confChatInit.start_conversation.map((item, index) => {
-                                      if(item == 'Email'){
-                                        return (<Form.Group key={index} controlId="formEmail">
-                                                  <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
-                                                  <Form.Label >Enter Email</Form.Label>
-                                                </Form.Group>);
-                                      }else if(item == 'Telephone'){
-                                        return (<Form.Group key={index} controlId="formTelephone">
-                                                  <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
-                                                  <Form.Label >Enter Telephone</Form.Label>
-                                                </Form.Group>);
-                                      }
-                                  })}
+                                  <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
+                                    <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
+                                    <Form.Group controlId="formName">
+                                      <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
+                                      <Form.Label >Enter Name</Form.Label>
+                                    </Form.Group>
+                                    {this.state.confChatInit.start_conversation.map((item, index) => {
+                                        if(item == 'Email'){
+                                          return (<Form.Group key={index} controlId="formEmail">
+                                                    <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
+                                                    <Form.Label >Enter Email</Form.Label>
+                                                  </Form.Group>);
+                                        }else if(item == 'Telephone'){
+                                          return (<Form.Group key={index} controlId="formTelephone">
+                                                    <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
+                                                    <Form.Label >Enter Telephone</Form.Label>
+                                                  </Form.Group>);
+                                        }
+                                    })}
 
-                                  <div className="contentBtn">
-                                    <Button variant="outline-primary" type="submit">
-                                      Start Conversation
-                                    </Button>
-                                  </div>
-                                </Form>
+                                    <ReCAPTCHA
+                                      size="invisible"
+                                      ref={this.state.recaptchaRef}
+                                      sitekey="6Lef87EZAAAAAFydGK3frj6cN9f3-swocdFoCgHP"
+                                      onChange={this.onChangeRecaptchaLogin}
+                                    />
+
+                                    <div className="contentBtn">
+                                      <Button variant="outline-primary" type="submit">
+                                        Start Conversation
+                                      </Button>
+                                    </div>
+                                  </Form>
+
+                                <p className="termsRecaptcha">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</p>
                           </div>
                       }
                       
