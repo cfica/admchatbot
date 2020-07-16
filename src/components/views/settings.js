@@ -51,6 +51,7 @@ export default class Settings extends Component {
 	      	client_id: '',
 	      	config: ''
 	      },
+	      statusClient: {},
 	      deactivateClient: false
 	    };
 	}
@@ -167,15 +168,15 @@ export default class Settings extends Component {
 	    });
 	}
 
-	deactivateClient(_id){
+	changeStatusClient(id, status,event){
 		this.setState({deactivateClient: true});
-		this.setState({idClient : _id});
+		this.setState({statusClient : {_id: id, _status: status}});
 	}
 
-	deactivateClientConfirm = ()=>{
+	changeStatusClientConfirm = ()=>{
 		axios.post(
-		    	config.get('baseUrlApi')+'/api/v1/deactivate-client', 
-		    	JSON.stringify({_id: this.state.idClient}), 
+		    	config.get('baseUrlApi')+'/api/v1/status-client', 
+		    	JSON.stringify(this.state.statusClient), 
 		    	{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
 		).then(res => {
 			this.setState({deactivateClient: false});
@@ -261,7 +262,14 @@ export default class Settings extends Component {
 						                    <td>
 						                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
 												    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
-												    <Dropdown.Item eventKey="3" onClick={(e) => this.deactivateClient(item._id.$oid, e)}>Deactivate</Dropdown.Item>
+												    {item.status == 'Active' &&
+												      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Inactive', e)}>Deactivate</Dropdown.Item>
+												    }
+
+												    {item.status == 'Inactive' &&
+												      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Active', e)}>Activate</Dropdown.Item>
+												    }
+											  
 											  </DropdownButton>
 						                    </td>
 						                  </tr>
@@ -271,9 +279,9 @@ export default class Settings extends Component {
 
 						            {this.state.deactivateClient && 
 								        <ModalToConfirm
-						                   handleConfirm={this.deactivateClientConfirm}
+						                   handleConfirm={this.changeStatusClientConfirm}
 						                   hiddenModal={this.deactivateClientClose}
-						                   message="Are you sure to deactivate this item?"
+						                   message="Are you sure you want to do this?"
 						                />
 						            }
 

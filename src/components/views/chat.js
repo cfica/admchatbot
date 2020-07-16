@@ -104,7 +104,6 @@ export default class Login extends Component {
         }else{
           this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
           this.setState({inputMessage : ''});
-          //
           this.setState({validated : false});
           var _dataPost = {"message" : this.state.inputMessage};
           axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
@@ -256,7 +255,7 @@ export default class Login extends Component {
     //if(this._vldParamasGet() == false){
     if(true == false){
       return (
-          <div style={{margin: "10px"}} role="alert" class="fade alert alert-danger show">
+          <div style={{margin: "10px", width: "auto"}} role="alert" className="fade alert alert-danger show">
                Oops, something is wrong. Please contact the administrator.
           </div>
       );
@@ -393,7 +392,7 @@ export default class Login extends Component {
         );
     }else{
       return (
-        <div style={{margin: "10px"}} role="alert" class="fade alert alert-danger show">
+        <div style={{margin: "10px", width: "auto"}} role="alert" className="fade alert alert-danger show">
              Oops, something is wrong. Please contact the administrator.
         </div>
       );

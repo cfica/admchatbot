@@ -300,7 +300,7 @@ export default class ModalToLearn extends Component {
 												                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
 
 												                    <ul className="listItemsSelected">
-																        {this.state.listPatternsAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
+																        {this.state.listPatternsAdd.map((li, i) => <li key={i}><h4><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></h4></li>)}
 												                    </ul>
 
 												                    <Form.Text className="text-muted">
@@ -359,7 +359,8 @@ export default class ModalToLearn extends Component {
 															                    		{this.state.valueResponseTextHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
 
 																	                    <ul className="listItemsSelected">
-																					        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></li>)}
+																					        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><h4><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></h4></li>)}
+
 																	                    </ul>
 																                </Form.Group>
 																			</div>

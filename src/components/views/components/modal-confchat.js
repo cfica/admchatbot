@@ -62,28 +62,27 @@ export default class ModalConfChat extends Component {
 		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage){
 			var _headerMessage = headerMessage == null ? 'BELISA, Virtual assistant' : headerMessage;
 			const code = `
-			<script type="text/javascript">
-			     (function(d) {
-			        window.bElisa = {};
-			        bElisa.client_id = '`+client_id+`';
-			        bElisa.baseStatic = '`+staticFrontChat+'/'+id_client+`';
-			        bElisa.fileName = '`+fileName+`';
-			        bElisa.tokenToInit = '`+tokenToInit+`';
-			        bElisa.baseApp = '`+baseUrl+`';
-			        bElisa.headerMessage = '`+_headerMessage+`';
-			        var ref = d.getElementsByTagName('script')[0];
-			        var app, appId = 'app-bElisa';
-			        if (d.getElementById(appId)) return;
-			        app = d.createElement('script');
-			        app.id = appId;
-			        app.async = true;
-			        app.charset='UTF-8';
-			        //app.setAttribute('crossorigin','*');
-			        app.src = bElisa.baseStatic+"/"+bElisa.fileName+".js";
-			        ref.parentNode.insertBefore(app, ref);
-			     }(document));
-			</script>
-			`;
+<script type="text/javascript">
+     (function(d) {
+        window.bElisa = {};
+        bElisa.client_id = '`+client_id+`';
+        bElisa.baseStatic = '`+staticFrontChat+'/'+id_client+`';
+        bElisa.fileName = '`+fileName+`';
+        bElisa.tokenToInit = '`+tokenToInit+`';
+        bElisa.baseApp = '`+baseUrl+`';
+        bElisa.headerMessage = '`+_headerMessage+`';
+        var ref = d.getElementsByTagName('script')[0];
+        var app, appId = 'app-bElisa';
+        if (d.getElementById(appId)) return;
+        app = d.createElement('script');
+        app.id = appId;
+        app.async = true;
+        app.charset='UTF-8';
+        //app.setAttribute('crossorigin','*');
+        app.src = bElisa.baseStatic+"/"+bElisa.fileName+".js";
+        ref.parentNode.insertBefore(app, ref);
+     }(document));
+</script>`;
 			return code;
 		}
 
