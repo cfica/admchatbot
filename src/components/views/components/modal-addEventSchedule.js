@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import {Modal,Button,Table,Badge,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import {BlockHours} from './componentsUtils';
+import * as moment from 'moment';
 
 export default class ModalAddEventSchedule extends Component {
   		constructor(props) {
@@ -11,17 +12,42 @@ export default class ModalAddEventSchedule extends Component {
 		      nameEvent: '',
 		      hourFrom: '',
 	    	  hourTo: '',
+	    	  validated: false,
+	    	  daySelected: ''
 		    };
 		}
 
 		handleClose = () => {
 			this.setState({showModal: false});
-			//this.props.hiddenModal();
+			this.props.hiddenModal();
 		}
 
-		handleConfirm = () => {
-			this.setState({showModal: false});
-			//this.props.handleConfirm();
+		componentDidMount(){
+			var _start = this.props.dayStart;
+			//console.log(_start);
+			var start = moment(_start).format('DD/MM/YYYY');
+			this.setState({daySelected: start})
+		}
+
+		handleSubmitFormAddPattern = (event)=>{
+			event.preventDefault();
+			const form = event.currentTarget;
+			if (form.checkValidity() === false) {
+				event.stopPropagation();
+				this.setState({validated : true});
+			}else{
+				this.setState({validated : false});
+				this.setState({showModal: false});
+				this.props.handleConfirm({
+					nameEvent: this.state.nameEvent,
+					repeatEvent: this.state.repeatEvent,
+					hourFrom: this.state.hourFrom,
+					hourTo: this.state.hourTo,
+					daySelected: this.state.daySelected
+				});
+				event.stopPropagation();
+			}
+
 		}
 
 		changeRepeatEvent = (event) =>{
@@ -40,6 +66,7 @@ export default class ModalAddEventSchedule extends Component {
 				return (
 				  	<div className="modal-confirm">
 				  			<Modal show={this.state.showModal} onHide={this.handleClose}>
+				  			  <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitFormAddPattern}>
 						        <Modal.Header closeButton>
 						          <Modal.Title>Add Event</Modal.Title>
 						        </Modal.Header>
@@ -98,10 +125,12 @@ export default class ModalAddEventSchedule extends Component {
 						          <Button variant="secondary" onClick={this.handleClose}>
 						            Close
 						          </Button>
-						          <Button variant="primary" onClick={this.handleConfirm}>
+
+						          <Button variant="primary" type="submit">
 						            Confirm
 						          </Button>
 						        </Modal.Footer>
+						      </Form>
 						    </Modal>
 				  	</div>
 				);

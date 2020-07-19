@@ -97,11 +97,14 @@ export class CalendarSchedule extends Component{
 	    	localizer: momentLocalizer(moment),
 	    	confirmDelEvent: false,
 	    	eventId: '',
-	    	modalAddEvent: false
+	    	modalAddEvent: false,
+	    	events: [],
+	    	dayStart: '',
+	    	dayEnd: ''
 	    };
 	}
 
-	onChange = date => {
+	/*onChange = date => {
 		//this.setState({ dateSelected: moment(date).format('L')});
 		//console.log(this.state.date);
 	}
@@ -109,50 +112,152 @@ export class CalendarSchedule extends Component{
 	onClickDay = (value, event)=>{
 		const _date = moment(value).format('DD/MM/YYYY');
 		this.props.onClick(_date);
-	}
+	}*/
 
 	onClickDay2 = (value)=>{
 		//const _date = moment(value).format('DD/MM/YYYY');
 		//this.props.onClick(_date);
 		//console.log(value);
 		const _date = moment(value).format('DD/MM/YYYY');
-		this.props.onClick(_date);
+		//this.props.onClick(_date);
 	}
 
-	renderDataToDays = ({ date, view }) => {
-		this.props.events.map((x, i) => {
-      		return(<p>1 Ev</p>);
-      	});
-	}
 
 	handleSelect = ({ start, end }) => {
-		//console.log(start);
-		//console.log(end);
-	    //const title = window.prompt('New Event name')
+	    //console.log(start);
+	    //console.log(end);
+	    this.setState({dayStart: start});
+	    this.setState({dayEnd: end});
 	    this.setState({modalAddEvent: true});
-	    /*if (title)
-	      this.setState({
-	        events: [
-	          ...this.state.events,
-	          {
-	            start,
-	            end,
-	            title,
-	          },
-	        ],
-	      })*/
 	}
 
+	addEvent = (data)=>{
+		//var _data = this.state;
+		//console.log(data);
+		var _events = this.state.events;
+		if(data.repeatEvent == 'Only-chosen-day'){
+			moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  		var _d1 = moment(data.daySelected+' '+data.hourFrom, moment.defaultFormat).toDate();
+	  		var _d2 = moment(data.daySelected+' '+data.hourTo, moment.defaultFormat).toDate();
+			var _item = {
+				start: _d1,
+				end:_d2,
+				title: data.nameEvent,
+				date: data.daySelected,
+				hours: data.hourFrom+' to '+data.hourTo,
+				_schedule: {day: data.daySelected, hours: {from: data.hourFrom, to: data.hourTo}},
+				event: data.nameEvent,
+				status: ''
+			};
+			
+			_events = this.addEventItem(_events, _item);
+
+	    }else if(data.repeatEvent == 'Everyday'){
+	    	_events = this.addEvents(_events, data);
+
+	    }else if(data.repeatEvent == 'Monday-to-Friday'){
+	    	_events = this.addEvents(_events,data, 'Monday-to-Friday');
+
+	    }else if(data.repeatEvent == 'Monday-to-Saturday'){
+	    	_events = this.addEvents(_events,data, 'Monday-to-Saturday');
+
+		}
+		this.setState({events: _events});
+		this.setState({confirmDelEvent: false});
+	}
+	hiddenModalAddEvent = () => this.setState({modalAddEvent: false});
+
+	addEvents(_events, data,cicle = null){
+		moment.defaultFormat = "DD/MM/YYYY";
+    	var start = moment(data.daySelected, moment.defaultFormat).toDate();
+    	var end = moment(start, moment.defaultFormat).add(3, 'M').toDate();
+    	//###
+    	var _start = moment(start, moment.defaultFormat).subtract(1, 'days').toDate();
+    	var loop = new Date(_start);
+		while(loop <= end){        
+		    var newDate = loop.setDate(loop.getDate() + 1);
+		    loop = new Date(newDate);
+		    var _loop = moment(loop).format('DD/MM/YYYY');
+		    var _day = moment(loop).format('dddd');
+		    
+		    moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  		var _d1 = moment(_loop+' '+data.hourFrom, moment.defaultFormat).toDate();
+	  		var _d2 = moment(_loop+' '+data.hourTo, moment.defaultFormat).toDate();
+
+		    var _item = {
+		    	start: _d1,
+				end: _d2,
+				title: data.nameEvent,
+				date: _loop,
+				hours: data.hourFrom+' to '+data.hourTo,
+				_schedule: {day: _loop, hours: {from: data.hourFrom, to: data.hourTo}},
+				event: data.nameEvent,
+				status: ''
+			};
+
+		    if(cicle != null){
+		    	if(cicle == 'Monday-to-Friday'){
+		    		if(_day != 'Saturday' && _day != 'Sunday'){
+		        		_events = this.addEventItem(_events, _item);
+		        	}
+		        }else if(cicle == 'Monday-to-Saturday'){
+		        	if(_day != 'Sunday'){
+		        		_events = this.addEventItem(_events, _item);
+		        	}
+		    	}
+		    }else{
+		      _events = this.addEventItem(_events, _item);
+		    }
+		}
+		return _events;
+	}
+
+	addEventItem(arr, item) {
+	  var _count = 0;
+	  var shedule = item._schedule;
+	  var day = shedule.day; var _from = shedule.hours.from.split(':'); var _to = shedule.hours.to.split(':');
+	  moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  var d1 = moment(day+' '+shedule.hours.from, moment.defaultFormat).toDate();
+	  var d2 = moment(day+' '+shedule.hours.to, moment.defaultFormat).toDate();
+	  if(_from[0] == _to[0] || _to[0] < _from[0]){
+	  	//console.log('error');
+	  	_count++;
+	  }
+
+	  //##
+	  var _res = arr.forEach(function(el){
+	  	var shedule1 = el._schedule;
+	  	var day1 = shedule1.day;
+	 	var _from1 = shedule1.hours.from.split(':');
+	  	var _to1 = shedule1.hours.to.split(':');
+	  	moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  	//####
+	  	var d3 = moment(day1+' '+shedule1.hours.from, moment.defaultFormat).toDate();
+	    var d4 = moment(day1+' '+shedule1.hours.to, moment.defaultFormat).toDate();
+	    //####
+	    //console.log(_from[0]+' - '+_from1[0]+' - '+day+' - '+day1);
+	    if(_from[0] == _from1[0] && day == day1){
+	    	//console.log('err2');
+	    	_count++;
+	    }
+	  });
+	  if (_count == 0) arr.push(item);
+	  return arr;
+	}
+
+	handleModalConfirmDelete = ()=>{
+		this.setState({confirmDelEvent: false});
+		var _events = this.state.events;
+		const idx = _events.indexOf(this.state.eventId)
+		_events.splice(idx, 1);
+		this.setState({events: _events});
+	}
 	onSelectEvent(pEvent) {
 	   this.setState({confirmDelEvent: true});
 	   this.setState({eventId: pEvent});
 	}
-	hiddenModalConfirm = () => this.setState({confirmDelEvent: false});
-	handleModalConfirm = ()=>{
-		this.setState({confirmDelEvent: false});
-		this.props.removeEvent(this.state.eventId);
-	}
-
+	hiddenModalConfirmDelete = () => this.setState({confirmDelEvent: false});
+	
 	render(){
         return (
 	        <div>
@@ -161,7 +266,7 @@ export class CalendarSchedule extends Component{
 		          /*onShowMore={(events, date) => this.setState({ showModal: true, events })}*/
 		          selectable
 		          localizer={this.state.localizer}
-		          events={this.props.events}
+		          events={this.state.events}
 		          defaultView='month'
 		          defaultDate={new Date()}
 		          style={{ height: 500 }}
@@ -173,14 +278,19 @@ export class CalendarSchedule extends Component{
 
 		        {this.state.modalAddEvent && 
 		        	<ModalAddEventSchedule
+		        	    hiddenModal = {this.hiddenModalAddEvent}
+		        	    handleConfirm={this.addEvent}
+		        		events={this.state.events}
+		        		dayStart={this.state.dayStart}
+		        		dayEnd={this.state.dayEnd}
 		        	/>
 		        }
 
 		        {this.state.confirmDelEvent && 
 	            	<ModalToConfirm
-		        	 hiddenModal = {this.hiddenModalConfirm}
+		        	 hiddenModal = {this.hiddenModalConfirmDelete}
 		        	 message = "Are you sure to delete this event?"
-		        	 handleConfirm={this.handleModalConfirm}
+		        	 handleConfirm={this.handleModalConfirmDelete}
 		        	/>
 		        }
 	        </div>
@@ -597,131 +707,7 @@ export class InputsTypeForm extends Component {
 export class ScheduleManually extends Component{
 	constructor(props) {
 	    super(props);
-	    this.state = {
-	    	daySelected: '',
-	    	events: []
-	    };
-	}
-
-	selectDay = (value) =>{
-		this.setState({daySelected: value});
-	}
-
-	addEvent = ()=>{
-		var _data = this.state;
-		var _events = this.state.events;
-		if(this.state.repeatEvent == 'Only-chosen-day'){
-			moment.defaultFormat = "DD/MM/YYYY HH:mm";
-	  		var _d1 = moment(this.state.daySelected+' '+this.state.hourFrom, moment.defaultFormat).toDate();
-	  		var _d2 = moment(this.state.daySelected+' '+this.state.hourTo, moment.defaultFormat).toDate();
-			var _item = {
-				start: _d1,
-				end:_d2,
-				title: this.state.nameEvent,
-				date: this.state.daySelected,
-				hours: this.state.hourFrom+' to '+this.state.hourTo,
-				_schedule: {day: this.state.daySelected, hours: {from: this.state.hourFrom, to: this.state.hourTo}},
-				event: this.state.nameEvent,
-				status: ''
-			};
-			
-			_events = this.addEventItem(_events, _item);
-
-	    }else if(this.state.repeatEvent == 'Everyday'){
-	    	_events = this.addEvents(_events);
-
-	    }else if(this.state.repeatEvent == 'Monday-to-Friday'){
-	    	_events = this.addEvents(_events, 'Monday-to-Friday');
-
-	    }else if(this.state.repeatEvent == 'Monday-to-Saturday'){
-	    	_events = this.addEvents(_events, 'Monday-to-Saturday');
-
-		}
-		this.setState({events: _events});
-	}
-
-	addEvents(_events, cicle = null){
-		moment.defaultFormat = "DD/MM/YYYY";
-    	var start = moment(this.state.daySelected, moment.defaultFormat).toDate();
-    	var end = moment(start, moment.defaultFormat).add(3, 'M').toDate();
-    	//###
-    	var _start = moment(start, moment.defaultFormat).subtract(1, 'days').toDate();
-    	var loop = new Date(_start);
-		while(loop <= end){        
-		    var newDate = loop.setDate(loop.getDate() + 1);
-		    loop = new Date(newDate);
-		    var _loop = moment(loop).format('DD/MM/YYYY');
-		    var _day = moment(loop).format('dddd');
-		    
-		    moment.defaultFormat = "DD/MM/YYYY HH:mm";
-	  		var _d1 = moment(_loop+' '+this.state.hourFrom, moment.defaultFormat).toDate();
-	  		var _d2 = moment(_loop+' '+this.state.hourTo, moment.defaultFormat).toDate();
-
-		    var _item = {
-		    	start: _d1,
-				end: _d2,
-				title: this.state.nameEvent,
-				date: _loop,
-				hours: this.state.hourFrom+' to '+this.state.hourTo,
-				_schedule: {day: _loop, hours: {from: this.state.hourFrom, to: this.state.hourTo}},
-				event: this.state.nameEvent,
-				status: ''
-			};
-		    if(cicle != null){
-		    	if(cicle == 'Monday-to-Friday'){
-		    		if(_day != 'Saturday' && _day != 'Sunday'){
-		        		_events = this.addEventItem(_events, _item);
-		        	}
-		        }else if(cicle == 'Monday-to-Saturday'){
-		        	if(_day != 'Sunday'){
-		        		_events = this.addEventItem(_events, _item);
-		        	}
-		    	}
-		    }else{
-		      _events = this.addEventItem(_events, _item);
-		    }
-		}
-		return _events;
-	}
-
-	addEventItem(arr, item) {
-	  var _count = 0;
-	  var shedule = item._schedule;
-	  var day = shedule.day; var _from = shedule.hours.from.split(':'); var _to = shedule.hours.to.split(':');
-	  moment.defaultFormat = "DD/MM/YYYY HH:mm";
-	  var d1 = moment(day+' '+shedule.hours.from, moment.defaultFormat).toDate();
-	  var d2 = moment(day+' '+shedule.hours.to, moment.defaultFormat).toDate();
-	  if(_from[0] == _to[0] || _to[0] < _from[0]){
-	  	console.log('error');
-	  	_count++;
-	  }
-
-	  //##
-	  var _res = arr.forEach(function(el){
-	  	var shedule1 = el._schedule;
-	  	var day1 = shedule1.day;
-	 	var _from1 = shedule1.hours.from.split(':');
-	  	var _to1 = shedule1.hours.to.split(':');
-	  	moment.defaultFormat = "DD/MM/YYYY HH:mm";
-	  	//####
-	  	var d3 = moment(day1+' '+shedule1.hours.from, moment.defaultFormat).toDate();
-	    var d4 = moment(day1+' '+shedule1.hours.to, moment.defaultFormat).toDate();
-	    //####
-	    console.log(_from[0]+' - '+_from1[0]+' - '+day+' - '+day1);
-	    if(_from[0] == _from1[0] && day == day1){
-	    	console.log('err2');
-	    	_count++;
-	    }
-	  });
-	  if (_count == 0) arr.push(item);
-	  return arr;
-	}
-
-	deleteEvent = (pEvent)=>{
-		var _events = this.state.events;
-		const idx = _events.indexOf(pEvent)
-		_events.splice(idx, 1);
-		this.setState({events: _events});
+	    this.state = {};
 	}
 
 	render(){
@@ -729,7 +715,7 @@ export class ScheduleManually extends Component{
        		<Form.Row>
 			  <Col xs={12}>
 			  		<div className="divide"></div>
-			  		<CalendarSchedule onClick={this.selectDay} removeEvent={this.deleteEvent} events={this.state.events}/>
+			  		<CalendarSchedule/>
 					{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state)}</div>*/}
 			  </Col>
 			</Form.Row>
