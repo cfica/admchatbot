@@ -637,16 +637,19 @@ a[data-toggle="collapse"] {
   padding-top: 0px
 }
 
-.contentInputsResponseForm label{
-  font-size: 0.9rem;
-  margin: 0px;
-  padding: 0px
+.contentInputsResponseForm > div{
+  border-left: 3px solid #a37272;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  /*background: #f7f7f7*/
 }
 
-label{
-  margin-bottom: 0px
+.scheduleEvents{
+  max-height: 400px;
+  overflow-y: auto;
 }
-
 
 
 /*MODAL*/
@@ -684,6 +687,7 @@ label{
 }
 
 
+/*inputs*/
 .form-control.is-invalid:focus, .was-validated .form-control:invalid:focus{
   box-shadow: none;
 }
@@ -715,8 +719,8 @@ label{
    /*background: transparent !important;*/
    transition: border-color 0.2s;
    font-weight: 700;
-   height: 50px;
-   padding-top: 20px;
+   height: 40px;
+   padding-top: 10px;
    padding-left: 10px;
    padding-right: 10px;
    padding-bottom: 2px;
@@ -733,19 +737,21 @@ label{
 .form-control:placeholder-shown ~ .form-label {
    font-size: 1rem;
    cursor: text;
-   top: 11px;
-   margin-left: 16px
+   top: 9px;
+   margin-left: 10px;
+   z-index: 3
 }
 
 .form-label {
    position: absolute;
-   top: 3px;
+   top: 0px;
    display: block;
    transition: 0.2s;
-   font-size: 0.8rem;
+   font-size: 0.7rem;
    /*color: #9b9b9b;*/
-   margin-left: 15px;
+   margin-left: 10px;
    font-weight: normal;
+   z-index: 3
 }
  .form-control:focus {
    /*padding-bottom: 6px;
@@ -754,20 +760,87 @@ label{
    /*border-image: linear-gradient(to right, #11998e, #38ef7d);
    border-image-slice: 1;*/
 }
- .form-control:focus ~ .form-label {
+
+.form-control:focus ~ .form-label {
    position: absolute;
-   top: 3px;
+   top: 0px;
    display: block;
    transition: 0.2s;
-   font-size: 0.8rem;
-   /*color: #11998e;*/
-   font-weight: 700;
-   margin-left: 16px
+   font-size: 0.7rem;
+   /*color: #11998e;
+   font-weight: 700;*/
+   margin-left: 10px
 }
 
 /* reset input */
  .form-control:required, .form-control:invalid {
    /*box-shadow: none;*/
+}
+
+/*BLOCK HOUR*/
+.hoursBlock{
+  display: flex;
+  max-width: 105px
+}
+
+.blockHourTo{
+  display: flex;
+}
+
+.blockHourTo .to{
+  margin-left: 15px;
+  margin-right: 10px;
+  font-size: 1rem;
+  padding-top: 10px;
+  text-decoration: underline;
+}
+
+.hoursBlock .form-control{
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.hoursBlock .form-label{
+  margin-left: 8px
+}
+
+.hoursBlock h1{
+  margin: 0px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.hoursBlock #formHour{
+  width: 45px;
+  border: none;
+}
+
+.hoursBlock #formMin{
+  width: 45px;
+  border:none;
+}
+
+.hoursBlock .form-control:placeholder-shown ~ .hoursBlock .form-label {
+  margin-left: 8px
+}
+
+.hoursBlock .form-control:focus ~ .hoursBlock .form-label {
+  margin-left: 8px
+}
+/*BLOCK HOUR*/
+
+.react-calendar{
+  width: 100%
+}
+
+.react-calendar p{
+  font-size: 0.7rem
+}
+
+.divide{
+  padding-top: 5px;
+  padding-bottom: 10px;
+  width: 100%
 }
 
 

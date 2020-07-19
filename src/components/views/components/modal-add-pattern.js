@@ -290,10 +290,12 @@ export default class ModalToLearn extends Component {
 																	    <FormControl value={this.state.valuePattern} onChange={this._handonchangeInputPattern} size="sm"
 																	      placeholder="Add Pattern"/>
 																	    <Form.Label >Add Pattern</Form.Label>
+
 																	    <InputGroup.Append>
 																	      <Button size="sm" onClick={this._handleonAddPattern} variant="outline-secondary">Add</Button>
 																	    </InputGroup.Append>
 																	</InputGroup>
+
 
 																	<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden} size="sm"/>
 												                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
@@ -348,11 +350,11 @@ export default class ModalToLearn extends Component {
 																						<InputGroup className="mb-3">
 																						    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
 																						      placeholder="Add Response"/>
+																						    <Form.Label >Add Response</Form.Label>
 																						    <InputGroup.Append>
 																						      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
 																						    </InputGroup.Append>
 																						</InputGroup>
-																						<Form.Label >Responses</Form.Label>
 
 																						<FormControl required type="hidden" name="valueResponseTextHidden" value={this.state.valueResponseTextHidden} size="sm"/>
 																						{this.state.valueResponseTextHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
@@ -360,7 +362,6 @@ export default class ModalToLearn extends Component {
 
 																	                    <ul className="listItemsSelected">
 																					        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><h4><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></h4></li>)}
-
 																	                    </ul>
 																                </Form.Group>
 																			</div>
@@ -428,7 +429,7 @@ export default class ModalToLearn extends Component {
 										</Tabs>
 
 										
-										{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valueDataSlide)}</div>*/}
+										<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>
 						        </Modal.Body>
 						        
 						        <Modal.Footer>

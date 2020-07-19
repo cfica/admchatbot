@@ -1,7 +1,14 @@
 import React, { Component } from "react";
-import {Modal,Button,Badge,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
+import {Modal,Button,Table,Badge,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
+//import Calendar from 'react-calendar';
+//import 'react-calendar/dist/Calendar.css';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import * as moment from 'moment';
+import ModalToConfirm from './confirm';
+import ModalAddEventSchedule from './modal-addEventSchedule';
 
 export class Status extends Component{
 	constructor(props) {
@@ -19,6 +26,169 @@ export class Status extends Component{
        }
 	}
 }
+
+export class BlockHours extends Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {
+	    	hour: '06',
+	    	min: '00'
+	    };
+	}
+
+	selectHour = (event) =>{
+		this.setState({hour: event.target.value});
+		this.props.returnHour(event.target.value+':'+this.state.min);
+	}
+
+	selectMin = (event) =>{
+		this.setState({min: event.target.value});
+		this.props.returnHour(this.state.hour+':'+event.target.value);
+	}
+
+	render(){
+       return(
+       	  <div className="hoursBlock">
+       	    <Form.Group controlId="formHour">
+	       	  	<Form.Control required placeholder="Choose Hour" onChange={this.selectHour} size="sm" name="hour" as="select">
+			        <option value="">--</option>
+			        <option value="06">06</option>
+			        <option value="07">07</option>
+			        <option value="08">08</option>
+			        <option value="09">09</option>
+			        <option value="10">10</option>
+			        <option value="11">11</option>
+			        <option value="12">12</option>
+			        <option value="13">13</option>
+			        <option value="14">14</option>
+			        <option value="15">15</option>
+			        <option value="16">16</option>
+			        <option value="17">17</option>
+			        <option value="18">18</option>
+			        <option value="19">19</option>
+			        <option value="20">20</option>
+			        <option value="21">21</option>
+			        <option value="22">22</option>
+			        <option value="23">23</option>
+			    </Form.Control>
+			     <Form.Label>H</Form.Label>
+			</Form.Group>
+			    <h2>:</h2>
+			<Form.Group controlId="formMin">
+			    <Form.Control required placeholder="Choose Min" onChange={this.selectMin} size="sm" name="min" as="select">
+			        <option value="">--</option>
+			        <option value="00" selected>00</option>
+			        <option value="15">15</option>
+			        <option value="30">30</option>
+			        <option value="45">45</option>
+			    </Form.Control>
+			    <Form.Label>M</Form.Label>
+		    </Form.Group>
+       	  </div>
+       );
+	}
+}
+
+
+export class CalendarSchedule extends Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {
+	    	localizer: momentLocalizer(moment),
+	    	confirmDelEvent: false,
+	    	eventId: '',
+	    	modalAddEvent: false
+	    };
+	}
+
+	onChange = date => {
+		//this.setState({ dateSelected: moment(date).format('L')});
+		//console.log(this.state.date);
+	}
+
+	onClickDay = (value, event)=>{
+		const _date = moment(value).format('DD/MM/YYYY');
+		this.props.onClick(_date);
+	}
+
+	onClickDay2 = (value)=>{
+		//const _date = moment(value).format('DD/MM/YYYY');
+		//this.props.onClick(_date);
+		//console.log(value);
+		const _date = moment(value).format('DD/MM/YYYY');
+		this.props.onClick(_date);
+	}
+
+	renderDataToDays = ({ date, view }) => {
+		this.props.events.map((x, i) => {
+      		return(<p>1 Ev</p>);
+      	});
+	}
+
+	handleSelect = ({ start, end }) => {
+		//console.log(start);
+		//console.log(end);
+	    //const title = window.prompt('New Event name')
+	    this.setState({modalAddEvent: true});
+	    /*if (title)
+	      this.setState({
+	        events: [
+	          ...this.state.events,
+	          {
+	            start,
+	            end,
+	            title,
+	          },
+	        ],
+	      })*/
+	}
+
+	onSelectEvent(pEvent) {
+	   this.setState({confirmDelEvent: true});
+	   this.setState({eventId: pEvent});
+	}
+	hiddenModalConfirm = () => this.setState({confirmDelEvent: false});
+	handleModalConfirm = ()=>{
+		this.setState({confirmDelEvent: false});
+		this.props.removeEvent(this.state.eventId);
+	}
+
+	render(){
+        return (
+	        <div>
+	        	<Calendar
+		          popup={false}
+		          /*onShowMore={(events, date) => this.setState({ showModal: true, events })}*/
+		          selectable
+		          localizer={this.state.localizer}
+		          events={this.props.events}
+		          defaultView='month'
+		          defaultDate={new Date()}
+		          style={{ height: 500 }}
+		          /*views={{month: true}}*/
+		          onSelectEvent={event => this.onSelectEvent(event)}
+		          onDrillDown={this.onClickDay2}
+		          onSelectSlot={this.handleSelect}
+		        />
+
+		        {this.state.modalAddEvent && 
+		        	<ModalAddEventSchedule
+		        	/>
+		        }
+
+		        {this.state.confirmDelEvent && 
+	            	<ModalToConfirm
+		        	 hiddenModal = {this.hiddenModalConfirm}
+		        	 message = "Are you sure to delete this event?"
+		        	 handleConfirm={this.handleModalConfirm}
+		        	/>
+		        }
+	        </div>
+	    );
+	}
+}
+
+
 
 export class Validation extends Component{
 	constructor(props) {
@@ -391,9 +561,178 @@ export class InputsTypeForm extends Component {
 									    </Form.Row>
 									</div>
 								);
+							}else if(x.type == 'Schedule'){
+								return (
+									<div key={i}>
+											<Form.Row>
+												<Col xs={12}><strong>Schedule</strong></Col>
+												<Col xs={4}>
+											    	<Form.Control placeholder="Choose type Schedule" size="sm" name="value" as="select" onChange={e => this.handleInputChange(e, i)}>
+												        <option value="">Choose type Schedule...</option>
+												        {/*<option value="CSV">CSV</option>
+												        <option value="Integration">Integration</option>*/}
+												        <option value="Manually">Manually</option>
+												    </Form.Control>
+												    <Form.Label>Source</Form.Label>
+												</Col>
+
+												<Col xs={1}>
+											    	<Button size="sm" onClick={() => this.deleteInput(i)}  variant="secondary">X</Button>
+												</Col>
+											</Form.Row>
+
+											{x.value == 'Manually' &&
+												<ScheduleManually/>
+										    }
+									</div>
+								);
 							}
 						})}
 				    </div>
 				);
   		}
+}
+
+
+export class ScheduleManually extends Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {
+	    	daySelected: '',
+	    	events: []
+	    };
+	}
+
+	selectDay = (value) =>{
+		this.setState({daySelected: value});
+	}
+
+	addEvent = ()=>{
+		var _data = this.state;
+		var _events = this.state.events;
+		if(this.state.repeatEvent == 'Only-chosen-day'){
+			moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  		var _d1 = moment(this.state.daySelected+' '+this.state.hourFrom, moment.defaultFormat).toDate();
+	  		var _d2 = moment(this.state.daySelected+' '+this.state.hourTo, moment.defaultFormat).toDate();
+			var _item = {
+				start: _d1,
+				end:_d2,
+				title: this.state.nameEvent,
+				date: this.state.daySelected,
+				hours: this.state.hourFrom+' to '+this.state.hourTo,
+				_schedule: {day: this.state.daySelected, hours: {from: this.state.hourFrom, to: this.state.hourTo}},
+				event: this.state.nameEvent,
+				status: ''
+			};
+			
+			_events = this.addEventItem(_events, _item);
+
+	    }else if(this.state.repeatEvent == 'Everyday'){
+	    	_events = this.addEvents(_events);
+
+	    }else if(this.state.repeatEvent == 'Monday-to-Friday'){
+	    	_events = this.addEvents(_events, 'Monday-to-Friday');
+
+	    }else if(this.state.repeatEvent == 'Monday-to-Saturday'){
+	    	_events = this.addEvents(_events, 'Monday-to-Saturday');
+
+		}
+		this.setState({events: _events});
+	}
+
+	addEvents(_events, cicle = null){
+		moment.defaultFormat = "DD/MM/YYYY";
+    	var start = moment(this.state.daySelected, moment.defaultFormat).toDate();
+    	var end = moment(start, moment.defaultFormat).add(3, 'M').toDate();
+    	//###
+    	var _start = moment(start, moment.defaultFormat).subtract(1, 'days').toDate();
+    	var loop = new Date(_start);
+		while(loop <= end){        
+		    var newDate = loop.setDate(loop.getDate() + 1);
+		    loop = new Date(newDate);
+		    var _loop = moment(loop).format('DD/MM/YYYY');
+		    var _day = moment(loop).format('dddd');
+		    
+		    moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  		var _d1 = moment(_loop+' '+this.state.hourFrom, moment.defaultFormat).toDate();
+	  		var _d2 = moment(_loop+' '+this.state.hourTo, moment.defaultFormat).toDate();
+
+		    var _item = {
+		    	start: _d1,
+				end: _d2,
+				title: this.state.nameEvent,
+				date: _loop,
+				hours: this.state.hourFrom+' to '+this.state.hourTo,
+				_schedule: {day: _loop, hours: {from: this.state.hourFrom, to: this.state.hourTo}},
+				event: this.state.nameEvent,
+				status: ''
+			};
+		    if(cicle != null){
+		    	if(cicle == 'Monday-to-Friday'){
+		    		if(_day != 'Saturday' && _day != 'Sunday'){
+		        		_events = this.addEventItem(_events, _item);
+		        	}
+		        }else if(cicle == 'Monday-to-Saturday'){
+		        	if(_day != 'Sunday'){
+		        		_events = this.addEventItem(_events, _item);
+		        	}
+		    	}
+		    }else{
+		      _events = this.addEventItem(_events, _item);
+		    }
+		}
+		return _events;
+	}
+
+	addEventItem(arr, item) {
+	  var _count = 0;
+	  var shedule = item._schedule;
+	  var day = shedule.day; var _from = shedule.hours.from.split(':'); var _to = shedule.hours.to.split(':');
+	  moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  var d1 = moment(day+' '+shedule.hours.from, moment.defaultFormat).toDate();
+	  var d2 = moment(day+' '+shedule.hours.to, moment.defaultFormat).toDate();
+	  if(_from[0] == _to[0] || _to[0] < _from[0]){
+	  	console.log('error');
+	  	_count++;
+	  }
+
+	  //##
+	  var _res = arr.forEach(function(el){
+	  	var shedule1 = el._schedule;
+	  	var day1 = shedule1.day;
+	 	var _from1 = shedule1.hours.from.split(':');
+	  	var _to1 = shedule1.hours.to.split(':');
+	  	moment.defaultFormat = "DD/MM/YYYY HH:mm";
+	  	//####
+	  	var d3 = moment(day1+' '+shedule1.hours.from, moment.defaultFormat).toDate();
+	    var d4 = moment(day1+' '+shedule1.hours.to, moment.defaultFormat).toDate();
+	    //####
+	    console.log(_from[0]+' - '+_from1[0]+' - '+day+' - '+day1);
+	    if(_from[0] == _from1[0] && day == day1){
+	    	console.log('err2');
+	    	_count++;
+	    }
+	  });
+	  if (_count == 0) arr.push(item);
+	  return arr;
+	}
+
+	deleteEvent = (pEvent)=>{
+		var _events = this.state.events;
+		const idx = _events.indexOf(pEvent)
+		_events.splice(idx, 1);
+		this.setState({events: _events});
+	}
+
+	render(){
+       return(
+       		<Form.Row>
+			  <Col xs={12}>
+			  		<div className="divide"></div>
+			  		<CalendarSchedule onClick={this.selectDay} removeEvent={this.deleteEvent} events={this.state.events}/>
+					{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state)}</div>*/}
+			  </Col>
+			</Form.Row>
+       );
+	}
 }
