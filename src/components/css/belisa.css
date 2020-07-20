@@ -202,4 +202,77 @@ body {
 }
 
 
+.selectSchedule .btn-group-sm > .btn, 
+.selectSchedule .btn-sm{
+	padding: 5px;
+	font-size: 0.8rem;
+	margin-bottom: 4px;
+	width: 100%
+}
+
+.selectSchedule .day{
+	border-bottom: 1px solid #ced4da;
+	margin-bottom: 5px;
+	text-align: center;
+	color: #6c757d
+}
+
+.selectSchedule .year{
+	text-align: center;
+	padding: 2px;
+	font-weight: 700;
+	color: #6c757d
+}
+
+.selectSchedule .carousel-control-next, 
+.selectSchedule .carousel-control-prev{
+	align-items:initial;
+	top: 3px
+}
+
+.selectSchedule .carousel-indicators{
+	display: none;
+}
+
+.selectSchedule .list-group-item{
+	padding: 5px;
+	font-size: 0.8rem;
+	text-align: center;
+	font-weight: 700;
+}
+
+.selectSchedule .btn-group-toggle > .btn, 
+.selectSchedule .btn-group-toggle > .btn-group > .btn{
+	padding: 5px;
+	font-size: 0.8rem;
+	text-align: center;
+	color: #6c757d
+}
+
+
+.selectSchedule .btn-secondary.focus, 
+.selectSchedule .btn-secondary:focus{
+	color: #fff;
+	box-shadow: none;
+}
+
+.selectSchedule .btn-secondary{
+	background: #fff;
+	color: #6c757d
+}
+
+.selectSchedule .btn{
+	border-radius: 0px;
+	border: solid 1px #6c757d;
+}
+
+.selectSchedule .carousel-control-prev-icon {
+ background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%6c757d' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+}
+
+.selectSchedule .carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%6c757d' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+
+
 

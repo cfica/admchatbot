@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import {Modal,Button,Table,Badge,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
+import {Modal,Button,Table,Badge,Carousel,ButtonGroup,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
 //import Calendar from 'react-calendar';
 //import 'react-calendar/dist/Calendar.css';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar, momentLocalizer,Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import * as moment from 'moment';
 import ModalToConfirm from './confirm';
@@ -26,6 +26,172 @@ export class Status extends Component{
        }
 	}
 }
+
+
+export class CarouselSchedule extends Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {
+	    	events: [],
+	    	input: {},
+	    	days: {
+			 Mon: 'Lun',
+			 Tue: 'Mar', 
+			 Wed: 'Mié',
+			 Thu: 'Jue',
+			 Fri: 'Vie',
+			 Sat: 'Sab',
+			 Sun: 'Dom'
+			},
+			months:{
+				January: 'Enero',
+				February: 'Febrero',
+				March: 'Marzo',
+				April: 'Abril',
+				May: 'Mayo',
+				June: 'Junio',
+				July: 'Julio',
+				August: 'Agosto',
+				September: 'Septiembre',
+				October: 'Octubre',
+				November: 'Noviembre',
+				December: 'Diciembre'
+			}
+	    };
+	}
+
+	componentDidMount(){
+		const _events = this.props.inputData.items;
+		var temparray = this.groupsEvents(_events);
+		this.setState({events: temparray});
+	}
+
+	groupsEvents (_events){
+		// this gives an object with dates as keys
+		const groups = _events.reduce((groups, game) => {
+		  const date = game.start.split('T')[0];
+		  if (!groups[date]) {
+		    groups[date] = [];
+		  }
+		  groups[date].push(game);
+		  return groups;
+		}, {});
+
+		// Edit: to add it in the array format instead
+		const groupArrays = Object.keys(groups).map((date) => {
+		  return {
+		    date,
+		    events: groups[date]
+		  };
+		});
+		var i,j,chunk = 2;
+		var temparray = [];
+		for (i=0,j=groupArrays.length; i<j; i+=chunk) {
+		    temparray.push(groupArrays.slice(i,i+chunk));
+		    // do whatever
+		}
+		return temparray;
+	}
+
+	selectSchedule = (event) => {
+		const items = this.props.inputData.items; //original array
+		const items1 = this.props.inputData.items; //original array copy
+		items.forEach(function(el, i){
+			var _item = el._schedule.day+'|'+el._schedule.hours.from+'|'+el._schedule.hours.to;
+			if(event.target.value == _item){
+				items1[i].status = 'Burned';
+			}else{
+				items1[i].status = 'Active';
+			}
+		});
+		this.props.updateSchedule(items1, this.props.indexInput);
+		/**/
+		var temparray = this.groupsEvents(items1);
+		this.setState({events: temparray});
+	}
+
+	render(){
+       return(
+       	 	<Carousel interval={null}>
+       	 	    {
+       	 	    	this.state.events.map((item, i) =>
+			       		<Carousel.Item key={i}>
+						    <Row>
+						    	<Col xs={12} className="year">
+						    		<span>{this.state.months[moment(item[0].date).format('MMMM')]}{' '}{moment(item[0].date).format('YYYY')}</span>
+						    	</Col>
+						    </Row>
+
+						    <Row>
+						    	<Col xs={6} className="day">
+						    		{this.state.days[moment(item[0].date).format('ddd')]}{' '}{moment(item[0].date).format('DD')}
+						    	</Col>
+
+						    	{typeof item[1] != 'undefined' && 
+							    	<Col xs={6} className="day">
+							    		{this.state.days[moment(item[1].date).format('ddd')]}{' '}{moment(item[1].date).format('DD')}
+							    	</Col>
+						    	}
+
+						    </Row>
+
+						    <Row>
+						    	<Col xs={6}>
+						    	    <ButtonGroup vertical toggle>
+						    	          {
+						    	          	item[0].events.map((item1, i1) =>
+						    	          		<ToggleButton
+										            key={i1}
+										            type="radio"
+										            variant="secondary"
+										            name="radio"
+										            value={item1._schedule.day+'|'+item1._schedule.hours.from+'|'+item1._schedule.hours.to}
+										            checked={item1.status == 'Burned' ? true: false}
+										            onChange={this.selectSchedule}
+										            required
+										        >
+										          {moment(item1.start).format('HH:mm')}{'/'}{moment(item1.end).format('HH:mm A')}
+										        </ToggleButton>
+						    	          	)
+						    	          }
+								    </ButtonGroup>
+						    	</Col>
+
+						    	{typeof item[1] != 'undefined' &&
+							    	<Col xs={6}>
+							    	    <ButtonGroup vertical toggle>
+									          {
+							    	          	item[1].events.map((item1, i1) =>
+							    	          		<ToggleButton
+											            key={i1}
+											            type="radio"
+											            variant="secondary"
+											            name="radio"
+											            value={item1._schedule.day+'|'+item1._schedule.hours.from+'|'+item1._schedule.hours.to}
+											            checked={item1.status == 'Burned' ? true: false}
+											            onChange={this.selectSchedule}
+											            required
+											        >
+											          {moment(item1.start).format('HH:mm')}{'/'}{moment(item1.end).format('HH:mm A')}
+											        </ToggleButton>
+							    	          	)
+							    	          }
+									    </ButtonGroup>
+							    	</Col>
+							    }
+
+						    </Row>
+						    <div className="divide"></div>
+						</Carousel.Item>
+			        )
+       	 	    }
+			</Carousel>
+       );
+	}
+}
+
+
+
 
 export class BlockHours extends Component{
 	constructor(props) {
@@ -77,7 +243,7 @@ export class BlockHours extends Component{
 			<Form.Group controlId="formMin">
 			    <Form.Control required placeholder="Choose Min" onChange={this.selectMin} size="sm" name="min" as="select">
 			        <option value="">--</option>
-			        <option value="00" selected>00</option>
+			        <option value="00">00</option>
 			        <option value="15">15</option>
 			        <option value="30">30</option>
 			        <option value="45">45</option>
@@ -126,6 +292,7 @@ export class CalendarSchedule extends Component{
 	handleSelect = ({ start, end }) => {
 	    //console.log(start);
 	    //console.log(end);
+	    //console.log(start);
 	    this.setState({dayStart: start});
 	    this.setState({dayEnd: end});
 	    this.setState({modalAddEvent: true});
@@ -147,7 +314,7 @@ export class CalendarSchedule extends Component{
 				hours: data.hourFrom+' to '+data.hourTo,
 				_schedule: {day: data.daySelected, hours: {from: data.hourFrom, to: data.hourTo}},
 				event: data.nameEvent,
-				status: ''
+				status: 'Active'
 			};
 			
 			_events = this.addEventItem(_events, _item);
@@ -164,6 +331,7 @@ export class CalendarSchedule extends Component{
 		}
 		this.setState({events: _events});
 		this.setState({confirmDelEvent: false});
+		this.props.collect(this.state.events);
 	}
 	hiddenModalAddEvent = () => this.setState({modalAddEvent: false});
 
@@ -192,7 +360,7 @@ export class CalendarSchedule extends Component{
 				hours: data.hourFrom+' to '+data.hourTo,
 				_schedule: {day: _loop, hours: {from: data.hourFrom, to: data.hourTo}},
 				event: data.nameEvent,
-				status: ''
+				status: 'Active'
 			};
 
 		    if(cicle != null){
@@ -422,7 +590,8 @@ export class ResponseForm extends Component {
 	    this.state = {
 	    	validated: false,
 	    	errorSaveForm: '',
-	    	showForm: true
+	    	showForm: true,
+	    	localizer: momentLocalizer(moment)
 	    };
 	}
 
@@ -461,6 +630,10 @@ export class ResponseForm extends Component {
 		this.props.inputChangeOptions(e.target.value, item, indexItems, index, this.props.index,type);
 	}
 
+	updateSchedule = (events, index) =>{
+		this.props.updateScheduleEvents(events, index, this.props.index);
+	}
+
 	render() {	
 		return (
 			<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
@@ -482,29 +655,14 @@ export class ResponseForm extends Component {
 		    				return (
 		    					<Form.Row key={i} className="Multi-Choices">
 									<Col key={i} xs={12}>
-									    {/*<div class="customCheckbox">
-											<ul class="ks-cboxtags">*/}
-												    {x.items.map((x1, i1) => {
-												    	{/*return (
-												    		<label className="containerCheckbox">{x1}
-															  <input type="checkbox"/>
-															  <span className="checkmark"></span>
-															</label>
-												    	);*/}
-
-												    	{/*return (
-															<li key={i1}><input type="checkbox" id={"checkbox"+ i+i1} value={x1}/><label for={"checkbox"+i +i1}>{x1}</label></li>
-												    	);*/}
-
-												    	return (
-												    		  <div key={i1} className="inputGroup">
-															    <Form.Control id={"checkbox"+ i+i1} value={x1.value} checked={x1.value} onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} name={"option"+ i+i1} type="checkbox"/>
-															    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
-															  </div>
-												    	);
-												    })}
-									    	{/*</ul>
-										</div>*/}
+									    {x.items.map((x1, i1) => {
+									    	return (
+									    		  <div key={i1} className="inputGroup">
+												    <Form.Control id={"checkbox"+ i+i1} value={x1.value} checked={x1.value} onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} name={"option"+ i+i1} type="checkbox"/>
+												    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
+												  </div>
+									    	);
+									    })}
 									</Col>
 								</Form.Row>
 		    				);
@@ -513,13 +671,6 @@ export class ResponseForm extends Component {
 			    					<Form.Row key={"Single-Option-Choice"+i} className="Single-Option-Choice">
 										<Col key={i} xs={12}>
 										    {x.items.map((x1, i1) => {
-										    	{/*return (
-										    		<label class="containerRadio">{x1}
-													  <input type="radio" checked="checked" name="radio"/>
-													  <span class="checkmark"></span>
-													</label>
-										    	);*/}
-
 										    	return (
 										    		  <div key={i1} className="inputGroup">
 													    <Form.Control id={"radio"+ i+i1} value={x1.label} onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} name="radio" type="radio"/>
@@ -542,8 +693,17 @@ export class ResponseForm extends Component {
 									</Col>
 								</Form.Row>
 		    				);
+		    			}else if(x.type == 'Schedule'){
+		    				return(
+		    					<div className="selectSchedule" key={i}>
+		    						<CarouselSchedule key={i} indexInput={i} inputData={x} updateSchedule={this.updateSchedule}/>
+		    					</div>
+		    				);
 		    			}
 		    		})}
+
+		    		
+		    		{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.props.messageData)}</div>*/}
 
 		    		<div className="contentFormButton">
 			    		<Button size="sm" variant="outline-primary" type="submit">Save</Button>
@@ -559,7 +719,8 @@ export class InputsTypeForm extends Component {
 		    super(props);
 		    this.state = {
 		    	listItemsMultiChoice: [],
-		    	valueItemMultiChoice: ''
+		    	valueItemMultiChoice: '',
+		    	eventsSchedule: []
 		    };
 		}
 
@@ -575,6 +736,16 @@ export class InputsTypeForm extends Component {
 			const items = this.props.inputList[index].items;
 			items.push({label: value, value: false});
 			this.props.addItemToList(items, index);
+		}
+
+		setEventsSchedule = (data, index)=>{
+			//console.log(data);
+			//console.log(index);
+			this.setState({eventsSchedule: data});
+
+			//const items = this.props.inputList[index].items;
+			//items.push({label: value, value: false});
+			this.props.addItemToList(data, index);
 		}
 
 
@@ -692,7 +863,10 @@ export class InputsTypeForm extends Component {
 											</Form.Row>
 
 											{x.value == 'Manually' &&
-												<ScheduleManually/>
+												<div>
+													<ScheduleManually index={i} collect={this.setEventsSchedule}/>
+													{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.eventsSchedule)}</div>*/}
+												</div>
 										    }
 									</div>
 								);
@@ -707,7 +881,16 @@ export class InputsTypeForm extends Component {
 export class ScheduleManually extends Component{
 	constructor(props) {
 	    super(props);
-	    this.state = {};
+	    this.state = {
+	    	collect: []
+	    };
+	}
+
+	setCollect = (data) => {
+		this.setState({collect: data});
+		//console.log(this.props.index);
+		//console.log(data);
+		this.props.collect(data, this.props.index);
 	}
 
 	render(){
@@ -715,8 +898,8 @@ export class ScheduleManually extends Component{
        		<Form.Row>
 			  <Col xs={12}>
 			  		<div className="divide"></div>
-			  		<CalendarSchedule/>
-					{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state)}</div>*/}
+			  		<CalendarSchedule collect={this.setCollect} />
+					{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.collect)}</div>*/}
 			  </Col>
 			</Form.Row>
        );

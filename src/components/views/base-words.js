@@ -131,7 +131,7 @@ export default class BaseWords extends Component {
 	            <p>You can generate question patterns that can be asked by chat.</p>
 	            <div className="line"></div>
 	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
-		            <Button variant="primary" onClick="">Import Patterns</Button>{' '}
+		            <Button variant="primary">Import Patterns</Button>{' '}
 		            
 		            <Button variant="primary" onClick={this.handleTrain}>Train</Button>{' '}
 
@@ -148,8 +148,8 @@ export default class BaseWords extends Component {
 				           <hr/>
 				            <div className="log_training">
 							    <ul>
-							       {this.state.logTraining.map((item) =>
-							       		<li>> {item.client} | {item.name_log} | {item._created}</li>
+							       {this.state.logTraining.map((item, i) =>
+							       		<li key={i}>> {item.client} | {item.name_log} | {item._created}</li>
 							       )}
 							    </ul>
 							</div>

@@ -651,6 +651,10 @@ a[data-toggle="collapse"] {
   overflow-y: auto;
 }
 
+.rbc-day-bg:hover{
+  cursor: pointer;
+}
+
 
 /*MODAL*/
 .modal-header {

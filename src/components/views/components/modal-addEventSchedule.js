@@ -31,13 +31,12 @@ export default class ModalAddEventSchedule extends Component {
 
 		handleSubmitFormAddPattern = (event)=>{
 			event.preventDefault();
+			event.stopPropagation();
 			const form = event.currentTarget;
 			if (form.checkValidity() === false) {
-				event.stopPropagation();
 				this.setState({validated : true});
 			}else{
 				this.setState({validated : false});
-				this.setState({showModal: false});
 				this.props.handleConfirm({
 					nameEvent: this.state.nameEvent,
 					repeatEvent: this.state.repeatEvent,
@@ -45,9 +44,10 @@ export default class ModalAddEventSchedule extends Component {
 					hourTo: this.state.hourTo,
 					daySelected: this.state.daySelected
 				});
-				event.stopPropagation();
-			}
 
+				this.setState({showModal: false});
+				this.props.hiddenModal();
+			}
 		}
 
 		changeRepeatEvent = (event) =>{
@@ -97,9 +97,9 @@ export default class ModalAddEventSchedule extends Component {
 
 							  		<Form.Row>
 							  			<Col xs={12} >
-									   		<Form.Control placeholder="Repeat event" onChange={this.changeRepeatEvent} size="sm" name="value" as="select">
+									   		<Form.Control required placeholder="Repeat event" onChange={this.changeRepeatEvent} size="sm" name="value" as="select">
 										        <option value="">Repeat event...</option>
-										        <option value="Only-chosen-day" selected>Only chosen day</option>
+										        <option value="Only-chosen-day">Only chosen day</option>
 										        <option value="Everyday">Everyday</option>
 										        <option value="Monday-to-Friday">Monday to Friday</option>
 										        <option value="Monday-to-Saturday">Monday to Saturday</option>

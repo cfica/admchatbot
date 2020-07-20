@@ -265,6 +265,12 @@ export default class Login extends Component {
     this.setState({listMessages: _items});
   }
 
+  updateScheduleEvents = (events, index, indexParent) =>{
+    //const _items = this.state.listMessages;
+    //_items[indexParent]['msg']['inputs'][index]['items'] = events;
+    //this.setState({listMessages: _items});
+  }
+
   render() {
     //add recaptcha..
     if(this._vldParamasGet() == false){
@@ -281,10 +287,12 @@ export default class Login extends Component {
                           <div className="contHello">
                                   <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
                                     <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
+                                    
                                     <Form.Group controlId="formName">
                                       <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                                       <Form.Label >Enter Name</Form.Label>
                                     </Form.Group>
+
                                     {this.state.confChatInit.start_conversation.map((item, index) => {
                                         if(item == 'Email'){
                                           return (<Form.Group key={index} controlId="formEmail">
@@ -366,6 +374,7 @@ export default class Login extends Component {
                                                                       messageData = {item.msg}
                                                                       inputChange = {this.inputChange}
                                                                       inputChangeOptions = {this.inputChangeOptions}
+                                                                      updateScheduleEvents = {this.updateScheduleEvents}
                                                                   />
                                                              </div>
                                                          </div>

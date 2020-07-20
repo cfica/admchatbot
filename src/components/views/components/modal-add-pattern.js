@@ -168,7 +168,7 @@ export default class ModalToLearn extends Component {
 			    });
    		    }
 
-   		    console.log(_dataPost);
+   		    //console.log(_dataPost);
 
 		    if (form.checkValidity() === false || 
 		    	this.state.valueResponseTextHidden.length == 0 ||
@@ -429,7 +429,7 @@ export default class ModalToLearn extends Component {
 										</Tabs>
 
 										
-										<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>
+										{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.valuesDataForm)}</div>*/}
 						        </Modal.Body>
 						        
 						        <Modal.Footer>
