@@ -68,12 +68,14 @@ export class CarouselSchedule extends Component{
 
 	groupsEvents (_events){
 		// this gives an object with dates as keys
-		const groups = _events.reduce((groups, game) => {
-		  const date = game.start.split('T')[0];
+		const groups = _events.reduce((groups, item) => {
+		  const date = item.start.split('T')[0];
 		  if (!groups[date]) {
 		    groups[date] = [];
 		  }
-		  groups[date].push(game);
+
+		  groups[date].push(item);
+
 		  return groups;
 		}, {});
 
@@ -96,15 +98,17 @@ export class CarouselSchedule extends Component{
 	selectSchedule = (event) => {
 		const items = this.props.inputData.items; //original array
 		const items1 = this.props.inputData.items; //original array copy
+		var _itemSelectd = {};
 		items.forEach(function(el, i){
 			var _item = el._schedule.day+'|'+el._schedule.hours.from+'|'+el._schedule.hours.to;
 			if(event.target.value == _item){
 				items1[i].status = 'Burned';
+				_itemSelectd = items1[i];
 			}else{
 				items1[i].status = 'Active';
 			}
 		});
-		this.props.updateSchedule(items1, this.props.indexInput);
+		this.props.updateSchedule(_itemSelectd, items1, this.props.indexInput);
 		/**/
 		var temparray = this.groupsEvents(items1);
 		this.setState({events: temparray});
@@ -604,7 +608,13 @@ export class ResponseForm extends Component {
 		      this.setState({validated : true});
 		}else{
 			this.setState({validated : false});
-			var _dataPost = {"form" : this.props.messageData};
+			var _dataPost1 = this.props.messageData;
+			//this.props.messageData.inputs.forEach(function(el, index){
+			//	if(el.type == 'Schedule'){
+			//		delete _dataPost1.inputs[index].items;
+			//	}
+			//});
+			var _dataPost = {"form" : _dataPost1, '_id': this.props.messageId};
             axios.post(config.get('baseUrlApi')+'/api/v1/message-save-form',JSON.stringify(_dataPost), 
               {headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
@@ -613,7 +623,8 @@ export class ResponseForm extends Component {
               }}
             ).then(res => {
               //this.setMessage('_res', res.data.data);
-              this.props.setMessage('_res',{response: 'Acción guardada correctamente!', type: 'Text'});
+              //this.props.setMessage('_res',{response: 'Acción guardada correctamente!', type: 'Text'}); //mensaje debe venir del patron
+              this.props.successSentForm(this.props.index);
               this.setState({showForm: false});
               form.reset();
             }).catch(function (error) {}).then(function () {});
@@ -630,8 +641,8 @@ export class ResponseForm extends Component {
 		this.props.inputChangeOptions(e.target.value, item, indexItems, index, this.props.index,type);
 	}
 
-	updateSchedule = (events, index) =>{
-		this.props.updateScheduleEvents(events, index, this.props.index);
+	updateSchedule = (itemSelected,events, index) =>{
+		this.props.updateScheduleEvents(itemSelected, events, index, this.props.index);
 	}
 
 	render() {	
@@ -701,12 +712,9 @@ export class ResponseForm extends Component {
 		    				);
 		    			}
 		    		})}
-
-		    		
 		    		{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.props.messageData)}</div>*/}
-
 		    		<div className="contentFormButton">
-			    		<Button size="sm" variant="outline-primary" type="submit">Save</Button>
+			    		<Button size="sm" variant="outline-secondary" type="submit">Save</Button>
 			    	</div>
 		    	</div>
 		    </Form>

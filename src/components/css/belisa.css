@@ -7,17 +7,47 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#chat{
+	height: 100vh;
+}
+
 #chat h5{
-	margin-bottom: 0px !important;
-	font-size: 1.0rem !important;
+	margin-bottom: 0px;
+	font-size: 1.0rem;
 }
 
 #chat span{
-	font-size: 0.9rem !important;
+	font-size: 0.9rem;
+	color: #220b44 !important
 }
 
-#chat{
-	height: 100vh;
+#chat .form-control{
+	color: #220b44 !important;
+	font-weight: 500
+}
+
+#chat .btn-outline-primary:hover{
+	background-color: #593096 !important;
+	border-color: #593096 !important;
+	color: #fff !important
+}
+
+#chat .btn-outline-primary:not(:disabled):not(.disabled).active, 
+#chat .btn-outline-primary:not(:disabled):not(.disabled):active, 
+#chat .show > .btn-outline-primary.dropdown-toggle{
+	background-color: #593096 !important;
+	color: #fff !important
+}
+
+#chat .btn-outline-primary:not(:disabled):not(.disabled).active:focus, 
+#chat .btn-outline-primary:not(:disabled):not(.disabled):active:focus, 
+#chat .show > .btn-outline-primary.dropdown-toggle:focus{
+	box-shadow: none !important;
+}
+
+#chat .btn-outline-primary{
+	border-color: #593096 !important;
+	color:#593096 !important;
 }
 
 .contentSend{
@@ -108,15 +138,16 @@ body {
 .contentResponse .contentMessageChat > div{
 	width: 90%;
 	float: left;
-	background: #e9eade;
+	background: #f4edff;
 	margin-left: 10px;
 	padding: 8px;
 	margin-top: 10px;
 	border-radius: 3px;
+	border: 1px solid #ced4da;
 }
 
 .contentResponse .contentMessageChat .contentUser{
-	text-transform: uppercase;
+	
 }
 .contentResponse .contentMessageChat .contentMsg{
 
@@ -128,17 +159,42 @@ body {
 .contentResponse .contentMessageClient > div{
 	float: right;
 	width: 90%;
-	background: #8dc986;
+	background: #f0ffef;
 	margin-right: 10px;
 	padding: 8px;
 	margin-top: 10px;
 	border-radius: 5px;
+	border: solid 1px #c7edc4;
 }
 
 
-.contentResponse .contentMessageClient .contentUser{
-
+.contentResponse .contentMessageClient .contentUser,
+.contentResponse .contentMessageChat .contentUser
+{
+	height: 20px
 }
+
+.contentResponse .contentMessageClient .contentUser h5,
+.contentResponse .contentMessageChat .contentUser h5
+{
+	float: left;
+	text-transform: uppercase;
+	font-size: 0.8rem !important;
+	font-weight: 700;
+	color: #371866
+}
+
+.contentResponse .contentMessageClient .contentUser span,
+.contentResponse .contentMessageChat .contentUser span
+{
+	float: right;
+	font-size: 0.6rem !important;
+	font-weight: 500;
+	text-transform: uppercase;
+	opacity: 0.8
+}
+
+
 .contentResponse .contentMessageClient .contentMsg{
 
 }
@@ -254,6 +310,10 @@ body {
 .selectSchedule .btn-secondary:focus{
 	color: #fff;
 	box-shadow: none;
+}
+
+.selectSchedule .btn-secondary:hover{
+	color: #fff;
 }
 
 .selectSchedule .btn-secondary{

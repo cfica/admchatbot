@@ -9,6 +9,7 @@ import Utils from './utils';
 import {GetSlide} from './components/slide';
 import {InputsTypeForm,ResponseForm,Validation} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
+import * as moment from 'moment';
 
 export default class Login extends Component {
   constructor(props){
@@ -40,6 +41,45 @@ export default class Login extends Component {
     console.log('recaptcha: '+value);
   }
 
+  inIframe () {
+      try {
+          return window.self != window.top;
+      } catch (e) {
+          return true;
+      }
+  }
+
+  clsAlphaNoOnly(text){ 
+      var letters = /^[a-zA-Z0-9]+$/;
+      if(text.match(letters)){
+        return true;
+      }else{
+        return false;
+      }
+  }
+
+  _vldParamasGet(){
+    const client_id = this.props.location.query.i;
+    const init = this.props.location.query.init;
+    if(client_id == null || init == null){
+      return false;
+    }else{
+      if(this.inIframe() == false){
+        return false;
+      }else{
+        if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false){
+          return false;
+        }else{
+          if(init == null || init.length < 25 || this.clsAlphaNoOnly(init) == false){
+            return false;
+          }else{
+            return true;
+          }
+        }
+      }
+    }
+  }
+
   componentDidMount(){
       const client_id = this.props.location.query.i;
       const init = this.props.location.query.init;
@@ -48,10 +88,6 @@ export default class Login extends Component {
       /*localStorage.removeItem('messages');
       localStorage.removeItem('token');
       localStorage.removeItem('key_temp');*/
-  }
-
-  componentDidUpdate(){
-
   }
 
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
@@ -95,7 +131,14 @@ export default class Login extends Component {
   }
 
   setMessage = (_type,message) =>{
-    const item = {'type' : _type,'msg' : message.response, type_resp: message.type};
+    const item = {
+        _id: message._id,
+        type : _type,
+        msg : message.response, 
+        type_resp: message.type, 
+        status: '',
+        _created: moment()
+    };
     var oldItems = JSON.parse(localStorage.getItem('messages')) || [];
     const items = oldItems.slice();
     items.push(item);
@@ -188,45 +231,8 @@ export default class Login extends Component {
       }
   }
 
-  inIframe () {
-      try {
-          return window.self != window.top;
-      } catch (e) {
-          return true;
-      }
-  }
 
-  clsAlphaNoOnly(text){ 
-      var letters = /^[a-zA-Z0-9]+$/;
-      if(text.match(letters)){
-        return true;
-      }else{
-        return false;
-      }
-  }
-
-  _vldParamasGet(){
-    const client_id = this.props.location.query.i;
-    const init = this.props.location.query.init;
-    if(client_id == null || init == null){
-      return false;
-    }else{
-      if(this.inIframe() == false){
-        return false;
-      }else{
-        if(client_id == null || client_id.length < 25 || this.clsAlphaNoOnly(client_id) == false){
-          return false;
-        }else{
-          if(init == null || init.length < 25 || this.clsAlphaNoOnly(init) == false){
-            return false;
-          }else{
-            return true;
-          }
-        }
-      }
-    }
-  }
-
+  /*#########EVENTS CHANGES###########*/
   inputChange = (e, index, indexParent) =>{
     const _value = e.target.value;
     const _items = this.state.listMessages;
@@ -237,13 +243,18 @@ export default class Login extends Component {
     _items[indexParent]['msg']['inputs'][index]['classValidation'] = _result._class;
     _items[indexParent]['msg']['inputs'][index]['errorValidation'] = _result.error;
     /*validation*/
-    this.setState({listMessages: _items});
+    //this.setState({listMessages: _items});
+    localStorage.setItem('messages', JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
 
   statusValidation(result, item, index,indexParent){
     const _items = this.state.listMessages;
     _items[indexParent]['msg']['inputs'][index]['validation'] = result.error;
-    this.setState({listMessages: _items});
+    //this.setState({listMessages: _items});
+    /*##*/
+    localStorage.setItem('messages', JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
 
   inputChangeOptions = (value, item, indexItems, index, indexParent,type) =>{
@@ -262,14 +273,29 @@ export default class Login extends Component {
         __itemSelected['value'] = false;
       }
     }
-    this.setState({listMessages: _items});
+    //this.setState({listMessages: _items});
+    localStorage.setItem('messages', JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
 
-  updateScheduleEvents = (events, index, indexParent) =>{
-    //const _items = this.state.listMessages;
-    //_items[indexParent]['msg']['inputs'][index]['items'] = events;
-    //this.setState({listMessages: _items});
+  updateScheduleEvents = (itemSelected, events, index, indexParent) =>{
+     const _items = this.state.listMessages;
+     _items[indexParent]['msg']['inputs'][index]['itemSelected'] = itemSelected;
+     _items[indexParent]['msg']['inputs'][index]['items'] = events;
+     //this.setState({listMessages: _items});
+     localStorage.setItem('messages', JSON.stringify(_items));
+     this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
+
+  successSentForm = (indexParent) => {
+    const _items = this.state.listMessages;
+     _items[indexParent]['status'] = 'Form-Sent-Success';
+     /**/
+     localStorage.setItem('messages', JSON.stringify(_items));
+     this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+  }
+  /*#########EVENTS CHANGES###########*/
+
 
   render() {
     //add recaptcha..
@@ -333,7 +359,10 @@ export default class Login extends Component {
                                           return (
                                             <div key={index} className="contentMessageClient">
                                                 <div>
-                                                   <div className="contentUser"><h5>You</h5></div>
+                                                   <div className="contentUser">
+                                                          <h5>You</h5>
+                                                          <span>{moment(item._created).fromNow()}</span>
+                                                   </div>
                                                    <div className="contentMsg">
                                                         <span>{item.msg}</span>
                                                    </div>
@@ -341,72 +370,64 @@ export default class Login extends Component {
                                             </div>
                                           );
                                         }else if(item.type == '_res'){
-                                          if(item.type_resp == 'Text'){
-                                              return (
-                                                  <div key={index} className="contentMessageChat">
-                                                         <div>
-                                                             <div className="contentUser"><h5>Belisa</h5></div>
-                                                             <div className="contentMsg">
-                                                             <span>{item.msg}</span>
-                                                             </div>
-                                                         </div>
-                                                  </div>
+                                              return(
+                                                    <div key={index} className="contentMessageChat">
+                                                           <div>
+                                                               <div className="contentUser">
+                                                                    <h5>Belisa</h5>
+                                                                    <span>{moment(item._created).fromNow()}</span>
+                                                               </div>
+
+                                                               <div className="contentMsg">
+                                                                  {item.type_resp == 'Text' && 
+                                                                      <span>{item.msg}</span>
+                                                                  }
+                                                                 
+                                                                  {item.type_resp == 'Html' &&
+                                                                    <div dangerouslySetInnerHTML={{__html: item.msg}}></div>
+                                                                  }
+
+                                                                  {item.type_resp == 'Form' && item.status != 'Form-Sent-Success' &&
+                                                                        <ResponseForm
+                                                                            setMessage = {this.setMessage}
+                                                                            statusValidation = {this.statusValidation}
+                                                                            index = {index}
+                                                                            messageData = {item.msg}
+                                                                            messageId = {item._id}
+                                                                            inputChange = {this.inputChange}
+                                                                            inputChangeOptions = {this.inputChangeOptions}
+                                                                            updateScheduleEvents = {this.updateScheduleEvents}
+                                                                            successSentForm = {this.successSentForm}
+                                                                        />
+                                                                  }
+
+                                                                  {item.type_resp == 'Form' && item.status == 'Form-Sent-Success' &&
+                                                                     <span>Form sent correctly.</span>
+                                                                  }
+
+                                                                  {item.type_resp == 'Slide' &&
+                                                                        <div>
+                                                                          <span>{item.msg.textResponse}</span>
+                                                                          <GetSlide
+                                                                                index = {index}
+                                                                                messageData = {item.msg}
+                                                                          />
+                                                                        </div>
+                                                                  }
+                                                               </div>
+                                                           </div>
+                                                    </div>
                                               );
-                                          }else if(item.type_resp == 'Html'){
-                                              return (
-                                                  <div key={index} className="contentMessageChat">
-                                                         <div>
-                                                             <div className="contentUser"><h5>Belisa</h5></div>
-                                                             <div className="contentMsg" dangerouslySetInnerHTML={{__html: item.msg}}></div>
-                                                         </div>
-                                                  </div>
-                                              );
-                                          }else if(item.type_resp == 'Form'){
-                                              return (
-                                                  <div key={index} className="contentMessageChat">
-                                                         <div key={"i"+index}>
-                                                             <div className="contentUser"><h5>Belisa</h5></div>
-                                                             <div className="contentMsg">
-                                                                  <ResponseForm
-                                                                      setMessage = {this.setMessage}
-                                                                      statusValidation = {this.statusValidation}
-                                                                      index = {index}
-                                                                      messageData = {item.msg}
-                                                                      inputChange = {this.inputChange}
-                                                                      inputChangeOptions = {this.inputChangeOptions}
-                                                                      updateScheduleEvents = {this.updateScheduleEvents}
-                                                                  />
-                                                             </div>
-                                                         </div>
-                                                         {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
-                                                  </div>
-                                              );
-                                          }else if(item.type_resp == 'Slide'){
-                                              return (
-                                                  <div key={index} className="contentMessageChat">
-                                                         <div key={"i"+index}>
-                                                             <div className="contentUser"><h5>Belisa</h5></div>
-                                                             <div className="contentMsg">
-                                                                  <span>{item.msg.textResponse}</span>
-                                                                  <GetSlide
-                                                                      index = {index}
-                                                                      messageData = {item.msg}
-                                                                  />
-                                                             </div>
-                                                         </div>
-                                                         {/*<div style={{ marginTop: 20 }}>{JSON.stringify(item)}</div>*/}
-                                                  </div>
-                                              );
-                                          }
                                         }
                                       })}
+                                      {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
                                     
                                     <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
                                         <div className="contentSend">
                                           <Form.Group  controlId="sendMessage">
                                             <InputGroup>
-                                                <FormControl required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
+                                                <FormControl placeholder="Add Message" required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
                                                   aria-label="Add Message"
                                                   aria-describedby="basic-addon2"
                                                 />
