@@ -296,6 +296,15 @@ export default class Login extends Component {
   }
   /*#########EVENTS CHANGES###########*/
 
+  closeSession = (event) =>{
+      localStorage.removeItem('messages');
+      localStorage.removeItem('token');
+      localStorage.removeItem('key_temp');
+      localStorage.removeItem('client_id');
+      this.setState({showContHello : true});
+      this.setState({showContChat : false});
+  }
+
 
   render() {
     //add recaptcha..
@@ -313,7 +322,6 @@ export default class Login extends Component {
                           <div className="contHello">
                                   <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
                                     <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
-                                    
                                     <Form.Group controlId="formName">
                                       <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                                       <Form.Label >Enter Name</Form.Label>
@@ -346,7 +354,6 @@ export default class Login extends Component {
                                       </Button>
                                     </div>
                                   </Form>
-
                                 <p className="termsRecaptcha">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</p>
                           </div>
                       }
@@ -398,6 +405,7 @@ export default class Login extends Component {
                                                                             inputChangeOptions = {this.inputChangeOptions}
                                                                             updateScheduleEvents = {this.updateScheduleEvents}
                                                                             successSentForm = {this.successSentForm}
+                                                                            closeSession = {this.closeSession}
                                                                         />
                                                                   }
 

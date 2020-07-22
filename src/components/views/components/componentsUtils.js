@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Modal,Button,Table,Badge,Carousel,ButtonGroup,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
+import {Modal,Button,Table,Badge,Alert,Carousel,ButtonGroup,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
 //import Calendar from 'react-calendar';
@@ -140,52 +140,47 @@ export class CarouselSchedule extends Component{
 						    </Row>
 
 						    <Row>
-						    	<Col xs={6}>
-						    	    <ButtonGroup vertical toggle>
-						    	          {
-						    	          	item[0].events.map((item1, i1) =>
-						    	          		<ToggleButton
-										            key={i1}
-										            type="radio"
-										            variant="secondary"
-										            name="radio"
-										            value={item1._schedule.day+'|'+item1._schedule.hours.from+'|'+item1._schedule.hours.to}
-										            checked={item1.status == 'Burned' ? true: false}
-										            onChange={this.selectSchedule}
-										            required
-										        >
-										          {moment(item1.start).format('HH:mm')}{'/'}{moment(item1.end).format('HH:mm A')}
-										        </ToggleButton>
-						    	          	)
-						    	          }
-								    </ButtonGroup>
-						    	</Col>
+								    	<Col xs={6}>
+										    <div role="group" className="btn-group-vertical btn-group-toggle">
+										          {
+										          	item[0].events.map((item1, i1) =>
+										          		<label className={item1.status == 'Burned' ? 'focus btn btn-secondary': 'btn btn-secondary'} key={i1}>
+										    	    		<input name="radio" type="radio"
+										    	    		       required
+										    	    			   value={item1._schedule.day+'|'+item1._schedule.hours.from+'|'+item1._schedule.hours.to}
+										    	    			   checked={item1.status == 'Burned' ? true: false}
+										    	    			   onChange={this.selectSchedule}
+										    	    			   />
+										    	    		  {moment(item1.start).format('HH:mm')}{'/'}{moment(item1.end).format('HH:mm A')}
+										    	    	</label>
+										          	)
+										          }
+										    </div>
+										</Col>
 
-						    	{typeof item[1] != 'undefined' &&
-							    	<Col xs={6}>
-							    	    <ButtonGroup vertical toggle>
-									          {
-							    	          	item[1].events.map((item1, i1) =>
-							    	          		<ToggleButton
-											            key={i1}
-											            type="radio"
-											            variant="secondary"
-											            name="radio"
-											            value={item1._schedule.day+'|'+item1._schedule.hours.from+'|'+item1._schedule.hours.to}
-											            checked={item1.status == 'Burned' ? true: false}
-											            onChange={this.selectSchedule}
-											            required
-											        >
-											          {moment(item1.start).format('HH:mm')}{'/'}{moment(item1.end).format('HH:mm A')}
-											        </ToggleButton>
-							    	          	)
-							    	          }
-									    </ButtonGroup>
-							    	</Col>
-							    }
+										{typeof item[1] != 'undefined' &&
+											<Col xs={6}>
+											    <div role="group" className="btn-group-vertical btn-group-toggle">
+											          {
+											          	item[1].events.map((item1, i1) =>
+											          		<label className={item1.status == 'Burned' ? 'focus btn btn-secondary': 'btn btn-secondary'} key={i1}>
+											    	    		<input name="radio" 
+											    	    		       type="radio"
+											    	    			   value={item1._schedule.day+'|'+item1._schedule.hours.from+'|'+item1._schedule.hours.to}
+											    	    			   checked={item1.status == 'Burned' ? true: false}
+											    	    			   onChange={this.selectSchedule}
+											    	    			   />
+											    	    				{moment(item1.start).format('HH:mm')}{'/'}{moment(item1.end).format('HH:mm A')}
+											    	    	</label>
+											          	)
+											          }
+											    </div>
+											</Col>
+										}
 
 						    </Row>
 						    <div className="divide"></div>
+						    
 						</Carousel.Item>
 			        )
        	 	    }
@@ -586,6 +581,193 @@ export class Validation extends Component{
 			}
 		}
 	}
+
+
+	_validationV2(value, type){
+		if(value.length == 0 || type == ""){
+			return true;
+		}
+
+		if(type == 'RUT'){
+			if(!this.rut(value)){
+				return false;
+			}else{
+				return true;
+			}
+		}
+
+		if(type == 'String'){
+			if(!this.text2(value)){
+				return false;
+			}else{
+				return true;
+			}
+		}
+
+		if(type == 'Email'){
+			if(!this.email(value)){
+				return false;
+			}else{
+				return true;
+			}
+		}
+
+		if(type == 'Telephone'){
+			if(!this.telephoneCLv2(value)){
+				return false;
+			}else{
+				return true;
+			}
+		}
+
+		if(type == 'Number'){
+			if(!this.numbers(value)){
+				return false;
+			}else{
+				return true;
+			}
+		}
+	}
+
+	validateForm(submitEvent) {
+		/* Seriously, hold everything. */
+	    submitEvent.preventDefault();
+	    try{ submitEvent.stopImmediatePropagation(); } catch (error) {}
+	    submitEvent.stopPropagation();
+		
+		if (!submitEvent.currentTarget.checkValidity()) {
+		    var form     = submitEvent.currentTarget, elements = form.elements;
+		    /* Loop through the elements, looking for an invalid one. */
+		    for (var index = 0, len = elements.length; index < len; index++){
+		      var element = elements[index];
+
+		      var message = element.validationMessage,
+		            parent  = element.parentNode,
+		            div     = document.createElement('div');
+
+		      console.log(element.nodeName + ' - '+element.type+' - '+element.getAttribute('name'));
+
+		      /*validation custom input*/
+		      if(this.validationMessageForV2(element) == false){
+		      	console.log('aqui');
+		      	parent.classList.add("is-invalid");
+		      	parent.classList.remove("is-valid");
+		      	//element.setAttribute("ivalid", "true");
+		      	element.setCustomValidity('error-validation-input');
+		      	element.focus();
+		      	break;
+		      }else{
+		      	parent.classList.add("is-valid");
+		      	parent.classList.remove("is-invalid");
+		      	element.setCustomValidity('');
+		      }
+
+		        if (element.willValidate === true && element.validity.valid !== true) {
+			      	var name = element.nodeName, type = element.type;
+		      		console.log('aqui2');
+			        /* Add our message to a div with class 'validation-message' */
+			        //div.appendChild(document.createTextNode(message));
+			        //div.classList.add('validation-message');
+
+			        /* Add our error message just after element. */
+			        //parent.insertBefore(div, element.nextSibling);
+			        
+			        //var error = parent.getElementsByClassName("invalid-feedback");
+			        //var x = parent.getElementsByClassName("invalid-feedback"); //invalid-feedback / valid-feedback
+					//var i;
+					//for (i = 0; i < x.length; i++) {
+					//    x[i].style.display = 'block';
+					//}
+					parent.classList.add("is-invalid");
+					parent.classList.remove("is-valid");
+					element.setCustomValidity('error-input-required');
+			
+			        /* Focus on the element. */
+			        element.focus();
+			        /* break from our loop */
+			        break;
+			    } /* willValidate && validity.valid */
+			      else{
+			      	parent.classList.remove("is-invalid");
+			      	parent.classList.add("is-valid");
+			      	element.setCustomValidity('');
+			    }
+
+
+		    }
+		} else {
+		    return true; /* everything's cool, the form is valid! */
+		}
+	}
+
+
+	validationMessageForV2(element) {
+	    var name = element.nodeName, type = element.type;
+	    //console.log(name); 
+	    //console.log(type);
+		/* Type mismatch. */
+		if (name == 'INPUT' && type === 'email') {
+	      return this._validationV2(element.getAttribute('value'), 'Email');
+	    } else if (name == 'INPUT' && type === 'tel') {
+	      return this._validationV2(element.getAttribute('value'), 'Telephone');
+	    } else if(name == 'INPUT'){
+	      return this._validationV2(element.getAttribute('value'), element.getAttribute('validation'));
+	    }
+		return true;
+	}
+
+	/*
+		Determine the best message to return based on validity state.
+	*/
+	validationMessageFor(element) {
+	    var name = element.nodeName,
+	      type = element.type,
+	
+	      /* Custom, reused messages. */
+	      emailMessage = "Please enter a valid email address.";
+		
+		/* Pattern is present but the input doesn't match. */
+		if (element.validity.patternMismatch === true) {
+		    if (element.pattern == '\\d*') {
+		      return "Please only enter numbers.";
+		    } else {
+		      return element.validationMessage;
+		    }
+		
+		/* Type mismatch. */
+		} else if (element.validity.typeMismatch === true) {
+		    if (name == 'INPUT' && type === 'email') {
+		      return emailMessage;
+		    } else if (name == 'INPUT' && type === 'tel') {
+		      return "Please enter a valid phone number.";
+		    } else {
+		      return element.validationMessage;
+		    }
+		
+		/* Required field left blank. */
+		} else if (element.validity.valueMissing === true) {
+		    if (name == 'SELECT' || (name == 'INPUT' && type === 'radio')) {
+		      return "Please select an option from the list.";
+		    } else if (name == 'INPUT' && type === 'checkbox') {
+		      return "Please check the required box.";
+		    } else if (name == 'INPUT' && type === 'email') {
+		      return emailMessage;
+		    } else {
+		      return "Please fill out this field.";
+		    }
+		
+		/* Input is out of range. */
+		} else if (element.validity.rangeOverflow === true || element.validity.rangeUnderflow === true) {
+		    var max = element.getAttribute('max'),
+		        min = element.getAttribute('min');
+		
+		    return "Please input a value between " + min + " and " + max + ".";
+		
+		  /* Default message. */
+		  } else {
+		    return element.validationMessage;
+		}
+	}
 }
 
 export class ResponseForm extends Component {
@@ -600,20 +782,26 @@ export class ResponseForm extends Component {
 	}
 
 	handleSubmitForm = (event) =>{
-		event.preventDefault();
+		//event.preventDefault();
 		const form = event.currentTarget;
-		if (form.checkValidity() === false) {
-		      event.stopPropagation();
+		if (new Validation().validateForm(event) === undefined) {
 		      this.setState({errorSaveForm : ''});
 		      this.setState({validated : true});
+		      //event.stopPropagation();
 		}else{
 			this.setState({validated : false});
 			var _dataPost1 = this.props.messageData;
-			//this.props.messageData.inputs.forEach(function(el, index){
-			//	if(el.type == 'Schedule'){
-			//		delete _dataPost1.inputs[index].items;
-			//	}
-			//});
+			/*this.props.messageData.inputs.forEach(function(el, index){
+				if(el.type == 'Schedule'){
+					//delete _dataPost1.inputs[index].items;
+					if(typeof el.itemSelected == 'undefined' || el.itemSelected == ''){
+							this.setState({validated : true});
+							event.stopPropagation();
+					}
+				}
+			});*/
+
+			//if(this.state.validated == false){
 			var _dataPost = {"form" : _dataPost1, '_id': this.props.messageId};
             axios.post(config.get('baseUrlApi')+'/api/v1/message-save-form',JSON.stringify(_dataPost), 
               {headers: {
@@ -622,12 +810,19 @@ export class ResponseForm extends Component {
                 'x-dsi-restful' : localStorage.getItem('key_temp')
               }}
             ).then(res => {
-              //this.setMessage('_res', res.data.data);
-              //this.props.setMessage('_res',{response: 'Acción guardada correctamente!', type: 'Text'}); //mensaje debe venir del patron
-              this.props.successSentForm(this.props.index);
-              this.setState({showForm: false});
-              form.reset();
-            }).catch(function (error) {}).then(function () {});
+	              //this.setMessage('_res', res.data.data);
+	              //this.props.setMessage('_res',{response: 'Acción guardada correctamente!', type: 'Text'}); //mensaje debe venir del patron
+	              this.props.successSentForm(this.props.index);
+	              this.setState({showForm: false});
+	              form.reset();
+            }).catch(function (error) {
+            	if(error.response){
+	                if(error.response.status == 403){
+	                    this.props.closeSesion();
+	                }
+	            }
+            }).then(function () {});
+	        //}
 		}
 	}
 
@@ -656,8 +851,14 @@ export class ResponseForm extends Component {
 		    					<Form.Row key={"inputText"+i} className="inputText">
 									<Col key={i} xs={12}>
 									    	<Form.Group controlId="formBasicText">
-											    <Form.Control  className={x.classValidation ? x.classValidation : "form-control"} placeholder={x.label} size="sm" required name="label" type="text" value={x.value} onChange={e => this.handleInputChange(e, i)}/>
+											    <Form.Control  placeholder={x.label} size="sm" 
+											    			   required 
+											    			   name="label" type="text"
+											    			   validation={x.validation} 
+											    			   value={x.value} onChange={e => this.handleInputChange(e, i)}/>
 											    <Form.Label >{x.label}</Form.Label>
+											    {/*<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+												<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>*/}
 											</Form.Group>
 									</Col>
 								</Form.Row>
@@ -667,12 +868,16 @@ export class ResponseForm extends Component {
 		    					<Form.Row key={i} className="Multi-Choices">
 									<Col key={i} xs={12}>
 									    {x.items.map((x1, i1) => {
-									    	return (
-									    		  <div key={i1} className="inputGroup">
-												    <Form.Control id={"checkbox"+ i+i1} value={x1.value} checked={x1.value} onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} name={"option"+ i+i1} type="checkbox"/>
-												    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
-												  </div>
-									    	);
+										    	return (
+										    		  <div key={i1} className="inputGroup">
+													    <Form.Control id={"checkbox"+ i+i1} 
+													                  value={x1.value == true ? 'OK': ''} 
+													                  checked={x1.value} 
+													                  onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} 
+													                  name={"checkbox"+ i+i1} type="checkbox"/>
+													    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
+													  </div>
+										    	);
 									    })}
 									</Col>
 								</Form.Row>
@@ -684,7 +889,13 @@ export class ResponseForm extends Component {
 										    {x.items.map((x1, i1) => {
 										    	return (
 										    		  <div key={i1} className="inputGroup">
-													    <Form.Control id={"radio"+ i+i1} value={x1.label} onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} name="radio" type="radio"/>
+													    <Form.Control id={"radio"+ i+i1} 
+													                  value={x1.label} 
+													                  required
+													                  checked={x1.value}
+													                  onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} 
+													                  name={'radio'+i} 
+													                  type="radio"/>
 													    <label className="inputRadio" htmlFor={"radio"+ i+i1}>{x1.label}</label>
 													  </div>
 										    	);
@@ -698,7 +909,12 @@ export class ResponseForm extends Component {
 		    					<Form.Row key={i} className="Single-Option-Choice">
 									<Col key={i} xs={12}>
 									    	<Form.Group controlId="formBasicText">
-											    <Form.Control required size="sm" placeholder={x.label} value={x.value} onChange={e => this.handleInputChange(e, i)} as="textarea" rows="2"/>
+											    <Form.Control 
+											                required size="sm"
+											                name={'textarea'+i} 
+											    			placeholder={x.label} value={x.value} 
+											    			onChange={e => this.handleInputChange(e, i)} 
+											    			as="textarea" rows="2"/>
 											    <Form.Label >{x.label}</Form.Label>
 											</Form.Group>
 									</Col>

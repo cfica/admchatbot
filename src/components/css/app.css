@@ -713,9 +713,12 @@ a[data-toggle="collapse"] {
    margin-bottom: 10px
 }
  .form-control {
+   border: 0;
+   border-bottom: 1px solid #ced4da;
+   border-radius: 0px;
    font-family: inherit;
    /*width: 100%;
-   border: 0;
+   
    border-bottom: 2px solid #9b9b9b;*/
    outline: 0;
    font-size: 1rem;
@@ -723,11 +726,8 @@ a[data-toggle="collapse"] {
    /*background: transparent !important;*/
    transition: border-color 0.2s;
    font-weight: 700;
-   height: 40px;
-   padding-top: 10px;
    padding-left: 10px;
    padding-right: 10px;
-   padding-bottom: 2px;
 }
 
 .contentSend .form-control{
@@ -748,7 +748,7 @@ a[data-toggle="collapse"] {
 
 .form-label {
    position: absolute;
-   top: 0px;
+   top: -8px;
    display: block;
    transition: 0.2s;
    font-size: 0.7rem;
@@ -767,7 +767,7 @@ a[data-toggle="collapse"] {
 
 .form-control:focus ~ .form-label {
    position: absolute;
-   top: 0px;
+   top: -8px;
    display: block;
    transition: 0.2s;
    font-size: 0.7rem;

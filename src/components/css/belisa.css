@@ -18,7 +18,7 @@ body {
 
 #chat span{
 	font-size: 0.9rem;
-	color: #220b44 !important
+	color: #220b44
 }
 
 #chat .form-control{
@@ -75,6 +75,21 @@ body {
 	border-bottom: none;
 	border-left: none;
 	border-right: none;
+	border-top: solid 1px #593096;
+	height: 50px;
+	padding-top: 20px;
+}
+
+.contentSend .form-label{
+	top: 4px
+}
+
+.contentSend .form-control:placeholder-shown ~ .form-label{
+	top: 15px
+}
+
+.contentSend .form-control:focus ~ .form-label {
+  top: 4px
 }
 
 .contentSend .form-control.is-invalid, 
@@ -143,7 +158,7 @@ body {
 	padding: 8px;
 	margin-top: 10px;
 	border-radius: 3px;
-	border: 1px solid #ced4da;
+	border: 1px solid #593096;
 }
 
 .contentResponse .contentMessageChat .contentUser{
@@ -164,7 +179,7 @@ body {
 	padding: 8px;
 	margin-top: 10px;
 	border-radius: 5px;
-	border: solid 1px #c7edc4;
+	border: solid 1px #3eb233;
 }
 
 
@@ -334,5 +349,18 @@ body {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%6c757d' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
 }
 
+.errorMessage{
+	color: #dc3545 !important
+}
+
+.btn.btn-secondary.is-invalid{
+	border: solid 1px #dc3545;
+	color: #dc3545
+}
+
+.inputGroup.is-invalid{
+	color: #dc3545;
+	border-bottom: solid 1px #dc3545;
+}
 
 
