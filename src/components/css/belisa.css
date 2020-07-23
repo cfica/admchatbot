@@ -164,6 +164,14 @@ body {
 .contentResponse .contentMessageChat .contentUser{
 	
 }
+
+.contentResponse > div{
+ float: left;
+ clear: both;
+ width: 100%
+}
+
+
 .contentResponse .contentMessageChat .contentMsg{
 
 }
@@ -361,6 +369,11 @@ body {
 .inputGroup.is-invalid{
 	color: #dc3545;
 	border-bottom: solid 1px #dc3545;
+}
+
+.is-invalid{
+	color: #dc3545 !important;
+	font-size: 0.8rem !important
 }
 
 

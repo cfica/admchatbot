@@ -812,13 +812,13 @@ export class ResponseForm extends Component {
             ).then(res => {
 	              //this.setMessage('_res', res.data.data);
 	              //this.props.setMessage('_res',{response: 'Acción guardada correctamente!', type: 'Text'}); //mensaje debe venir del patron
-	              this.props.successSentForm(this.props.index);
+	              this.props.successSentForm(this.props.index, res.data.data.code);
 	              this.setState({showForm: false});
 	              form.reset();
             }).catch(function (error) {
             	if(error.response){
 	                if(error.response.status == 403){
-	                    this.props.closeSesion();
+	                    //this.props.closeSesion();
 	                }
 	            }
             }).then(function () {});

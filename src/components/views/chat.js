@@ -1,4 +1,5 @@
-import React, { Component,useState, useEffect } from "react";
+import React, { Component,useState, useEffect,useRef } from "react";
+import ReactDOM from 'react-dom';
 import { Alert, Navbar, Nav, InputGroup,Modal, Collapse,Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import config from 'react-global-configuration';
 import axios from 'axios';
@@ -33,8 +34,17 @@ export default class Login extends Component {
         header_message: 'BELISA, Virtual assistant',
         start_conversation: []
       },
-      recaptchaRef: React.createRef()
+      recaptchaRef: React.createRef(),
+      messagesEnd: React.createRef()
     };
+  }
+
+  scrollToBottom = () => {
+    //console.log(this.state.messagesEnd);
+    //window.HTMLElement.prototype.scrollIntoView = function() {};
+    if(this.state.messagesEnd.current != null){
+      this.state.messagesEnd.current.scrollIntoView({ behavior: "smooth"});
+    }
   }
 
   onChangeRecaptchaLogin(value){
@@ -88,7 +98,15 @@ export default class Login extends Component {
       /*localStorage.removeItem('messages');
       localStorage.removeItem('token');
       localStorage.removeItem('key_temp');*/
+      this.scrollToBottom();
+      
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.listMessages.length !== prevState.listMessages.length){
+      this.scrollToBottom();
+    }
+  } 
 
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
 
@@ -287,12 +305,16 @@ export default class Login extends Component {
      this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
 
-  successSentForm = (indexParent) => {
+  successSentForm = (indexParent, code) => {
     const _items = this.state.listMessages;
-     _items[indexParent]['status'] = 'Form-Sent-Success';
-     /**/
-     localStorage.setItem('messages', JSON.stringify(_items));
-     this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    if(code == 200){
+      _items[indexParent]['status'] = 'Form-Sent-Success';
+    }else if(code == 423){
+      _items[indexParent]['status'] = 'Form-Error-Saved';
+    }
+    /**/
+    localStorage.setItem('messages', JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
   }
   /*#########EVENTS CHANGES###########*/
 
@@ -304,7 +326,6 @@ export default class Login extends Component {
       this.setState({showContHello : true});
       this.setState({showContChat : false});
   }
-
 
   render() {
     //add recaptcha..
@@ -360,11 +381,11 @@ export default class Login extends Component {
                       
                       {this.state.showContChat && 
                               <div className="contChat">
-                                    <div className="contentResponse">
+                                    <div className="contentResponse" >
                                       {this.state.listMessages.map((item, index) => {
                                         if(item.type == '_req'){
                                           return (
-                                            <div key={index} className="contentMessageClient">
+                                            <div key={index} className="contentMessageClient" ref={index == (this.state.listMessages.length - 1)  ? this.state.messagesEnd : ''}>
                                                 <div>
                                                    <div className="contentUser">
                                                           <h5>You</h5>
@@ -378,7 +399,7 @@ export default class Login extends Component {
                                           );
                                         }else if(item.type == '_res'){
                                               return(
-                                                    <div key={index} className="contentMessageChat">
+                                                    <div key={index} className="contentMessageChat" ref={index == (this.state.listMessages.length - 1)  ? this.state.messagesEnd : ''}>
                                                            <div>
                                                                <div className="contentUser">
                                                                     <h5>Belisa</h5>
@@ -410,7 +431,15 @@ export default class Login extends Component {
                                                                   }
 
                                                                   {item.type_resp == 'Form' && item.status == 'Form-Sent-Success' &&
-                                                                     <span>Form sent correctly.</span>
+                                                                     <div>Form sent correctly.</div>
+                                                                  }
+
+                                                                  {item.type_resp == 'Form' && item.status == 'Form-Error-Saved' &&
+                                                                     <div className="is-invalid">
+                                                                      *The form could not be saved, the reasons are:<br/>
+                                                                      1.- You already made a reservation previously.<br/>
+                                                                      2.- The time is not available.
+                                                                     </div>
                                                                   }
 
                                                                   {item.type_resp == 'Slide' &&
