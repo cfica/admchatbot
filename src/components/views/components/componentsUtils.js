@@ -645,11 +645,11 @@ export class Validation extends Component{
 		            parent  = element.parentNode,
 		            div     = document.createElement('div');
 
-		      console.log(element.nodeName + ' - '+element.type+' - '+element.getAttribute('name'));
+		      //console.log(element.nodeName + ' - '+element.type+' - '+element.getAttribute('name'));
 
 		      /*validation custom input*/
 		      if(this.validationMessageForV2(element) == false){
-		      	console.log('aqui');
+		      	//console.log('aqui');
 		      	parent.classList.add("is-invalid");
 		      	parent.classList.remove("is-valid");
 		      	//element.setAttribute("ivalid", "true");
@@ -664,7 +664,7 @@ export class Validation extends Component{
 
 		        if (element.willValidate === true && element.validity.valid !== true) {
 			      	var name = element.nodeName, type = element.type;
-		      		console.log('aqui2');
+		      		//console.log('aqui2');
 			        /* Add our message to a div with class 'validation-message' */
 			        //div.appendChild(document.createTextNode(message));
 			        //div.classList.add('validation-message');
