@@ -424,6 +424,11 @@ a[data-toggle="collapse"] {
   max-width: none !important;
 }
 
+.modal-50w{
+  width: 50%;
+  max-width: none !important;
+}
+
 .contentMessageChat p, 
 .contentMessageChat ul, 
 .contentMessageChat span, 

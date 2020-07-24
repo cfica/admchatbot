@@ -28,6 +28,35 @@ export class Status extends Component{
 }
 
 
+
+export class ResponseTopic extends Component{
+	constructor(props) {
+	    super(props);
+	    this.state = {};
+	}
+
+	componentDidMount(){
+		console.log(this.props.messageData);
+	}
+
+	render(){
+       return (
+       		<div>
+       			<span>{this.props.messageData.text_response}</span>
+				<div className="divide"></div>
+				<ListGroup>
+					    {this.props.messageData.topics.map((x, i) => {
+					    	if(x.type_topic == 'Link'){
+				     	   return (<ListGroup.Item key={i} action>{x.value.title}</ListGroup.Item>);
+					    	}
+					    })}
+				</ListGroup>
+       		</div>
+       );
+	}
+}
+
+
 export class CarouselSchedule extends Component{
 	constructor(props) {
 	    super(props);

@@ -8,7 +8,7 @@ import { browserHistory } from 'react-router';
 import './../css/belisa.css';
 import Utils from './utils';
 import {GetSlide} from './components/slide';
-import {InputsTypeForm,ResponseForm,Validation} from './components/componentsUtils';
+import {InputsTypeForm,ResponseForm,Validation,ResponseTopic} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
 
@@ -413,6 +413,14 @@ export default class Login extends Component {
                                                                  
                                                                   {item.type_resp == 'Html' &&
                                                                     <div dangerouslySetInnerHTML={{__html: item.msg}}></div>
+                                                                  }
+
+                                                                  {item.type_resp == 'Topic' &&
+                                                                        <ResponseTopic
+                                                                            index = {index}
+                                                                            messageData = {item.msg}
+                                                                            messageId = {item._id}
+                                                                        />
                                                                   }
 
                                                                   {item.type_resp == 'Form' && item.status != 'Form-Sent-Success' &&

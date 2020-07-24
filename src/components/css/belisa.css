@@ -376,4 +376,9 @@ body {
 	font-size: 0.8rem !important
 }
 
+.contentResponse .contentMessageChat .list-group .list-group-item{
+	/*border: 1px solid #593096;*/
+	
+}
+
 

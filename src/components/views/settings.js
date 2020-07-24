@@ -12,6 +12,7 @@ import ModalConfChat from './components/modal-confchat';
 import ModalToConfirm from './components/confirm';
 import {Users} from './components/users';
 import MessageResult from './components/message-result';
+import Topics from './components/topics';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
@@ -225,9 +226,15 @@ export default class Settings extends Component {
 				        <Nav.Item>
 				          <Nav.Link eventKey="users">Users</Nav.Link>
 				        </Nav.Item>
+
 				        <Nav.Item>
 				          <Nav.Link eventKey="config">Configuration Chat</Nav.Link>
 				        </Nav.Item>
+
+				        <Nav.Item>
+				          <Nav.Link eventKey="topics">Topics</Nav.Link>
+				        </Nav.Item>
+
 				      </Nav>
 				    </Col>
 				    <Col sm={10}>
@@ -306,6 +313,10 @@ export default class Settings extends Component {
 				        
 				        <Tab.Pane eventKey="users">
 				        	<Users/>
+				        </Tab.Pane>
+
+				        <Tab.Pane eventKey="topics">
+				        	<Topics/>
 				        </Tab.Pane>
 
 				        <Tab.Pane eventKey="config">
