@@ -977,3 +977,29 @@ a[data-toggle="collapse"] {
 .colButton{
   text-align: right;
 }
+
+.titleFragment {
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 20px
+}
+
+.titleFragment h2{
+  font-size: 1.1rem;
+  margin: 0px;
+  color: #ccc
+}
+
+.titleFragment button{
+  margin: 0px;
+  padding: 0px
+}
+
+.titleFragment .buttons{
+  text-align: right;
+}
+
+.contentFragment{
+  border-left: solid 3px #7c2b8c;
+  margin-left: 10px ;
+  padding-left: 10px 
+}

@@ -105,19 +105,30 @@ export class TopicForm extends Component {
 
 	btnAddNewTopic = (event) =>{
 		const item = {
-			type_topic: this.state.topicSelected,
-			value:{}
+			title: '',
+			action:'',
+			value:''
 		}
 		const items = this.state.topics;
 		items.push(item);
 		this.setState({topics: items});
 	}
 
-	onchageTopic = (value, index, item, _name)=>{
+	onchageTitle = (value, index)=>{
 		const items = this.state.topics;
-		if(item.type_topic == 'Link'){
-			items[index]['value'][_name] = value;
-		}
+		items[index]['title'] = value;
+		this.setState({topics: items});
+	}
+
+	_handleSelectAction = (value, index)=>{
+		const items = this.state.topics;
+		items[index]['action'] = value;
+		this.setState({topics: items});
+	}
+
+	onchageValue = (value, index)=>{
+		const items = this.state.topics;
+		items[index]['value'] = value;
 		this.setState({topics: items});
 	}
 
@@ -164,71 +175,67 @@ export class TopicForm extends Component {
 
 									<div className="divide"></div>
 
-									<Form.Group  controlId="topics">
-										<InputGroup className="mb-3">
-										    <Form.Control placeholder="Type Topic" required as="select" onChange={this._handleSelectTopic}>
-										        <option key={0} value="">Select</option>
-											    <option key={1} value="Link">Link</option>
-											    <option key={2} value="Pattern">Pattern</option>
-											    <option key={3} value="Custom">Custom (Html)</option>
-										    </Form.Control>
-										    <Form.Label>Type Topic</Form.Label>
-										    
-										    <InputGroup.Append>
-										      <Button size="sm" onClick={this.btnAddNewTopic} variant="outline-secondary">Add</Button>
-										    </InputGroup.Append>
-										</InputGroup>
-					                    <Form.Text className="text-muted">
-					                      todo..
-					                    </Form.Text>
-					                </Form.Group>
+									<Form.Row className="titleFragment">
+									    <Col xs={11}><h2>Topics</h2></Col>
+									    <Col xs={1} className="buttons">
+									    	<Button variant="Link" onClick={this.btnAddNewTopic} size="sm"><Icon.Plus size={25}/></Button>
+									    </Col>
+									</Form.Row>
+
+									<section className="contentFragment">
+									    {this.state.topics.map((item, index) => 
+											<Form.Row>
+											        <Col xs={4}>
+											        		<Form.Group controlId="formTitle">
+															    <Form.Control size="sm" 
+															    			  type="text" 
+															    			  value={item.title} 
+															    			  onChange={e => this.onchageTitle(e.target.value, index)}
+															    			  placeholder="Enter Title" />
+															    <Form.Label>Title</Form.Label>
+															</Form.Group>
+											        </Col>
+
+											        <Col xs={4}>
+											        		<Form.Group required controlId="action" key={0}>
+															    <Form.Control placeholder="Type Topic" required as="select" onChange={e => this._handleSelectAction(e.target.value, index)}>
+															        <option value="">Select Action</option>
+																    <option key={0} value="Link">Link</option>
+																    <option key={1} value="Pattern">Pattern</option>
+																    <option key={2} value="Custom">Custom</option>
+															    </Form.Control>
+															    <Form.Label>Select Action</Form.Label>
+															</Form.Group>
+											        </Col>
 
 
-					                {this.state.topics.map((item, index) => {
-					                	if(item.type_topic == 'Link'){
-					                		return(
-					                			<Form.Row key={index}>
-											    	<Col xs={6}>
-											    		<Form.Group controlId="formTitle">
-														    <Form.Control size="sm" 
-														    			  type="text" 
-														    			  value={item.value.title} 
-														    			  onChange={e => this.onchageTopic(e.target.value, index, item, 'title')} 
-														    			  placeholder="Enter Title" />
-														    <Form.Label>Title</Form.Label>
-														</Form.Group>
-											    	</Col>
+											        <Col xs={4}>
+								            				{item.action == 'Link' && 
+										                		    <Form.Group controlId="formLink">
+																	    <Form.Control size="sm" 
+																	                  type="text" 
+																	                  value={item.value} 
+															    			  		  onChange={e => this.onchageValue(e.target.value, index)}
+																	                  placeholder="Enter Link" />
+																	    <Form.Label>Link (Url)</Form.Label>
+																	</Form.Group>
+										                	}
 
-											    	<Col xs={6}>
-											    		<Form.Group controlId="formLink">
-														    <Form.Control size="sm" 
-														                  type="text" 
-														                  value={item.value.link} 
-														                  onChange={e => this.onchageTopic(e.target.value, index, item, 'link')} 
-														                  placeholder="Enter Link" />
-														    <Form.Label>Link (Url)</Form.Label>
-														</Form.Group>
-											    	</Col>
-											    </Form.Row>
-					                		);
-					                	} else if(item.type_topic == 'Pattern'){
-					                		return (
-					                			<Form.Group required controlId="clients" key={index}>
-												    <Form.Control placeholder="Type Topic" required as="select" onChange={this._handleSelectTopic}>
-												        <option value="">Select Pattern</option>
-													    <option key={0} value="Link">Pattern 1</option>
-													    <option key={1} value="Pattern">Pattern 1</option>
-													    <option key={1} value="Custom">Pattern 3</option>
-												    </Form.Control>
-												    <Form.Label>Select Pattern</Form.Label>
-												</Form.Group>
-					                		);
-					                	} else if(item.type_topic == 'Custom'){
-					                		return (
-					                			<div key={index}></div>
-					                		);
-					                	}
-					                })}
+										                	{item.action == 'Pattern' &&
+									                			<Form.Group required controlId="clients" key={0}>
+																    <Form.Control placeholder="Type Topic" required as="select" onChange={e => this.onchageValue(e.target.value, index)}>
+																        <option value="">Select Pattern</option>
+																	    <option key={0} value="Link">Pattern 1</option>
+																	    <option key={1} value="Pattern">Pattern 1</option>
+																	    <option key={1} value="Custom">Pattern 3</option>
+																    </Form.Control>
+																    <Form.Label>Select Pattern</Form.Label>
+																</Form.Group>
+										                	}
+								            		</Col>
+								            </Form.Row>
+								        )}
+							        </section>
 					    		</Col>
 						    </Form.Row>
 			        </Modal.Body>
@@ -258,6 +265,7 @@ export default class Topics extends Component {
 	      scope: ['admin'].includes(localStorage.getItem('scope')),
 	      token: localStorage.getItem('tokenAdm'),
 	      user_id: localStorage.getItem('_id'),
+	      client: localStorage.getItem('client'),
 	      inputLink: '',
 	      inputDescription:'',
 	      validated : false,
