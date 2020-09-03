@@ -11,7 +11,6 @@ import {GetSlide} from './components/slide';
 import {InputsTypeForm,ResponseForm,Validation,ResponseTopic} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
-
 export default class Login extends Component {
   constructor(props){
     super(props);
@@ -99,7 +98,11 @@ export default class Login extends Component {
       localStorage.removeItem('token');
       localStorage.removeItem('key_temp');*/
       this.scrollToBottom();
-      
+      //var base= document.createElement('base');
+      //base.target= '_parent';
+      //base.href = 'http://www.w3.org/';
+      //document.getElementsByTagName('head')[0].appendChild(base);
+      //document.body.appendChild(base);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -159,6 +162,15 @@ export default class Login extends Component {
     };
     var oldItems = JSON.parse(localStorage.getItem('messages')) || [];
     const items = oldItems.slice();
+    if(item.type_resp == 'Form'){
+      items.forEach(function(el, index){
+        if(el.type_resp == 'Form'){
+            items[index]['status'] = 'Form-Exists';
+        }
+      });
+      item.status = 'Init';
+    }
+    console.log(items);
     items.push(item);
     localStorage.setItem('messages', JSON.stringify(items));
     this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
@@ -344,19 +356,19 @@ export default class Login extends Component {
                                   <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
                                     <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
                                     <Form.Group controlId="formName">
-                                      <Form.Control required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
+                                      <Form.Control autocomplete="off" required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                                       <Form.Label >Enter Name</Form.Label>
                                     </Form.Group>
 
                                     {this.state.confChatInit.start_conversation.map((item, index) => {
                                         if(item == 'Email'){
                                           return (<Form.Group key={index} controlId="formEmail">
-                                                    <Form.Control required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
+                                                    <Form.Control autocomplete="off" required placeholder="Enter Email"  value={this.state.inputEmail} onChange={this.inp = (e) => {this.setState({inputEmail: e.target.value})}} type="email" />
                                                     <Form.Label >Enter Email</Form.Label>
                                                   </Form.Group>);
                                         }else if(item == 'Telephone'){
                                           return (<Form.Group key={index} controlId="formTelephone">
-                                                    <Form.Control required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
+                                                    <Form.Control autocomplete="off" required placeholder="Enter Telephone"  type="text" value={this.state.inputTelephone} onChange={this.inp = (e) => {this.setState({inputTelephone: e.target.value})}}/>
                                                     <Form.Label >Enter Telephone</Form.Label>
                                                   </Form.Group>);
                                         }
@@ -423,7 +435,7 @@ export default class Login extends Component {
                                                                         />
                                                                   }
 
-                                                                  {item.type_resp == 'Form' && item.status != 'Form-Sent-Success' &&
+                                                                  {item.type_resp == 'Form' && item.status == 'Init' &&
                                                                         <ResponseForm
                                                                             setMessage = {this.setMessage}
                                                                             statusValidation = {this.statusValidation}
@@ -436,6 +448,10 @@ export default class Login extends Component {
                                                                             successSentForm = {this.successSentForm}
                                                                             closeSession = {this.closeSession}
                                                                         />
+                                                                  }
+
+                                                                  {item.type_resp == 'Form' && item.status == 'Form-Exists' &&
+                                                                     <div>Form disable.</div>
                                                                   }
 
                                                                   {item.type_resp == 'Form' && item.status == 'Form-Sent-Success' &&
@@ -474,7 +490,7 @@ export default class Login extends Component {
                                             <InputGroup>
                                                 <FormControl placeholder="Add Message" required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
                                                   aria-label="Add Message"
-                                                  aria-describedby="basic-addon2"
+                                                  autocomplete="off"
                                                 />
                                                 <Form.Label >Message</Form.Label>
 

@@ -36,7 +36,12 @@ export class ResponseTopic extends Component{
 	}
 
 	componentDidMount(){
-		console.log(this.props.messageData);
+		//console.log(this.props.messageData);
+	}
+
+	actionPattern = (x) =>{
+		/*send message server*/
+		console.log('hi!');
 	}
 
 	render(){
@@ -46,8 +51,10 @@ export class ResponseTopic extends Component{
 				<div className="divide"></div>
 				<ListGroup>
 					    {this.props.messageData.topics.map((x, i) => {
-					    	if(x.type_topic == 'Link'){
-				     	   return (<ListGroup.Item key={i} action>{x.value.title}</ListGroup.Item>);
+					    	if(x.action == 'Link'){
+				     	   		return (<a href={x.value} key={i} target="new" className="list-group-item list-group-item-action">{x.title}</a>);
+					    	}else if(x.action == 'Pattern'){
+					    		return (<ListGroup.Item key={i} action onClick={this.actionPattern(x)}>{x.title}</ListGroup.Item>);
 					    	}
 					    })}
 				</ListGroup>

@@ -14,18 +14,20 @@ export class TopicForm extends Component {
 	    super(props);
 	    this.state = {
 	    	scope: ['admin'].includes(localStorage.getItem('scope')),
-	    	token: localStorage.getItem('tokenAdm'),
+            token: localStorage.getItem('tokenAdm'),
+            user_id: localStorage.getItem('_id'),
+            client: localStorage.getItem('client'),
 	    	showModal: true,
 	    	validated: false,
 	    	collect: {},
 	    	name: '',
-	    	client: '',
 	    	clients: [],
 	    	typeUser: this.props.typeUser,
 	    	topicSelected: '',
 	    	header: {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm')}},
 	    	urlAddTopic: config.get('baseUrlApi')+'/api/v1/add-topic',
-	    	topics: []
+	    	topics: [],
+	    	listTags: []
 	    };
 	}
 
@@ -77,7 +79,9 @@ export class TopicForm extends Component {
    		    	JSON.stringify(_dataPost),
    		    	this.state.header
    		    ).then(res => {
-   		    	//this.props.success();
+   		    	this.setState({topics: []});
+   		    	this.setState({name: ''});
+   		    	this.setState({textResponse: ''});
 		    	form.reset();
 		    }).catch(function (error) {
 		    }).then(function () {});	
@@ -90,6 +94,13 @@ export class TopicForm extends Component {
 	    .then(res => {
 	    	this.setState({clients: res.data.data.items});
 	    }).catch(function (error) {});
+	}
+
+	loadListTags() {
+	    axios.get(config.get('baseUrlApi')+'/api/v1/list-tags', this.state.header)
+	    .then(res => {
+	    	this.setState({listTags: res.data.data.items});
+	    });
 	}
 
 	_handleSelectClient = (event) =>{
@@ -124,11 +135,27 @@ export class TopicForm extends Component {
 		const items = this.state.topics;
 		items[index]['action'] = value;
 		this.setState({topics: items});
+		if(items[index]['action'] == 'Pattern'){
+			this.loadListTags();
+		}
 	}
 
-	onchageValue = (value, index)=>{
+	onchageValueTopic = (value, index, action)=>{
 		const items = this.state.topics;
-		items[index]['value'] = value;
+		/*if(action == 'Pattern'){
+			items[index]['value'] = {
+				action: action,
+				value: value
+			};
+		}else{*/
+			items[index]['value'] = value;
+		//}
+		this.setState({topics: items});
+	}
+
+	deleteTopic = (index) =>{
+		const items = this.state.topics;
+		items.splice(index, 1);
 		this.setState({topics: items});
 	}
 
@@ -184,56 +211,61 @@ export class TopicForm extends Component {
 
 									<section className="contentFragment">
 									    {this.state.topics.map((item, index) => 
-											<Form.Row>
-											        <Col xs={4}>
-											        		<Form.Group controlId="formTitle">
-															    <Form.Control size="sm" 
-															    			  type="text" 
-															    			  value={item.title} 
-															    			  onChange={e => this.onchageTitle(e.target.value, index)}
-															    			  placeholder="Enter Title" />
-															    <Form.Label>Title</Form.Label>
-															</Form.Group>
-											        </Col>
-
-											        <Col xs={4}>
-											        		<Form.Group required controlId="action" key={0}>
-															    <Form.Control placeholder="Type Topic" required as="select" onChange={e => this._handleSelectAction(e.target.value, index)}>
-															        <option value="">Select Action</option>
-																    <option key={0} value="Link">Link</option>
-																    <option key={1} value="Pattern">Pattern</option>
-																    <option key={2} value="Custom">Custom</option>
-															    </Form.Control>
-															    <Form.Label>Select Action</Form.Label>
-															</Form.Group>
-											        </Col>
-
-
-											        <Col xs={4}>
-								            				{item.action == 'Link' && 
-										                		    <Form.Group controlId="formLink">
-																	    <Form.Control size="sm" 
-																	                  type="text" 
-																	                  value={item.value} 
-															    			  		  onChange={e => this.onchageValue(e.target.value, index)}
-																	                  placeholder="Enter Link" />
-																	    <Form.Label>Link (Url)</Form.Label>
-																	</Form.Group>
-										                	}
-
-										                	{item.action == 'Pattern' &&
-									                			<Form.Group required controlId="clients" key={0}>
-																    <Form.Control placeholder="Type Topic" required as="select" onChange={e => this.onchageValue(e.target.value, index)}>
-																        <option value="">Select Pattern</option>
-																	    <option key={0} value="Link">Pattern 1</option>
-																	    <option key={1} value="Pattern">Pattern 1</option>
-																	    <option key={1} value="Custom">Pattern 3</option>
-																    </Form.Control>
-																    <Form.Label>Select Pattern</Form.Label>
+												<Form.Row key={index}>
+												        <Col xs={4}>
+												        		<Form.Group controlId="formTitle">
+																    <Form.Control size="sm" 
+																    			  type="text" 
+																    			  value={item.title}
+																    			  required 
+																    			  onChange={e => this.onchageTitle(e.target.value, index)}
+																    			  placeholder="Enter Title" />
+																    <Form.Label>Title</Form.Label>
 																</Form.Group>
-										                	}
-								            		</Col>
-								            </Form.Row>
+												        </Col>
+
+												        <Col xs={3}>
+												        		<Form.Group required controlId="action" key={0}>
+																    <Form.Control placeholder="Type Topic" required as="select" onChange={e => this._handleSelectAction(e.target.value, index)}>
+																        <option value="">Select Action</option>
+																	    <option key={0} value="Link">Link</option>
+																	    <option key={1} value="Pattern">Pattern</option>
+																	    <option key={2} value="Custom">Custom</option>
+																    </Form.Control>
+																    <Form.Label>Select Action</Form.Label>
+																</Form.Group>
+												        </Col>
+
+
+												        <Col xs={4}>
+									            				{item.action == 'Link' && 
+											                		    <Form.Group controlId="formLink">
+																		    <Form.Control size="sm" 
+																		                  type="text" 
+																		                  value={item.value} 
+																    			  		  onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}
+																		                  placeholder="Enter Link" />
+																		    <Form.Label>Link (Url)</Form.Label>
+																		</Form.Group>
+											                	}
+
+											                	{item.action == 'Pattern' &&
+										                			<Form.Group required controlId="clients" key={0}>
+																	    <Form.Control placeholder="Select Pattern" required as="select" onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}>
+																	        <option value="">Select Pattern</option>
+																	        {this.state.listTags.map((item, index) => 
+																	        	<option value={item._id}>{item.tag}</option>
+																	        )}
+																	    </Form.Control>
+																	    <Form.Label>Select Pattern</Form.Label>
+																	</Form.Group>
+											                	}
+									            		</Col>
+
+									            		<Col xs={1}>
+									            				<Button size="sm" onClick={(e) => this.deleteTopic(index)} variant="outline-secondary">X</Button>
+									            		</Col>
+									            </Form.Row>
 								        )}
 							        </section>
 					    		</Col>
@@ -334,7 +366,8 @@ export default class Topics extends Component {
 	deactivateUserClose = ()=>{
 		this.setState({deactivateUser : false});
 	}
-  		render() {
+  	
+  	render() {
 				return (
 							<section>
 							    <Jumbotron className="content-form jumbotron-sm jumbotron-right">
@@ -404,5 +437,5 @@ export default class Topics extends Component {
 						        </div>
 					        </section>
 		  );
-  		}
+  	}
 }
