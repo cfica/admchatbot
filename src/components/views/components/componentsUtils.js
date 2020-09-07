@@ -9,6 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import * as moment from 'moment';
 import ModalToConfirm from './confirm';
 import ModalAddEventSchedule from './modal-addEventSchedule';
+import {ChatMessages} from './chat';
 
 export class Status extends Component{
 	constructor(props) {
@@ -28,6 +29,49 @@ export class Status extends Component{
 }
 
 
+export class RequestAsync extends Component{
+	async post(_url, _params, _header){
+	      let result;
+	      try{
+	             const request = await axios.post(config.get('baseUrlApi')+_url,JSON.stringify(_params), 
+	                    {headers: _header
+	             });
+	             const result = await request.data.data;
+	             return result;
+	      } catch(e){
+	             if(e.response){
+	               if(e.response.status == 403){
+	                   //localStorage.removeItem('messages');
+	                   //localStorage.removeItem('token');
+	                   //localStorage.removeItem('key_temp');
+	                   //localStorage.removeItem('client_id');
+	                   return false;
+	               }
+	             } 
+	             //throw e;
+	      }
+	}
+
+	async get(_url, _header){
+		let result;
+	    try{
+            const request = await axios.get(config.get('baseUrlApi')+_url,{headers: _header});
+            const result = await request.data.data;
+            return result;
+	    } catch(e){
+            if(e.response){
+               if(e.response.status == 403){
+                   //localStorage.removeItem('messages');
+                   //localStorage.removeItem('token');
+                   //localStorage.removeItem('key_temp');
+                   //localStorage.removeItem('client_id');
+                   return false;
+               }
+            } 
+            //throw e;
+	    }
+	}
+}
 
 export class ResponseTopic extends Component{
 	constructor(props) {
@@ -37,11 +81,6 @@ export class ResponseTopic extends Component{
 
 	componentDidMount(){
 		//console.log(this.props.messageData);
-	}
-
-	actionPattern = (x) =>{
-		/*send message server*/
-		console.log('hi!');
 	}
 
 	render(){
@@ -54,7 +93,7 @@ export class ResponseTopic extends Component{
 					    	if(x.action == 'Link'){
 				     	   		return (<a href={x.value} key={i} target="new" className="list-group-item list-group-item-action">{x.title}</a>);
 					    	}else if(x.action == 'Pattern'){
-					    		return (<ListGroup.Item key={i} action onClick={this.actionPattern(x)}>{x.title}</ListGroup.Item>);
+					    		return (<ListGroup.Item key={i} action onClick={(e) => this.props.sendAction(x, i, this.props.index)}>{x.title}</ListGroup.Item>);
 					    	}
 					    })}
 				</ListGroup>

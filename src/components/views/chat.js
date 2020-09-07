@@ -8,6 +8,7 @@ import { browserHistory } from 'react-router';
 import './../css/belisa.css';
 import Utils from './utils';
 import {GetSlide} from './components/slide';
+import {ChatMessages} from './components/chat';
 import {InputsTypeForm,ResponseForm,Validation,ResponseTopic} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
@@ -151,70 +152,52 @@ export default class Login extends Component {
     });
   }
 
-  setMessage = (_type,message) =>{
-    const item = {
-        _id: message._id,
-        type : _type,
-        msg : message.response, 
-        type_resp: message.type, 
-        status: '',
-        _created: moment()
-    };
-    var oldItems = JSON.parse(localStorage.getItem('messages')) || [];
-    const items = oldItems.slice();
-    if(item.type_resp == 'Form'){
-      items.forEach(function(el, index){
-        if(el.type_resp == 'Form'){
-            items[index]['status'] = 'Form-Exists';
-        }
-      });
-      item.status = 'Init';
-    }
-    console.log(items);
-    items.push(item);
-    localStorage.setItem('messages', JSON.stringify(items));
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+  setMessage = (_type, message) =>{
+    this.setState({'listMessages' : new ChatMessages().setMessage(_type, message)});
   }
 
   _handleSend = (event)=>{
-        event.preventDefault();
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-          event.stopPropagation();
-          this.setState({validated : true});
-        }else{
-          this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
-          this.setState({inputMessage : ''});
-          this.setState({validated : false});
-          var _dataPost = {"message" : this.state.inputMessage};
-          axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(_dataPost), 
-              {headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                'x-dsi-restful' : localStorage.getItem('key_temp'),
-                'x-dsi2-restful' : localStorage.getItem('client_id')
-              }}
-          ).then(res => {
-              this.setMessage('_res', res.data.data);
-              form.reset();
-          }).catch(function (error) {
-            if(error.response){
-                if(error.response.status == 403){
-                    localStorage.removeItem('messages');
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('key_temp');
-                    localStorage.removeItem('client_id');
-                }
-            }
-          }).then(function () {
-                // always executed
-          });
-
-          if(localStorage.getItem('token') == undefined){
-            this.setState({showContHello : true});
-            this.setState({showContChat : false});
-          }
+    event.preventDefault();
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      this.setState({validated : true});
+    }else{
+      this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
+      this.setState({inputMessage : ''});
+      this.setState({validated : false});
+      
+      async function _requestApi(_this, form){
+        const res = await new ChatMessages().sendMessage(_this.state.inputMessage);
+        if(typeof res.type != 'undefined'){
+          _this.setMessage('_res', res);
+          form.reset();
         }
+      }
+      _requestApi(this, form);
+
+      if(localStorage.getItem('token') == undefined){
+        this.setState({showContHello : true});
+        this.setState({showContChat : false});
+      }
+    }  
+  }
+
+  sendAction = (x, index, indexParent) =>{
+    const _items = this.state.listMessages;
+    _items[indexParent]['msg'] = x.title;
+    _items[indexParent]['type_resp'] = 'Text';
+    localStorage.setItem('messages', JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    this.setMessage('_req', {type:'Text', response: x.title});
+    /**/
+    async function _requestApi(_this, x){
+      const res = await new ChatMessages().sendMessage(x.value, x.action);
+      if(typeof res.type != 'undefined'){
+        _this.setMessage('_res', res);
+      }
+    }
+    _requestApi(this, x);
   }
 
   _handleStarChat = (event) =>{
@@ -432,6 +415,7 @@ export default class Login extends Component {
                                                                             index = {index}
                                                                             messageData = {item.msg}
                                                                             messageId = {item._id}
+                                                                            sendAction = {this.sendAction}
                                                                         />
                                                                   }
 

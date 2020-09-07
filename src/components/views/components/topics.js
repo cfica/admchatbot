@@ -3,7 +3,7 @@ import {Modal,Button,Table,Carousel,DropdownButton,Jumbotron,Dropdown,ButtonGrou
 import axios from 'axios';
 import config from 'react-global-configuration';
 import ReactPaginate from 'react-paginate';
-import {Validation, Status} from './componentsUtils';
+import {Validation, Status, RequestAsync} from './componentsUtils';
 import ModalToConfirm from './confirm';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
@@ -25,13 +25,22 @@ export class TopicForm extends Component {
 	    	typeUser: this.props.typeUser,
 	    	topicSelected: '',
 	    	header: {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm')}},
-	    	urlAddTopic: config.get('baseUrlApi')+'/api/v1/add-topic',
 	    	topics: [],
-	    	listTags: []
+	    	listTags: [],
+	    	detailTopic: {},
+	    	actionsTopic: [
+	    		{value: 'Link', title: 'Link'},
+	    		{value: 'Pattern', title: 'Pattern'},
+	    		{value: 'Custom', title: 'Custom'}
+	    	]
 	    };
 	}
 
 	handleClose = () => {
+		this.hiddenModal();
+	}
+
+	hiddenModal(){
 		this.setState({showModal: false});
 		this.props.hiddenModal();
 	}
@@ -41,19 +50,24 @@ export class TopicForm extends Component {
 		 	this.loadClients();
 		}
 		
-		if(this.props.idUser){
-	        this.getUser(this.props.idUser, false);
+		if(this.props.idTopic){
+	        this.loadTopic(this.props.idTopic);
+	        this.loadListTags();
 		}
 	}
 
-	getUser(_id, client){
-		axios.post(config.get('baseUrlApi')+'/api/v1/get-user',JSON.stringify({_id: _id, client: client}), 
-		 {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
-		).then(res => {
-			this.setState({fullname: res.data.data.result[0].fullname});
-			this.setState({email: res.data.data.result[0].email});
-	    }).catch(function (error) {
-	    }).then(function () {});
+	loadTopic(_id){
+		(async function(_this, _id){
+	      var _url = '/api/v1/topic?_id='+_id;
+	      const res = await new RequestAsync().get(
+	      	_url,
+	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      );
+	      _this.setState({name: res.name});
+	      _this.setState({textResponse: res.text_response});
+	      _this.setState({topics: res.topics});
+	      console.log(res);
+	    })(this, _id);
 	}
 
 	handleSave = (event) => {
@@ -64,36 +78,45 @@ export class TopicForm extends Component {
           this.setState({validated : true});
         }else{
         	this.setState({validated : false});
+        	var _url = '/api/v1/add-topic';
         	var _dataPost = {
         		client: this.state.client,
         		name : this.state.name,
         		topics: this.state.topics,
         		text_response : this.state.textResponse
             };
-   		    //if(this.props.idUser){
-   		    //	_url = '/api/v1/update-user';
-   		    //	_dataPost._id = this.props.idUser;
-   		    //}
-   		    axios.post(
-   		    	this.state.urlAddTopic,
-   		    	JSON.stringify(_dataPost),
-   		    	this.state.header
-   		    ).then(res => {
-   		    	this.setState({topics: []});
-   		    	this.setState({name: ''});
-   		    	this.setState({textResponse: ''});
+   		    
+   		    if(this.props.idTopic){
+   		    	_url = '/api/v1/update/topic';
+   		    	_dataPost._id = this.props.idTopic;
+   		    }
+
+
+   		    (async function(_this, _url, _dataPost, _header, form){
+			    const res = await new RequestAsync().post(
+			      	_url,
+			      	_dataPost,
+			      	_header
+			    );
+		        _this.setState({topics: []});
+   		    	_this.setState({name: ''});
+   		    	_this.setState({textResponse: ''});
 		    	form.reset();
-		    }).catch(function (error) {
-		    }).then(function () {});	
+		    	_this.hiddenModal();
+		    	_this.props.success();
+		    })(this, _url, _dataPost, {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}, form);	
         }
 	}
 
 	loadClients() {
-	    axios.get(config.get('baseUrlApi')+'/api/v1/clients?limit=50&offset=0', 
-    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-	    .then(res => {
-	    	this.setState({clients: res.data.data.items});
-	    }).catch(function (error) {});
+		(async function(_this){
+	      var _url = config.get('baseUrlApi')+'/api/v1/clients?limit=50&offset=0';
+	      const res = await new RequestAsync().get(
+	      	_url,
+	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      );
+	      _this.setState({clients: res.items});
+	    })(this);
 	}
 
 	loadListTags() {
@@ -164,7 +187,7 @@ export class TopicForm extends Component {
 			<Modal show={this.state.showModal} onHide={this.handleClose} dialogClassName="modal-50w">
 		        <Form noValidate validated={this.state.validated} onSubmit={this.handleSave}>
 			        <Modal.Header closeButton>
-			          <Modal.Title>{this.props.idUser ? 'Edit Topic' : 'Add Topic'}</Modal.Title>
+			          <Modal.Title>{this.props.idTopic ? 'Edit Topic' : 'Add Topic'}</Modal.Title>
 			        </Modal.Header>
 			        
 			        <Modal.Body>
@@ -226,11 +249,13 @@ export class TopicForm extends Component {
 
 												        <Col xs={3}>
 												        		<Form.Group required controlId="action" key={0}>
-																    <Form.Control placeholder="Type Topic" required as="select" onChange={e => this._handleSelectAction(e.target.value, index)}>
+																    <Form.Control placeholder="Type Topic" value={item.action} required as="select" onChange={e => this._handleSelectAction(e.target.value, index)}>
 																        <option value="">Select Action</option>
-																	    <option key={0} value="Link">Link</option>
-																	    <option key={1} value="Pattern">Pattern</option>
-																	    <option key={2} value="Custom">Custom</option>
+																	    
+																	    {this.state.actionsTopic.map((item1, index1) => 
+																	    	<option key={index1} value={item1.value}>{item1.title}</option>
+																	    )}
+																    
 																    </Form.Control>
 																    <Form.Label>Select Action</Form.Label>
 																</Form.Group>
@@ -251,7 +276,7 @@ export class TopicForm extends Component {
 
 											                	{item.action == 'Pattern' &&
 										                			<Form.Group required controlId="clients" key={0}>
-																	    <Form.Control placeholder="Select Pattern" required as="select" onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}>
+																	    <Form.Control placeholder="Select Pattern" value={item.value} required as="select" onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}>
 																	        <option value="">Select Pattern</option>
 																	        {this.state.listTags.map((item, index) => 
 																	        	<option value={item._id}>{item.tag}</option>
@@ -307,10 +332,12 @@ export default class Topics extends Component {
 	      items: [],
 	      pageCount: 10,
 	      offset: 0,
-	      showAddUser: false,
+	      showModalTopic: false,
 	      perPage: 10,
-	      idUser: '',
-	      deactivateUser: false
+
+	      idTopic: '',
+	      showDeleteConfirm: false,
+	      detailTopic: {}
 	    };
 	}
 
@@ -323,68 +350,76 @@ export default class Topics extends Component {
 	}
 
 	loadTopics() {
-		var _url = config.get('baseUrlApi')+'/api/v1/topics?limit='+this.state.perPage+'&offset='+this.state.offset;
-		var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
-	    axios.get(_url, _config).then(res => {
-	    	this.setState({items: res.data.data.items,pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),});
-	    }).catch(function (error) {});
+		(async function(_this){
+	      var _url = '/api/v1/topics?limit='+_this.state.perPage+'&offset='+_this.state.offset;
+	      const res = await new RequestAsync().get(
+	      	_url,
+	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      );
+	      _this.setState({items: res.items,pageCount: Math.ceil(res.total_count / res.limit)});
+	    })(this);
 	}
 
-	successUser = ()=>{
-		this.setState({showAddUser : false});
+	successTopic = ()=>{
+		this.setState({showModalTopic : false});
 		this.loadTopics();
 	}
 
-	addUser = (event)=>{
-		this.setState({showAddUser : true});
-		this.setState({idUser : ''});
+	addTopic = (event)=>{
+		this.setState({showModalTopic : true});
+		this.setState({idTopic : ''});
 	}
 
-	hiddenAddUser = data => {
-	    this.setState({showAddUser : false});
+	hiddenEditTopic = data => {
+	    this.setState({showModalTopic : false});
 	};
 
-	editUser(item){
-		this.setState({showAddUser : true});
-		this.setState({idUser : item._id.$oid});
+	edit(item){
+		this.setState({showModalTopic : true});
+		this.setState({idTopic : item._id.$oid});
 	}
 
-	deactivateUser(item){
-		this.setState({idUser : item._id.$oid});
-		this.setState({deactivateUser : true});
+	delete(item){
+		this.setState({idTopic : item._id.$oid});
+		this.setState({showDeleteConfirm : true});
 	}
 
-	deactivateUserConfirm = ()=>{
-		axios.post(
-		    	config.get('baseUrlApi')+'/api/v1/deactivate-user', 
-		    	JSON.stringify({_id: this.state.idUser}), 
-		    	{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
-		).then(res => {}).catch(function (error) {
-	    }).then(function () {});
+	deleteConfirm = ()=>{
+	    async function _requestApi(_this, x){
+	      const res = await new RequestAsync().post(
+	      	'/api/v1/delete/topic',
+	      	{_id: _this.state.idTopic},
+	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      );
+	      if(typeof res.code != 'undefined'){
+	        if(res.code == 200) _this.loadTopics();
+	      }
+	    }
+	    _requestApi(this);
 	}
 
-	deactivateUserClose = ()=>{
-		this.setState({deactivateUser : false});
+	deleteModalClose = ()=>{
+		this.setState({showDeleteConfirm : false});
 	}
   	
   	render() {
 				return (
 							<section>
 							    <Jumbotron className="content-form jumbotron-sm jumbotron-right">
-						            <Button variant="secondary" onClick={this.addUser}>Add Topic <Icon.Plus size={25}/></Button>
-						            {this.state.showAddUser && 
+						            <Button variant="secondary" onClick={this.addTopic}>Add Topic <Icon.Plus size={25}/></Button>
+						            {this.state.showModalTopic && 
 							        	<TopicForm 
-							        		hiddenModal = {this.hiddenAddUser} 
-							        		idUser={this.state.idUser}
-							        		success={this.successUser}
+							        		hiddenModal = {this.hiddenEditTopic} 
+							        		idTopic={this.state.idTopic}
+							        		success={this.successTopic}
 							        	/>
 							        }
 
-							        {this.state.deactivateUser && 
+							        {this.state.showDeleteConfirm && 
 								        <ModalToConfirm
-						                   handleConfirm={this.deactivateUserConfirm}
-						                   hiddenModal={this.deactivateUserClose}
-						                   message="Are you sure to deactivate this item?"
+						                   handleConfirm={this.deleteConfirm}
+						                   hiddenModal={this.deleteModalClose}
+						                   message="Are you sure to delete this item?"
 						                />
 						            }
 								</Jumbotron>
@@ -408,11 +443,8 @@ export default class Topics extends Component {
 					                    <td>{item._created}</td>
 					                    <td>
 					                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-												    <Dropdown.Item eventKey="1" onClick={(e) => this.editUser(item)}>Edit</Dropdown.Item>
-												    {this.state.user_id != item._id.$oid && 
-												    	<Dropdown.Item eventKey="2" onClick={(e) => this.deactivateUser(item)}>Deactivate</Dropdown.Item>
-												    }
-
+												<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
+												<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>
 											</DropdownButton>
 					                    </td>
 					                 </tr>
