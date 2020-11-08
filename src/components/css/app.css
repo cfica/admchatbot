@@ -1003,3 +1003,26 @@ a[data-toggle="collapse"] {
   margin-left: 10px ;
   padding-left: 10px 
 }
+
+.contentChatExecutive > .contentRequest{
+  min-height: 400px;
+  max-height: 500px;
+  border: solid 1px #cccc;
+  margin-bottom: 20px;
+  overflow-y: auto;
+}
+
+.contentChatExecutive > .contentSend{
+  height: auto;
+}
+
+.contentChatExecutive >  .contentSend .form-control{
+  height: auto;
+}
+
+.main-buttons{
+  text-align: right;
+  margin-bottom: 15px;
+  border-bottom: solid 1px #ccc;
+  padding-bottom: 5px
+}

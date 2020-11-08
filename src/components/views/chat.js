@@ -9,9 +9,11 @@ import './../css/belisa.css';
 import Utils from './utils';
 import {GetSlide} from './components/slide';
 import {ChatMessages} from './components/chat';
-import {InputsTypeForm,ResponseForm,Validation,ResponseTopic} from './components/componentsUtils';
+//import {Validation} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
+
+
 export default class Login extends Component {
   constructor(props){
     super(props);
@@ -252,7 +254,8 @@ export default class Login extends Component {
     _items[indexParent]['msg']['inputs'][index]['value'] = _value;
     const _validation = _items[indexParent]['msg']['inputs'][index]['validation'];
     /*validation*/
-    const _result = new Validation()._validation(_value, _validation);
+    //const _result = new Validation()._validation(_value, _validation);
+    const _result = new ChatMessages()._validation(_value, _validation);
     _items[indexParent]['msg']['inputs'][index]['classValidation'] = _result._class;
     _items[indexParent]['msg']['inputs'][index]['errorValidation'] = _result.error;
     /*validation*/
@@ -376,97 +379,31 @@ export default class Login extends Component {
                       
                       {this.state.showContChat && 
                               <div className="contChat">
+                                    
                                     <div className="contentResponse" >
                                       {this.state.listMessages.map((item, index) => {
                                         if(item.type == '_req'){
-                                          return (
-                                            <div key={index} className="contentMessageClient" ref={index == (this.state.listMessages.length - 1)  ? this.state.messagesEnd : ''}>
-                                                <div>
-                                                   <div className="contentUser">
-                                                          <h5>You</h5>
-                                                          <span>{moment(item._created).fromNow()}</span>
-                                                   </div>
-                                                   <div className="contentMsg">
-                                                        <span>{item.msg}</span>
-                                                   </div>
-                                                </div>
-                                            </div>
-                                          );
+                                          return new ChatMessages().messageClien(index, item, this.state.listMessages, this.state.messagesEnd);
                                         }else if(item.type == '_res'){
-                                              return(
-                                                    <div key={index} className="contentMessageChat" ref={index == (this.state.listMessages.length - 1)  ? this.state.messagesEnd : ''}>
-                                                           <div>
-                                                               <div className="contentUser">
-                                                                    <h5>Belisa</h5>
-                                                                    <span>{moment(item._created).fromNow()}</span>
-                                                               </div>
-
-                                                               <div className="contentMsg">
-                                                                  {item.type_resp == 'Text' && 
-                                                                      <span>{item.msg}</span>
-                                                                  }
-                                                                 
-                                                                  {item.type_resp == 'Html' &&
-                                                                    <div dangerouslySetInnerHTML={{__html: item.msg}}></div>
-                                                                  }
-
-                                                                  {item.type_resp == 'Topic' &&
-                                                                        <ResponseTopic
-                                                                            index = {index}
-                                                                            messageData = {item.msg}
-                                                                            messageId = {item._id}
-                                                                            sendAction = {this.sendAction}
-                                                                        />
-                                                                  }
-
-                                                                  {item.type_resp == 'Form' && item.status == 'Init' &&
-                                                                        <ResponseForm
-                                                                            setMessage = {this.setMessage}
-                                                                            statusValidation = {this.statusValidation}
-                                                                            index = {index}
-                                                                            messageData = {item.msg}
-                                                                            messageId = {item._id}
-                                                                            inputChange = {this.inputChange}
-                                                                            inputChangeOptions = {this.inputChangeOptions}
-                                                                            updateScheduleEvents = {this.updateScheduleEvents}
-                                                                            successSentForm = {this.successSentForm}
-                                                                            closeSession = {this.closeSession}
-                                                                        />
-                                                                  }
-
-                                                                  {item.type_resp == 'Form' && item.status == 'Form-Exists' &&
-                                                                     <div>Form disable.</div>
-                                                                  }
-
-                                                                  {item.type_resp == 'Form' && item.status == 'Form-Sent-Success' &&
-                                                                     <div>Form sent correctly.</div>
-                                                                  }
-
-                                                                  {item.type_resp == 'Form' && item.status == 'Form-Error-Saved' &&
-                                                                     <div className="is-invalid">
-                                                                      *The form could not be saved, the reasons are:<br/>
-                                                                      1.- You already made a reservation previously.<br/>
-                                                                      2.- The time is not available.
-                                                                     </div>
-                                                                  }
-
-                                                                  {item.type_resp == 'Slide' &&
-                                                                        <div>
-                                                                          <span>{item.msg.textResponse}</span>
-                                                                          <GetSlide
-                                                                                index = {index}
-                                                                                messageData = {item.msg}
-                                                                          />
-                                                                        </div>
-                                                                  }
-                                                               </div>
-                                                           </div>
-                                                    </div>
-                                              );
+                                          return new ChatMessages().messageResponse(
+                                            index, 
+                                            item, 
+                                            this.state.listMessages, 
+                                            this.state.messagesEnd, 
+                                            this.sendAction,
+                                            this.setMessage,
+                                            this.statusValidation,
+                                            this.inputChange,
+                                            this.inputChangeOptions,
+                                            this.updateScheduleEvents,
+                                            this.successSentForm,
+                                            this.closeSession
+                                          );
                                         }
                                       })}
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
+                                    
                                     
                                     <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
                                         <div className="contentSend">

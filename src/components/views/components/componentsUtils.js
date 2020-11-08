@@ -9,7 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import * as moment from 'moment';
 import ModalToConfirm from './confirm';
 import ModalAddEventSchedule from './modal-addEventSchedule';
-import {ChatMessages} from './chat';
+//import {ChatMessages} from './chat';
 
 export class Status extends Component{
 	constructor(props) {
@@ -93,6 +93,8 @@ export class ResponseTopic extends Component{
 					    	if(x.action == 'Link'){
 				     	   		return (<a href={x.value} key={i} target="new" className="list-group-item list-group-item-action">{x.title}</a>);
 					    	}else if(x.action == 'Pattern'){
+					    		return (<ListGroup.Item key={i} action onClick={(e) => this.props.sendAction(x, i, this.props.index)}>{x.title}</ListGroup.Item>);
+					    	}else if(x.action == 'Contact'){
 					    		return (<ListGroup.Item key={i} action onClick={(e) => this.props.sendAction(x, i, this.props.index)}>{x.title}</ListGroup.Item>);
 					    	}
 					    })}

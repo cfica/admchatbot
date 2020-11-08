@@ -31,7 +31,8 @@ export class TopicForm extends Component {
 	    	actionsTopic: [
 	    		{value: 'Link', title: 'Link'},
 	    		{value: 'Pattern', title: 'Pattern'},
-	    		{value: 'Custom', title: 'Custom'}
+	    		{value: 'Custom', title: 'Custom'},
+	    		{value: 'Contact', title: 'Contact'},
 	    	]
 	    };
 	}
@@ -103,7 +104,7 @@ export class TopicForm extends Component {
    		    	_this.setState({textResponse: ''});
 		    	form.reset();
 		    	_this.hiddenModal();
-		    	_this.props.success();
+		    	_this.props.successTopic();
 		    })(this, _url, _dataPost, {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}, form);	
         }
 	}

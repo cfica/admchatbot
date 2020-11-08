@@ -1,0 +1,184 @@
+import React, { Component } from "react";
+import config from 'react-global-configuration';
+import $ from "jquery";
+import Mousewheel from "jquery-mousewheel";
+import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
+import SidebarMenu from './components/sidebar-menu';
+import SidebarAction from './components/sidebar-action';
+import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import ReactPaginate from 'react-paginate';
+import axios from 'axios';
+import ModalToLearn from './components/modal-add-pattern';
+import { browserHistory } from 'react-router';
+
+
+export default class Contact extends Component {
+	constructor(props) {
+	    super(props);
+	    if(localStorage.getItem('tokenAdm') == undefined){
+	      browserHistory.push('/login');
+	    }
+
+	    this.state = {
+    	  scope: ['admin'].includes(localStorage.getItem('scope')),
+          token: localStorage.getItem('tokenAdm'),
+          user_id: localStorage.getItem('_id'),
+          client: localStorage.getItem('client'),
+	      error: null,
+	      perPage: 50,
+	      items: [],
+	      offset: 0,
+	      showModalToLearn: false,
+	      itemsAccess: [],
+	      patternSelected: [],
+	    };
+	}
+
+	/*loadWords() {
+		axios.get(config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset, 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	    .then(res => {
+	    	this.setState({
+	          items: res.data.data.items,
+	          pageCountWords: Math.ceil(res.data.data.total_count / res.data.data.limit),
+	        });
+	    });
+	}*/
+
+	loadContacts() {
+		axios.get(config.get('baseUrlApi')+'/api/v1/contacts?limit='+this.state.perPage+'&offset='+this.state.offset, 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	    .then(res => {
+	    	this.setState({
+	          itemsAccess: res.data.data.items,
+	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
+	        });
+	    });
+	}
+
+	handlePageClickAccess = data => {
+	    let selected = data.selected;
+	    let offset = Math.ceil(selected * this.state.perPage);
+	    this.setState({ offset: offset }, () => {
+	      this.loadContacts();
+	    });
+	};
+
+	componentDidMount(){
+	    //this.loadWords();
+	    this.loadContacts();
+	}
+
+
+	handlePageClick = data => {
+	    let selected = data.selected;
+	    let offset = Math.ceil(selected * this.state.perPage);
+	    this.setState({ offset: offset }, () => {
+	      //this.loadWords();
+	    });
+	};
+
+	
+	handleClickToLearn(data){
+	   this.setState({showModalToLearn : true, patternSelected: data});
+	}
+
+	hiddenModalToLearn = data =>{
+	   this.setState({showModalToLearn : false});
+	}
+
+
+  render() {
+    return (
+        <div className="wrapper">
+		    <SidebarMenu/>
+		    <div id="content">
+	            <SidebarAction/>
+
+				<h2>Contacts Chat</h2>
+	            <p>Last hits</p>
+	            <div className="line"></div>
+	            <section>
+		            <Table id="itemTable" striped bordered hover size="sm">
+		              <thead>
+		                <tr>
+		                  {this.state.scope &&
+		                  	<th>Client</th>
+		                  }
+		                  <th>Name</th>
+		                  <th>Email</th>
+		                  <th>Telephone</th>
+		                  <th>Status</th>
+		                  <th>Created</th>
+		                  <th>Action</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                {this.state.itemsAccess.map((item) => 
+		                  <tr key={item._id.$oid}>
+		                    {this.state.scope &&
+			                    <td>
+			                    	{item._client.map((item1) => 
+		                    			<span>
+				                    		{item1.client_domain}
+			                    		</span>
+			                    	)}
+			                    </td>
+			                }
+
+		                  	<td>{item._customer[0].name}</td>
+		                  	<td>{item._customer[0].email}</td>
+		                  	<td>{item._customer[0].telephone}</td>
+		                  	<td>{item.status}</td>
+		                  	<td>{item._created}</td>
+		                  	<td>
+		                  		<DropdownButton size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+								    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
+								    <Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+								</DropdownButton>
+		                  	</td>
+		                  </tr>
+		                )}
+		              </tbody>
+		            </Table>
+
+		            <div id="react-paginate">
+			            <ReactPaginate
+				          previousLabel={'Anterior'}
+				          nextLabel={'Siguiente'}
+				          breakLabel={'...'}
+				          breakClassName={'break-me'}
+				          pageCount={this.state.pageCount}
+				          marginPagesDisplayed={2}
+				          pageRangeDisplayed={5}
+				          onPageChange={this.handlePageClickAccess}
+				          containerClassName={'pagination'}
+				          subContainerClassName={'pages pagination'}
+				          activeClassName={'active'}
+				        />
+			        </div>
+		        </section>
+
+		        {this.state.showModalToLearn && 
+		        	<ModalToLearn
+		        	 hiddenModal = {this.hiddenModalToLearn} 
+		        	 patternSelected = {this.state.patternSelected}
+		        	/>
+		        }
+
+	        </div>
+
+	        <div className="overlay"></div>
+		</div>
+    );
+  }
+}
+
+/*
+<Greeting {...greeting} />
+const Greeting = ({ subject, description }) => (
+  <div>
+    <Title title={`Welcome to ${subject}`} />
+    <Description description={description} />
+  </div>
+);*/

@@ -3,6 +3,7 @@ import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import * as Icon from 'react-bootstrap-icons';
+import {Badge} from 'react-bootstrap';
 
 export default class SidebarMenu extends Component {
   componentDidMount(){
@@ -55,8 +56,13 @@ export default class SidebarMenu extends Component {
 		            </li>
 
 		            <li>
+		            	<a href="/contacts"><Icon.ChatQuote size={20}/> Contacts Chat <Badge variant="warning">9</Badge></a>
+		            </li>
+
+		            <li>
 		            	<a href="/base-words"><Icon.FileText size={20}/> Words Base</a>
 		            </li>
+
 
 		            <li>
 		            	<a href="/integrations"><Icon.Gear size={20}/> Integrations</a>
