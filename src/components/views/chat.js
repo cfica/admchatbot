@@ -12,11 +12,16 @@ import {ChatMessages} from './components/chat';
 //import {Validation} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
+//events
+//import RNEventSource from 'react-native-event-source';
+
 
 
 export default class Login extends Component {
   constructor(props){
     super(props);
+    
+
     this.state = {
       validated : false,
       errorSaveForm: '',
@@ -37,7 +42,8 @@ export default class Login extends Component {
         start_conversation: []
       },
       recaptchaRef: React.createRef(),
-      messagesEnd: React.createRef()
+      messagesEnd: React.createRef(),
+      eventSource: ''
     };
   }
 
@@ -50,7 +56,7 @@ export default class Login extends Component {
   }
 
   onChangeRecaptchaLogin(value){
-    console.log('recaptcha: '+value);
+    //console.log('recaptcha: '+value);
   }
 
   inIframe () {
@@ -97,9 +103,11 @@ export default class Login extends Component {
       const init = this.props.location.query.init;
       this.getSettings(client_id, init);
       this.initSettings();
+      
       /*localStorage.removeItem('messages');
       localStorage.removeItem('token');
       localStorage.removeItem('key_temp');*/
+
       this.scrollToBottom();
       //var base= document.createElement('base');
       //base.target= '_parent';
@@ -108,9 +116,18 @@ export default class Login extends Component {
       //document.body.appendChild(base);
   }
 
+  componentWillUnmount(){
+    //this.state.eventSource.removeAllListeners();
+    //this.state.eventSource.close();
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.listMessages.length !== prevState.listMessages.length){
-      this.scrollToBottom();
+    //console.log(this.state.listMessages);
+    //console.log(prevState.listMessages.length);
+    if(typeof this.state.listMessages != "undefined" && typeof prevState.listMessages != "undefined"){
+      if(this.state.listMessages.length !== prevState.listMessages.length){
+        this.scrollToBottom();
+      }
     }
   } 
 
@@ -121,10 +138,13 @@ export default class Login extends Component {
       //if(true == false){
       }else{
         //console.log(localStorage.getItem('token'));
-        if(localStorage.getItem('token') != undefined && localStorage.getItem('messages') != undefined){
+        //console.log(localStorage.getItem('messages'));
+        if(localStorage.getItem('token') != "undefined" && localStorage.getItem('messages') != "undefined"){
           this.setState({showContHello : false});
           this.setState({showContChat : true});
-          this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+          this.getMessages();
+          var items = JSON.parse(localStorage.getItem('messages')) || [];
+          this.setState({'listMessages' : items});
         }
       }
       return null;
@@ -155,37 +175,80 @@ export default class Login extends Component {
   }
 
   setMessage = (_type, message) =>{
-    this.setState({'listMessages' : new ChatMessages().setMessage(_type, message)});
+    const items = new ChatMessages().setMessage(_type, message);
+    //console.log(items);
+    this.setState({'listMessages' : items});
   }
+
+  setMessages(messages){
+    if(messages.length > 0){
+      const _messages = new ChatMessages().setMessages(messages);
+      this.setState({'listMessages' : _messages});
+    }
+  }
+
+  getMessages = () =>{
+    async function _requestApi(_this){
+        const _messages = await new ChatMessages().loadMessages();
+        if(typeof _messages != "undefined"){
+          _this.setMessages(_messages);
+        }else{
+          _this.setState({showContHello : true});
+          _this.setState({showContChat : false});
+          _this.setState({inputMessage: ''});
+        }
+    }
+    _requestApi(this);
+  }
+
 
   _handleSend = (event)=>{
     event.preventDefault();
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-      this.setState({validated : true});
+    if(localStorage.getItem('token') == "undefined" || localStorage.getItem('token') == null){
+      this.setState({showContHello : true});
+      this.setState({showContChat : false});
     }else{
-      this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
-      this.setState({inputMessage : ''});
-      this.setState({validated : false});
-      
-      async function _requestApi(_this, form){
-        const res = await new ChatMessages().sendMessage(_this.state.inputMessage);
-        if(typeof res.type != 'undefined'){
-          _this.setMessage('_res', res);
-          form.reset();
-        }
-      }
-      _requestApi(this, form);
+      const form = event.currentTarget;
+      if (form.checkValidity() === false) {
+        event.stopPropagation();
+        this.setState({validated : true});
+      }else{
+        this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
+        this.setState({inputMessage : ''});
+        this.setState({validated : false});
+        
+        async function _requestApi(_this, form){
+          const res = await new ChatMessages().sendMessage(_this.state.inputMessage);
+          if(typeof res.messages == "undefined"){
+            _this.closeSession();
+          }else{
+            if(!new ChatMessages().getManualResponse()){
+              _this.setMessages(res.messages.items);
+              //_this.setMessage('_res', res.response, res.previus_responses);
+            }
+            form.reset();
+          }
 
-      if(localStorage.getItem('token') == undefined){
-        this.setState({showContHello : true});
-        this.setState({showContChat : false});
+          if(new ChatMessages().getManualResponse()){
+              var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id'));
+              sse.onmessage = function(event){
+                var _res = JSON.parse(event.data);
+                _this.setMessages(_res.items);
+              };
+
+              sse.onerror = msg => {
+
+              }
+          }
+        }
+
+        _requestApi(this, form);
       }
     }  
   }
 
   sendAction = (x, index, indexParent) =>{
+    //console.log(x);
     const _items = this.state.listMessages;
     _items[indexParent]['msg'] = x.title;
     _items[indexParent]['type_resp'] = 'Text';
@@ -194,10 +257,11 @@ export default class Login extends Component {
     this.setMessage('_req', {type:'Text', response: x.title});
     /**/
     async function _requestApi(_this, x){
-      const res = await new ChatMessages().sendMessage(x.value, x.action);
-      if(typeof res.type != 'undefined'){
-        _this.setMessage('_res', res);
-      }
+      const res = await new ChatMessages().sendMessage(x.title, x.action);
+      //if(typeof res.type != 'undefined'){
+      //  _this.setMessage('_res', res);
+      //}
+      _this.setMessages(res.messages.items);
     }
     _requestApi(this, x);
   }
@@ -224,14 +288,19 @@ export default class Login extends Component {
           {headers: {
             'Content-Type': 'application/json;charset=UTF-8', 
             'x-dsi-restful-i' :  client_id,
-            'x-dsi-restful-init' : init,'x-dsi-time' : 1800
+            'x-dsi-restful-init' : init,'x-dsi-time' : 800
           }}
         ).then(res => {
              this.setState({showContHello : false});
              this.setState({showContChat : true});
+             this.setState({'listMessages' : []});
+             localStorage.setItem('messages', []);
+
+             localStorage.removeItem('manual_response');
              localStorage.setItem('token', res.data.data.token);
              localStorage.setItem('key_temp', res.data.data.key_temp);
              localStorage.setItem('client_id', client_id);
+
              const _init = this.state.confChatInit;
              this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
         }).catch(error => {
@@ -321,6 +390,7 @@ export default class Login extends Component {
       localStorage.removeItem('token');
       localStorage.removeItem('key_temp');
       localStorage.removeItem('client_id');
+      localStorage.removeItem('manual_response');
       this.setState({showContHello : true});
       this.setState({showContChat : false});
   }
@@ -381,7 +451,7 @@ export default class Login extends Component {
                               <div className="contChat">
                                     
                                     <div className="contentResponse" >
-                                      {this.state.listMessages.map((item, index) => {
+                                      {(this.state.listMessages || []).map((item, index) => {
                                         if(item.type == '_req'){
                                           return new ChatMessages().messageClien(index, item, this.state.listMessages, this.state.messagesEnd);
                                         }else if(item.type == '_res'){
@@ -403,7 +473,7 @@ export default class Login extends Component {
                                       })}
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
-                                    
+
                                     
                                     <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
                                         <div className="contentSend">

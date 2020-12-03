@@ -38,9 +38,42 @@ export default class ContactDetail extends Component {
 	    };
 	}
 
-	setMessageList = (_type, message) =>{
-	    this.setState({'listMessages' : new ChatMessages().setMessage(_type, message)});
+	setMessage = (_type, message) =>{
+	    const items = new ChatMessages().setMessageV2(_type, message);
+	    this.setState({'listMessages' : items});
 	}
+
+	setMessages(messages){
+	    const _messages = new ChatMessages().setMessagesV2(messages);
+	    this.setState({'listMessages' : _messages});
+	}
+
+	componentDidMount(){
+		localStorage.setItem('m_messages', []);
+		//this.getMessages();
+		//console.log(localStorage.getItem('_id'));	
+
+		var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id);
+	    sse.onmessage = (event) => {
+	        var _res = JSON.parse(event.data);
+	        console.log(_res);
+	        this.setMessages(_res.items);
+	    };
+
+	    sse.onerror = msg => {
+
+	    }	
+	}
+
+	getMessages = () =>{
+		async function _requestApi(_this){
+		    const _messages = await new ChatMessages().loadMessagesV2(_this.props.params.id);
+		    //console.log(_messages);
+		    _this.setMessages(_messages);
+		}
+		_requestApi(this);
+	}
+
 
 	_handleSend = (event)=>{
 	    event.preventDefault();
@@ -49,15 +82,13 @@ export default class ContactDetail extends Component {
 	      event.stopPropagation();
 	      this.setState({validated : true});
 	    }else{
-	      this.setMessageList('_req', {type:'Text', response: this.state.inputMessage});
+	      this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
 	      this.setState({validated : false});
 	      
 	      async function _requestApi(_this, form){
-	        const res = await new ChatMessages().sendMessage(_this.state.inputMessage, 'manual_response');
-	        if(typeof res.type != 'undefined'){
-	          _this.setMessageList('_res', res);
-	          form.reset();
-	        }
+	        const res = await new ChatMessages().sendMessageV2(_this.state.inputMessage, 'manual_response', _this.props.params.id);
+	        //_this.setMessages(res.messages.items);
+	        form.reset();
 	      }
 	      _requestApi(this, form);
 		  this.setState({inputMessage : ''});
@@ -110,9 +141,9 @@ export default class ContactDetail extends Component {
 											</ButtonGroup>
 							    		</div>
 
-							    		<div className="contChat">
+							    		<div className="contChat app">
 						          			
-					          				<div class="contentResponse">
+					          				<div className="contentResponse">
 					          					{this.state.listMessages.map((item, index) => {
 			                                        if(item.type == '_req'){
 			                                          return new ChatMessages().messageClien(index, item, this.state.listMessages, this.state.messagesEnd);

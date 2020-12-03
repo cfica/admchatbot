@@ -18,7 +18,7 @@ export default class Contact extends Component {
 		    	var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _token}};
 		    	axios.get(config.get('baseUrlApi')+'/api/v1/validate-auth',_config)
 			    .then(res => {
-			    	console.log(res.data.data.client);
+			    	//console.log(res.data.data.client);
 			    	if(typeof res.data.data.scope != 'undefined'){
 			    	   localStorage.setItem('tokenAdm', _token);
 			    	   localStorage.setItem('_id', res.data.data.user_id);

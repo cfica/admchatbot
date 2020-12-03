@@ -20,36 +20,78 @@ export class ChatMessages extends Component{
                status: '',
                _created: moment()
            };
-           var oldItems = JSON.parse(localStorage.getItem('messages')) || [];
-           const items = oldItems.slice();
-           if(item.type_resp == 'Form'){
+
+          var oldItems = [];
+          var items = [];
+          if(localStorage.getItem('messages') != 'undefined' && localStorage.getItem('messages') != null){
+            //console.log(oldItems);
+            if(localStorage.getItem('messages').length > 0){
+              oldItems = JSON.parse(localStorage.getItem('messages'));
+              items = oldItems.slice();
+            }
+          }
+           
+          if(item.type_resp == 'Form'){
              items.forEach(function(el, index){
                if(el.type_resp == 'Form'){
                    items[index]['status'] = 'Form-Exists';
                }
              });
              item.status = 'Init';
-           }
-           //console.log(items);
+          }
            items.push(item);
            localStorage.setItem('messages', JSON.stringify(items));
            return JSON.parse(localStorage.getItem('messages'));
       }
 
+      setMessages(messages){
+         if(typeof messages != "undefined" && messages.length > 0){
+           localStorage.setItem('messages', JSON.stringify(messages));
+           return JSON.parse(localStorage.getItem('messages'));
+         }
+      }
+
+      setManualResponse(_bolean){
+        if(_bolean){
+          localStorage.setItem('manual_response', true);
+        }else{
+          localStorage.removeItem('manual_response');
+        }
+      }
+
+      getManualResponse(){
+        if(typeof localStorage.getItem('manual_response') != "undefined"){
+          if(localStorage.getItem('manual_response')){
+            return true;
+          }
+        }
+        return false;
+      }
+
       async sendMessage(_value, _type = null){
-              let result;
               try{
+                     if(this.getManualResponse()){
+                      _type = 'manual_response';
+                     }
+
                      if(_type){
                           var data = {"message" : _value, 'action': _type};
                      }else{
-                            var data = {"message" : _value};   
+                          var data = {"message" : _value};   
                      }
+
+                     if(_type == 'Contact'){
+                       /*Answer through executives*/
+                       this.setManualResponse(true);
+                     }
+
                      const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
                             {headers: {
                               'Content-Type': 'application/json;charset=UTF-8',
                               'Authorization' : 'Bearer ' + localStorage.getItem('token'),
                               'x-dsi-restful' : localStorage.getItem('key_temp'),
-                              'x-dsi2-restful' : localStorage.getItem('client_id')
+                              'x-dsi2-restful' : localStorage.getItem('client_id'),
+                              'x-dsi3-restful' : ''
                             }
                      });
                      const result = await request.data.data;
@@ -68,19 +110,105 @@ export class ChatMessages extends Component{
               }
       }
 
-      async loadMessages(_value, _type = null){
+      setMessageV2(_type,message){
+          const item = {
+               _id: message._id,
+               type : _type,
+               msg : message.response, 
+               type_resp: message.type, 
+               status: '',
+               _created: moment()
+          };
+
+          var oldItems = [];
+          var items = [];
+          if(localStorage.getItem('m_messages') != 'undefined' && localStorage.getItem('m_messages') != null){
+            if(localStorage.getItem('m_messages').length > 0){
+                oldItems = JSON.parse(localStorage.getItem('m_messages')) || [];
+                items = oldItems.slice();
+            }
+          }
+
+           
+          items.push(item);
+          localStorage.setItem('m_messages', JSON.stringify(items));
+          return JSON.parse(localStorage.getItem('m_messages'));
+      }
+
+      setMessagesV2(messages){
+        if(typeof messages != "undefined" && messages.length > 0){
+         localStorage.setItem('m_messages', JSON.stringify(messages));
+         return JSON.parse(localStorage.getItem('m_messages'));
+         }
+      }
+
+      async sendMessageV2(_value, _type = null, _id = null){
+          let result;
+          try{
+             var data = {"message" : _value, 'action': _type, '_id' : _id};
+             const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
+                    {headers: {
+                      'Content-Type': 'application/json;charset=UTF-8',
+                      'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                      'x-dsi-restful' : '',
+                      'x-dsi2-restful' : localStorage.getItem('client'),
+                      'x-dsi3-restful' : localStorage.getItem('_id')
+                    }
+             });
+             const result = await request.data.data;
+             return result;
+          }catch(e){
+                 if(e.response){
+                   if(e.response.status == 403){
+                   }
+                 } 
+          }
+      }
+
+      async loadMessages(){
           let result;
           try{
              var data = {};
-             const request = await axios.post(config.get('baseUrlApi')+'/api/v1/messages',JSON.stringify(data), 
+             const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?limit=20', 
                     {headers: {
                       'Content-Type': 'application/json;charset=UTF-8',
                       'Authorization' : 'Bearer ' + localStorage.getItem('token'),
                       'x-dsi-restful' : localStorage.getItem('key_temp'),
-                      'x-dsi2-restful' : localStorage.getItem('client_id')
+                      'x-dsi2-restful' : localStorage.getItem('client_id'),
+                      'x-dsi3-restful' : ''
                     }
              });
-             const result = await request.data.data;
+             const result = await request.data.data.items;
+             return result;
+          } catch(e){
+             /*if(e.response){
+               if(e.response.status == 403){
+                   localStorage.removeItem('messages');
+                   localStorage.removeItem('token');
+                   localStorage.removeItem('key_temp');
+                   localStorage.removeItem('client_id');
+                   return false;
+               }
+             }*/ 
+             //throw e;
+          }
+      }
+
+      async loadMessagesV2(_id){
+          let result;
+          try{
+             var data = {};
+             const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?id='+_id, 
+                {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'x-dsi-restful' : '',
+                  'x-dsi2-restful' : localStorage.getItem('client'),
+                  'x-dsi3-restful' : localStorage.getItem('_id')
+                }
+             });
+             const result = await request.data.data.items;
+             //console.log(result);
              return result;
           } catch(e){
              /*if(e.response){
@@ -100,10 +228,19 @@ export class ChatMessages extends Component{
         return (
           <div key={index} className="contentMessageClient" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
               <div>
+                 
                  <div className="contentUser">
-                        <h5>You</h5>
+                        {item.user_id  == "" &&
+                            <h5>You</h5>
+                        }
+
+                        {item.user_id != "" &&
+                          <h5>{item.user_name}</h5>
+                        }
+
                         <span>{moment(item._created).fromNow()}</span>
                  </div>
+
                  <div className="contentMsg">
                       <span>{item.msg}</span>
                  </div>
@@ -130,7 +267,15 @@ export class ChatMessages extends Component{
               <div key={index} className="contentMessageChat" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
                      <div>
                          <div className="contentUser">
-                              <h5>Belisa</h5>
+                              
+                              {item.user_id  == "" &&
+                                  <h5>Belisa</h5>
+                              }
+
+                              {item.user_id != "" &&
+                                <h5>{item.user_name}</h5>
+                              }
+
                               <span>{moment(item._created).fromNow()}</span>
                          </div>
 
