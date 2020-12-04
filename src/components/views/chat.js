@@ -142,9 +142,13 @@ export default class Login extends Component {
         if(localStorage.getItem('token') != "undefined" && localStorage.getItem('messages') != "undefined"){
           this.setState({showContHello : false});
           this.setState({showContChat : true});
-          this.getMessages();
+          //this.getMessages();
           var items = JSON.parse(localStorage.getItem('messages')) || [];
           this.setState({'listMessages' : items});
+          
+          if(new ChatMessages().getManualResponse()){
+              this.getMessagesSSE(this);
+          }
         }
       }
       return null;
@@ -187,9 +191,10 @@ export default class Login extends Component {
     }
   }
 
-  getMessages = () =>{
+  /*getMessages = () =>{
     async function _requestApi(_this){
         const _messages = await new ChatMessages().loadMessages();
+        //console.log(_messages);
         if(typeof _messages != "undefined"){
           _this.setMessages(_messages);
         }else{
@@ -199,7 +204,7 @@ export default class Login extends Component {
         }
     }
     _requestApi(this);
-  }
+  }*/
 
 
   _handleSend = (event)=>{
@@ -220,6 +225,7 @@ export default class Login extends Component {
         async function _requestApi(_this, form){
           const res = await new ChatMessages().sendMessage(_this.state.inputMessage);
           if(typeof res.messages == "undefined"){
+            //console.log(res.messages);
             _this.closeSession();
           }else{
             if(!new ChatMessages().getManualResponse()){
@@ -230,21 +236,25 @@ export default class Login extends Component {
           }
 
           if(new ChatMessages().getManualResponse()){
-              var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id'));
-              sse.onmessage = function(event){
-                var _res = JSON.parse(event.data);
-                _this.setMessages(_res.items);
-              };
-
-              sse.onerror = msg => {
-
-              }
+              _this.getMessagesSSE(_this);
           }
         }
 
         _requestApi(this, form);
       }
     }  
+  }
+
+  getMessagesSSE(_this){
+    var _strUrl = localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id');
+    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+    sse.onmessage = function(event){
+      var _res = JSON.parse(event.data);
+      _this.setMessages(_res.items);
+    };
+
+    sse.onerror = msg => {
+    }
   }
 
   sendAction = (x, index, indexParent) =>{
@@ -288,7 +298,7 @@ export default class Login extends Component {
           {headers: {
             'Content-Type': 'application/json;charset=UTF-8', 
             'x-dsi-restful-i' :  client_id,
-            'x-dsi-restful-init' : init,'x-dsi-time' : 800
+            'x-dsi-restful-init' : init,'x-dsi-time' : 2300
           }}
         ).then(res => {
              this.setState({showContHello : false});

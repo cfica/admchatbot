@@ -53,17 +53,31 @@ export default class ContactDetail extends Component {
 		//this.getMessages();
 		//console.log(localStorage.getItem('_id'));	
 
-		var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id);
+		/*var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id);
 	    sse.onmessage = (event) => {
 	        var _res = JSON.parse(event.data);
-	        console.log(_res);
+	        //console.log(_res);
 	        this.setMessages(_res.items);
 	    };
 
 	    sse.onerror = msg => {
 
-	    }	
+	    }*/
+
+	    this.getMessagesSSE(this);	
 	}
+
+	getMessagesSSE(_this){
+		var _strUrl = localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id; 
+	    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+	    sse.onmessage = function(event){
+	      var _res = JSON.parse(event.data);
+	      _this.setMessages(_res.items);
+	    };
+
+	    sse.onerror = msg => {
+	    }
+	 }
 
 	getMessages = () =>{
 		async function _requestApi(_this){

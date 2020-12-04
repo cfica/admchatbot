@@ -224,6 +224,12 @@ export class ChatMessages extends Component{
           }
       }
 
+
+      loadMessagesSSE(_strUrl){
+          var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+_strUrl);
+          return sse;
+      }
+
       messageClien(index, item, listMessages, messagesEnd){
         return (
           <div key={index} className="contentMessageClient" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
