@@ -51,9 +51,10 @@ export class ChatMessages extends Component{
          }
       }
 
-      setManualResponse(_bolean){
-        if(_bolean){
-          localStorage.setItem('manual_response', true);
+      setManualResponse(_param){
+        //console.log(_param);
+        if(_param){
+          localStorage.setItem('manual_response', _param);
         }else{
           localStorage.removeItem('manual_response');
         }
@@ -62,13 +63,13 @@ export class ChatMessages extends Component{
       getManualResponse(){
         if(typeof localStorage.getItem('manual_response') != "undefined"){
           if(localStorage.getItem('manual_response')){
-            return true;
+            return localStorage.getItem('manual_response');
           }
         }
         return false;
       }
 
-      async sendMessage(_value, _type = null){
+      async sendMessage(_value, _type = null, _options = null){
               try{
                      if(this.getManualResponse()){
                       _type = 'manual_response';
@@ -80,9 +81,18 @@ export class ChatMessages extends Component{
                           var data = {"message" : _value};   
                      }
 
+                     if(_options){
+                      data.options = _options;
+                     }
+
                      if(_type == 'Contact'){
                        /*Answer through executives*/
                        this.setManualResponse(true);
+                     }
+
+                     if(_type == 'Contact_End'){
+                       /*Answer through executives*/
+                       this.setManualResponse(false);
                      }
 
                      const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
@@ -108,6 +118,100 @@ export class ChatMessages extends Component{
                      } 
                      //throw e;
               }
+      }
+
+      getDetailContact (_id){
+
+      }
+
+      async postRequest(_url, data, _header){
+          try{
+             if(_header == 'front'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                  'x-dsi-restful' : localStorage.getItem('key_temp'),
+                  'x-dsi2-restful' : localStorage.getItem('client_id'),
+                  'x-dsi3-restful' : ''
+                }};
+             }else if(_header == 'back'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'x-dsi-restful' : '',
+                  'x-dsi2-restful' : localStorage.getItem('client'),
+                  'x-dsi3-restful' : localStorage.getItem('_id')
+                }};
+             }
+             const request = await axios.post(_url,JSON.stringify(data),header);
+             const result = await request.data.data;
+             return result;
+          }catch(e){
+           if(e.response){
+             if(e.response.status == 403){
+             }
+           } 
+          }
+      }
+
+      async putRequest(_url, data, _header){
+          try{
+             if(_header == 'front'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                  'x-dsi-restful' : localStorage.getItem('key_temp'),
+                  'x-dsi2-restful' : localStorage.getItem('client_id'),
+                  'x-dsi3-restful' : ''
+                }};
+             }else if(_header == 'back'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'x-dsi-restful' : '',
+                  'x-dsi2-restful' : localStorage.getItem('client'),
+                  'x-dsi3-restful' : localStorage.getItem('_id')
+                }};
+             }
+             const request = await axios.put(_url,JSON.stringify(data),header);
+             const result = await request.data.data;
+             return result;
+          }catch(e){
+           if(e.response){
+             if(e.response.status == 403){
+             }
+           } 
+          }
+      }
+
+      async getRequest(_url, _header){
+          try{
+             if(_header == 'front'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                  'x-dsi-restful' : localStorage.getItem('key_temp'),
+                  'x-dsi2-restful' : localStorage.getItem('client_id'),
+                  'x-dsi3-restful' : ''
+                }};
+             }else if(_header == 'back'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'x-dsi-restful' : '',
+                  'x-dsi2-restful' : localStorage.getItem('client'),
+                  'x-dsi3-restful' : localStorage.getItem('_id')
+                }};
+             }
+             const request = await axios.get(_url,header);
+             const result = await request.data.data;
+             return result;
+          }catch(e){
+           if(e.response){
+             if(e.response.status == 403){
+             }
+           } 
+          }
       }
 
       setMessageV2(_type,message){
@@ -230,6 +334,22 @@ export class ChatMessages extends Component{
           return sse;
       }
 
+      formatDate(date){
+        //console.log(date);
+
+        var __date = date.split(" ");
+        var _month = __date[0].split("/");
+        var _hours = __date[1];
+        //console.log(_month);
+        //console.log(_hours);
+        var _final = _month[2]+'-'+_month[1]+'-'+_month[0]+' '+_hours;
+        //console.log(date);
+        //console.log(moment(date).format('YYYY-DD-MM H:m:s'));
+        //var _date = date;
+        return date;
+      }
+
+
       messageClien(index, item, listMessages, messagesEnd){
         return (
           <div key={index} className="contentMessageClient" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
@@ -244,7 +364,7 @@ export class ChatMessages extends Component{
                           <h5>{item.user_name}</h5>
                         }
 
-                        <span>{moment(item._created).fromNow()}</span>
+                        <span>{moment(this.formatDate(item._created)).fromNow()}</span>
                  </div>
 
                  <div className="contentMsg">
@@ -282,7 +402,7 @@ export class ChatMessages extends Component{
                                 <h5>{item.user_name}</h5>
                               }
 
-                              <span>{moment(item._created).fromNow()}</span>
+                              <span>{moment(this.formatDate(item._created)).fromNow()}</span>
                          </div>
 
                          <div className="contentMsg">

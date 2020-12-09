@@ -1,6 +1,6 @@
 import React, { Component,useState, useEffect,useRef } from "react";
 import ReactDOM from 'react-dom';
-import { Alert, Navbar, Nav, InputGroup,Modal, Collapse,Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, ButtonGroup, DropdownButton, Dropdown, InputGroup,Modal, Collapse,Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import  { Redirect } from 'react-router-dom';
@@ -20,7 +20,6 @@ import * as moment from 'moment';
 export default class Login extends Component {
   constructor(props){
     super(props);
-    
 
     this.state = {
       validated : false,
@@ -35,6 +34,7 @@ export default class Login extends Component {
       inputTelephone: '',
       welcomeInputs:[],
       welcomeMessageInit: '',
+      isOpenSSE: false,
       confChatInit: {
         welcome_message_init: '<p>Please complete the following information to start a conversation.</p>',
         welcome_message: 'Hello, My name is BELISA and I am a virutal assistant. How I can help?',
@@ -43,7 +43,8 @@ export default class Login extends Component {
       },
       recaptchaRef: React.createRef(),
       messagesEnd: React.createRef(),
-      eventSource: ''
+      eventSource: '',
+      connectionSSE: null
     };
   }
 
@@ -106,14 +107,12 @@ export default class Login extends Component {
       
       /*localStorage.removeItem('messages');
       localStorage.removeItem('token');
-      localStorage.removeItem('key_temp');*/
+      localStorage.removeItem('key_temp');
+      localStorage.removeItem('manual_response');
+      localStorage.removeItem('m_messages');
+      localStorage.removeItem('sseConnection');*/
 
       this.scrollToBottom();
-      //var base= document.createElement('base');
-      //base.target= '_parent';
-      //base.href = 'http://www.w3.org/';
-      //document.getElementsByTagName('head')[0].appendChild(base);
-      //document.body.appendChild(base);
   }
 
   componentWillUnmount(){
@@ -206,6 +205,40 @@ export default class Login extends Component {
     _requestApi(this);
   }*/
 
+  sendAction = (x, index, indexParent) =>{
+    //console.log(x);
+    const _items = this.state.listMessages;
+    _items[indexParent]['msg'] = x.title;
+    _items[indexParent]['type_resp'] = 'Text';
+    localStorage.setItem('messages', JSON.stringify(_items));
+
+    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    this.setMessage('_req', {type:'Text', response: x.title});
+    /**/
+    async function _requestApi(_this, x){
+      const res = await new ChatMessages().sendMessage(x.title, x.action, {id: x.value});
+      //if(typeof res.type != 'undefined'){
+      //  _this.setMessage('_res', res);
+      //}
+      if(typeof res.messages != "undefined"){
+        _this.setMessages(res.messages.items);
+      }
+
+
+      //console.log(new ChatMessages().getManualResponse());
+      if(new ChatMessages().getManualResponse()){
+        //console.log('aquii - 1');
+         _this.getMessagesSSE(_this);
+      }
+
+      if(x.action == "Contact" && new ChatMessages().getManualResponse()){
+        if(typeof res.options._id != "undefined"){
+          new ChatMessages().setManualResponse(res.options._id);
+        }
+      }
+    }
+    _requestApi(this, x);
+  }
 
   _handleSend = (event)=>{
     event.preventDefault();
@@ -224,20 +257,22 @@ export default class Login extends Component {
         
         async function _requestApi(_this, form){
           const res = await new ChatMessages().sendMessage(_this.state.inputMessage);
+          //console.log(res);
           if(typeof res.messages == "undefined"){
             //console.log(res.messages);
             _this.closeSession();
           }else{
             if(!new ChatMessages().getManualResponse()){
+              //console.log('aaa111');
               _this.setMessages(res.messages.items);
               //_this.setMessage('_res', res.response, res.previus_responses);
             }
             form.reset();
           }
 
-          if(new ChatMessages().getManualResponse()){
-              _this.getMessagesSSE(_this);
-          }
+          //if(new ChatMessages().getManualResponse()){
+          //    _this.getMessagesSSE(_this);
+          //}
         }
 
         _requestApi(this, form);
@@ -245,35 +280,60 @@ export default class Login extends Component {
     }  
   }
 
-  getMessagesSSE(_this){
-    var _strUrl = localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id');
-    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
-    sse.onmessage = function(event){
-      var _res = JSON.parse(event.data);
-      _this.setMessages(_res.items);
-    };
+  sendRequestMessage(_message, _type = null, _options = null){
+    this.setMessage('_req', {type:'Text', response: _message});
+    async function _requestApi(_this, _message, _options){
+      const res = await new ChatMessages().sendMessage(_message, _type, _options);
+      //console.log(res);
+      if(typeof res.messages == "undefined"){
+        //console.log(res.messages);
+        _this.closeSession();
+      }else{
+        if(!new ChatMessages().getManualResponse() && res.messages.length > 0){
+          _this.setMessages(res.messages.items);
+        }
+      }
 
-    sse.onerror = msg => {
+      if(_type == "Contact_End"){
+         _this.getMessagesSSE(_this, true);
+      }
     }
+    _requestApi(this, _message, _options);
   }
 
-  sendAction = (x, index, indexParent) =>{
-    //console.log(x);
-    const _items = this.state.listMessages;
-    _items[indexParent]['msg'] = x.title;
-    _items[indexParent]['type_resp'] = 'Text';
-    localStorage.setItem('messages', JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
-    this.setMessage('_req', {type:'Text', response: x.title});
-    /**/
-    async function _requestApi(_this, x){
-      const res = await new ChatMessages().sendMessage(x.title, x.action);
-      //if(typeof res.type != 'undefined'){
-      //  _this.setMessage('_res', res);
-      //}
-      _this.setMessages(res.messages.items);
+  endConversationManual = (event) =>{
+    var _id = new ChatMessages().getManualResponse();
+    new ChatMessages().setManualResponse(false);
+    this.sendRequestMessage("Conversation ended", "Contact_End", {id: _id});
+  }
+
+  getMessagesSSE(_this, _close = null){
+    var sse = this.state.connectionSSE;
+    if(sse){
+      if(_close){
+        //console.log("close event");
+        sse.close();
+        this.setState({connectionSSE: null});
+      }
+    }else{
+        //console.log('start event');
+        var _strUrl = localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id');
+        var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+        this.setState({connectionSSE: sse});
+
+        sse.onmessage = function(event){
+          var _res = JSON.parse(event.data);
+          _this.setMessages(_res.items);
+        };
+
+        sse.addEventListener('message', function(event) {
+            //console.log('Received a message event:', event.data);
+            //console.log('Received a message event: [' + event.lastEventId + ']', event.data);
+        }, false);
+
+        sse.onerror = msg => {
+        }
     }
-    _requestApi(this, x);
   }
 
   _handleStarChat = (event) =>{
@@ -483,6 +543,20 @@ export default class Login extends Component {
                                       })}
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
+
+                                    {new ChatMessages().getManualResponse() &&
+                                      <div className="options">
+                                            <ButtonGroup size="sm">
+                                              {/*<Button variant="outline-secondary">1</Button>
+                                              <Button variant="outline-secondary">2</Button>*/}
+
+                                              <DropdownButton variant="outline-secondary" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+                                                <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
+                                                {/*<Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item>*/}
+                                              </DropdownButton>
+                                            </ButtonGroup>
+                                      </div>
+                                    }
 
                                     
                                     <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>

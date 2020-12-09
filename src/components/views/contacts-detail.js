@@ -34,7 +34,9 @@ export default class ContactDetail extends Component {
 	      patternSelected: [],
 	      validated : false,
 	      inputMessage: '',
-	      listMessages: []
+	      listMessages: [],
+	      detail: {},
+	      connectionSSE: null
 	    };
 	}
 
@@ -49,35 +51,45 @@ export default class ContactDetail extends Component {
 	}
 
 	componentDidMount(){
-		localStorage.setItem('m_messages', []);
-		//this.getMessages();
-		//console.log(localStorage.getItem('_id'));	
+		localStorage.setItem('m_messages', []);	
 
-		/*var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id);
-	    sse.onmessage = (event) => {
-	        var _res = JSON.parse(event.data);
-	        //console.log(_res);
-	        this.setMessages(_res.items);
-	    };
-
-	    sse.onerror = msg => {
-
-	    }*/
-
-	    this.getMessagesSSE(this);	
+	    this.getMessagesSSE(this);
+	    /*##*/
+	    async function _requestApi(_this){
+		    var _url = config.get('baseUrlApi')+'/api/v1/contact?id='+_this.props.params.id;
+		    const res = await new ChatMessages().getRequest(_url,'back');
+		    //console.log(res);
+		    _this.setState({'detail': res});
+		}
+		_requestApi(this);
 	}
 
 	getMessagesSSE(_this){
-		var _strUrl = localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id; 
-	    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
-	    sse.onmessage = function(event){
-	      var _res = JSON.parse(event.data);
-	      _this.setMessages(_res.items);
-	    };
+		var sse = this.state.connectionSSE;
+		if(sse){
+			//close
+		}else{
+			var _strUrl = localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id; 
+		    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+		    sse.onmessage = function(event){
+		      var _res = JSON.parse(event.data);
+		      _this.setMessages(_res.items);
+		    };
 
-	    sse.onerror = msg => {
-	    }
-	 }
+		    sse.onerror = msg => {
+		    }
+		}
+	}
+
+	startChat = (event) =>{
+		async function _requestApi(_this){
+		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
+		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'open'}, 'back');
+		    //console.log(res);
+		    //_this.setState({'detail': res});
+		}
+		_requestApi(this);
+	}
 
 	getMessages = () =>{
 		async function _requestApi(_this){
@@ -151,7 +163,15 @@ export default class ContactDetail extends Component {
 												    <Dropdown.Item eventKey="1">Lock</Dropdown.Item>
 												    <Dropdown.Item eventKey="2">Asign</Dropdown.Item>
 												  </DropdownButton>
-												  <Button variant="warning">End Chat</Button>
+
+												  {this.state.detail.state == 'processing' && this.state.detail.status == 'open' &&
+												     <Button variant="warning" onClick="">End Chat</Button>
+												  }
+												  
+												  {this.state.detail.status == 'pending' &&
+												  	<Button variant="success" onClick={this.startChat}>Start Chat</Button>
+												  }
+											
 											</ButtonGroup>
 							    		</div>
 
@@ -182,26 +202,28 @@ export default class ContactDetail extends Component {
 						          			
 
 
-						          			<Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
-		                                        <div className="contentSend">
-		                                          <Form.Group  controlId="sendMessage">
-		                                            <InputGroup>
-		                                                
-		                                                <FormControl placeholder="Add Message" required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
-		                                                  aria-label="Add Message"
-		                                                  autocomplete="off"
-		                                                />
+					          				{this.state.detail.state == 'processing' && this.state.detail.status == 'open' &&
+							          			<Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
+			                                        <div className="contentSend">
+			                                          <Form.Group  controlId="sendMessage">
+			                                            <InputGroup>
+			                                                
+			                                                <FormControl placeholder="Add Message" required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
+			                                                  aria-label="Add Message"
+			                                                  autocomplete="off"
+			                                                />
 
-		                                                <Form.Label >Message</Form.Label>
+			                                                <Form.Label >Message</Form.Label>
 
-		                                                <InputGroup.Append className="btnSend">
-		                                                  <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
-		                                                </InputGroup.Append>
+			                                                <InputGroup.Append className="btnSend">
+			                                                  <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
+			                                                </InputGroup.Append>
 
-		                                            </InputGroup>
-		                                          </Form.Group>
-		                                        </div>
-		                                    </Form>
+			                                            </InputGroup>
+			                                          </Form.Group>
+			                                        </div>
+			                                    </Form>
+		                                	}
 
 						          			
 						          		</div>
