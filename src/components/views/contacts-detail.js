@@ -52,10 +52,12 @@ export default class ContactDetail extends Component {
 
 	componentDidMount(){
 		localStorage.setItem('m_messages', []);	
-
+		this.getDetail();
 	    this.getMessagesSSE(this);
-	    /*##*/
-	    async function _requestApi(_this){
+	}
+
+	getDetail(){
+		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact?id='+_this.props.params.id;
 		    const res = await new ChatMessages().getRequest(_url,'back');
 		    //console.log(res);
@@ -85,8 +87,20 @@ export default class ContactDetail extends Component {
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
 		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'open'}, 'back');
-		    //console.log(res);
 		    //_this.setState({'detail': res});
+		    //add message join conversation user
+		    _this.getDetail();
+		}
+		_requestApi(this);
+	}
+
+	endChat = (event) =>{
+		async function _requestApi(_this){
+		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
+		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'close'}, 'back');
+		    //_this.setState({'detail': res});
+		    //add message join conversation user
+		    _this.getDetail();
 		}
 		_requestApi(this);
 	}
@@ -165,7 +179,7 @@ export default class ContactDetail extends Component {
 												  </DropdownButton>
 
 												  {this.state.detail.state == 'processing' && this.state.detail.status == 'open' &&
-												     <Button variant="warning" onClick="">End Chat</Button>
+												     <Button variant="warning" onClick={this.endChat}>End Chat</Button>
 												  }
 												  
 												  {this.state.detail.status == 'pending' &&
