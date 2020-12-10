@@ -224,17 +224,16 @@ export default class Login extends Component {
         _this.setMessages(res.messages.items);
       }
 
-
-      //console.log(new ChatMessages().getManualResponse());
-      if(new ChatMessages().getManualResponse()){
-        //console.log('aquii - 1');
-         _this.getMessagesSSE(_this);
-      }
-
       if(x.action == "Contact" && new ChatMessages().getManualResponse()){
         if(typeof res.options._id != "undefined"){
           new ChatMessages().setManualResponse(res.options._id);
         }
+      }
+
+      //console.log(new ChatMessages().getManualResponse());
+      if(new ChatMessages().getManualResponse()){
+        //console.log('aquii - 1');
+         _this.getMessagesSSE(_this, null, res.options._id);
       }
     }
     _requestApi(this, x);
@@ -307,7 +306,7 @@ export default class Login extends Component {
     this.sendRequestMessage("Conversation ended", "Contact_End", {id: _id});
   }
 
-  getMessagesSSE(_this, _close = null){
+  getMessagesSSE(_this, _close = null, _idcontact = null){
     var sse = this.state.connectionSSE;
     if(sse){
       if(_close){
@@ -317,21 +316,38 @@ export default class Login extends Component {
       }
     }else{
         //console.log('start event');
-        var _strUrl = localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id');
-        var sse = new ChatMessages().loadMessagesSSE(_strUrl);
-        this.setState({connectionSSE: sse});
+        if(_idcontact != null){
+          var _strUrl = localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id')+'&_id='+_idcontact;
+          var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+          this.setState({connectionSSE: sse});
 
-        sse.onmessage = function(event){
-          var _res = JSON.parse(event.data);
-          _this.setMessages(_res.items);
-        };
+          sse.onmessage = function(event){
+            var _res = JSON.parse(event.data);
+            _this.setMessages(_res.items);
+          };
 
-        sse.addEventListener('message', function(event) {
-            //console.log('Received a message event:', event.data);
-            //console.log('Received a message event: [' + event.lastEventId + ']', event.data);
-        }, false);
+          var self = this;
+          sse.addEventListener('message', function(event) {
+              //console.log('Received a message event:', event.data);
+              //console.log('Received a message event: [' + event.lastEventId + ']', event.data);
+              var data = JSON.parse(event.data);
+              //console.log(data);
+              if(data.state == 'processing' && data.status == 'closed'){
+                sse.close();
+                new ChatMessages().setManualResponse(false);
+                self.setState({connectionSSE: null});
+              }
+              /*for (const object in data.items) {
+                if(data.items[object].action == 'Contact_End'){
+                  sse.close();
+                  self.setState({connectionSSE: null});
+                }
+              }*/
 
-        sse.onerror = msg => {
+          }, false);
+
+          sse.onerror = msg => {
+          }
         }
     }
   }

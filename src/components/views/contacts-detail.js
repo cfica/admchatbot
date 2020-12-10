@@ -53,7 +53,7 @@ export default class ContactDetail extends Component {
 	componentDidMount(){
 		localStorage.setItem('m_messages', []);	
 		this.getDetail();
-	    this.getMessagesSSE(this);
+		this.getMessagesSSE(this);
 	}
 
 	getDetail(){
@@ -66,13 +66,17 @@ export default class ContactDetail extends Component {
 		_requestApi(this);
 	}
 
-	getMessagesSSE(_this){
+	getMessagesSSE(_this, _close = null){
 		var sse = this.state.connectionSSE;
 		if(sse){
-			//close
+			if(_close){
+			  sse.close();
+			  this.setState({connectionSSE: null});
+			}
 		}else{
 			var _strUrl = localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id; 
 		    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+		    this.setState({connectionSSE: sse});
 		    sse.onmessage = function(event){
 		      var _res = JSON.parse(event.data);
 		      _this.setMessages(_res.items);
@@ -84,6 +88,10 @@ export default class ContactDetail extends Component {
 	}
 
 	startChat = (event) =>{
+		var _message = 'An executive has joined the conversation.';
+		this.setMessage('_req', {type:'Text', response: _message});
+      	this.sendMessage(this, _message);
+
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
 		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'open'}, 'back');
@@ -95,6 +103,10 @@ export default class ContactDetail extends Component {
 	}
 
 	endChat = (event) =>{
+		var _message = 'The session has ended.';
+		this.setMessage('_req', {type:'Text', response: _message});
+      	this.sendMessage(this, _message, null, {'action': 'Contact_End'});
+
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
 		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'close'}, 'back');
@@ -124,13 +136,8 @@ export default class ContactDetail extends Component {
 	    }else{
 	      this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
 	      this.setState({validated : false});
-	      
-	      async function _requestApi(_this, form){
-	        const res = await new ChatMessages().sendMessageV2(_this.state.inputMessage, 'manual_response', _this.props.params.id);
-	        //_this.setMessages(res.messages.items);
-	        form.reset();
-	      }
-	      _requestApi(this, form);
+
+	      this.sendMessage(this, this.state.inputMessage, form);
 		  this.setState({inputMessage : ''});
 
 	      /*if(localStorage.getItem('token') == undefined){
@@ -139,6 +146,17 @@ export default class ContactDetail extends Component {
 	      }*/
 
 	    }  
+	}
+
+	sendMessage(_this, message, form = null, options = null){
+		async function _requestApi(_this, message, form, options){
+	        const res = await new ChatMessages().sendMessageV2(message, 'manual_response', _this.props.params.id, options);
+	        //_this.setMessages(res.messages.items);
+	        if(form){
+	        	form.reset();
+	        }
+	    }
+	    _requestApi(_this, message, form, options);
 	}
 
 

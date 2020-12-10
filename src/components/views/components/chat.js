@@ -246,10 +246,16 @@ export class ChatMessages extends Component{
          }
       }
 
-      async sendMessageV2(_value, _type = null, _id = null){
-          let result;
+      async sendMessageV2(_value, _type = null, _id = null, _options = null){
           try{
              var data = {"message" : _value, 'action': _type, '_id' : _id};
+             if(_options){
+              if(_options.action == 'Contact_End'){
+                data.action = _options.action;
+                data.options = {id: _id};
+              }
+              //data.options = _options;
+             }
              const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
                     {headers: {
                       'Content-Type': 'application/json;charset=UTF-8',
