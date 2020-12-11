@@ -103,56 +103,43 @@ export default class RealTime extends Component {
 				    		<h2>Real Time Chat</h2>
 				            <p>Last messages</p>
 				            <div className="line"></div>
-				            <section>
+				            
 					          <section>
-					            <Table id="itemTable" striped bordered hover size="sm">
-					              <thead>
-					                <tr>
-					                  {this.state.scope &&
-					                  	<th>Client</th>
-					                  }
-					                  <th>Created</th>
-					                  <th>Action on Input</th>
-					                  <th>Input</th>
-					                  <th>Response</th>
-					                  <th>Type</th>
-					                  <th>User Agent</th>
-					                </tr>
-					              </thead>
-					              <tbody>
-					                {this.state.items.map((item) => 
-					                  <tr key={item._id.$oid}>
-					                  	{this.state.scope &&
-						                  	<td>
-						                    	{item._client.map((item1) => 
-					                    			<span>
-							                    		{item1.client_domain}
-						                    		</span>
-						                    	)}
-						                    </td>
+					            
+					            {this.state.items.map((item) =>
+						            <Alert key={item._id.$oid} variant="info" className="cont-real-time">
+						            	{this.state.scope &&
+					                    	item._client.map((item1) => 
+					                    		<Alert.Heading>{item1.client_domain}</Alert.Heading>
+					                    	)
 						                }
 
-					                  	<td>{item._created}</td>
-					                    <td>
-					                      <DropdownButton size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+						                <DropdownButton variant="link" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
 										    <Dropdown.Item eventKey="1" onClick={(e) => this.handleClickToLearn([item._id.$oid, item._input.message], e)}>To Learn</Dropdown.Item>
 										    <Dropdown.Item eventKey="2" onClick={(e) => this.handleClickToBlock([item._id.$oid, item._input.message], e)}>To Lock</Dropdown.Item>
-										  </DropdownButton>
-					                    </td>
-					                    <td>{item._input.message}</td>
-					                    {item.type == 'Text' && 
-					                    	<td>{item._response}</td>
-					                    }
+										</DropdownButton>
 
-					                    {item.type != 'Text' && 
-					                    	<td></td>
-					                    }
-					                    <td>{item.type}</td>
-					                    <td>{item._input.info.ip} / {item._input.info.user_agent}</td>
-					                  </tr>
-					                )}
-					              </tbody>
-					            </Table>
+										  
+										  <p>
+										    {item._input.message}
+										  </p>
+
+										  <p>
+										    {item.type == 'Text' && item._response}
+										  </p>
+
+										  <hr />
+
+
+										  
+
+										  <div className="_type">{item.type}</div>
+										  <div className="_created">{item._created}</div>
+										  <div className="_user_agent">{item._input.info.ip} / {item._input.info.user_agent}</div>
+									</Alert>
+								)}
+
+
 
 					            <div id="react-paginate">
 						            <ReactPaginate
@@ -170,9 +157,11 @@ export default class RealTime extends Component {
 							        />
 						        </div>
 
-					          </section>
+					        
 					        </section>
 				  </Tab>
+				  
+
 				  <Tab eventKey="access" title="Access Chat">
 				    			<h2>Access Chat</h2>
 					            <p>Last hits</p>

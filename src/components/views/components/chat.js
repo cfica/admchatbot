@@ -84,9 +84,9 @@ export class ChatMessages extends Component{
                      const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
                             {headers: {
                               'Content-Type': 'application/json;charset=UTF-8',
-                              'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                              'x-dsi-restful' : localStorage.getItem('key_temp'),
-                              'x-dsi2-restful' : localStorage.getItem('client_id'),
+                              'Authorization' : 'Bearer ' + new VarStorage.getToken(),
+                              'x-dsi-restful' : new VarStorage.getKeyTemp(),
+                              'x-dsi2-restful' : new VarStorage.getClientId(),
                               'x-dsi3-restful' : ''
                             }
                      });
@@ -95,10 +95,7 @@ export class ChatMessages extends Component{
               } catch(e){
                      if(e.response){
                        if(e.response.status == 403){
-                           localStorage.removeItem('messages');
-                           localStorage.removeItem('token');
-                           localStorage.removeItem('key_temp');
-                           localStorage.removeItem('client_id');
+                           new VarStorage.delAll();
                            return false;
                        }
                      } 
@@ -115,9 +112,9 @@ export class ChatMessages extends Component{
              if(_header == 'front'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                  'x-dsi-restful' : localStorage.getItem('key_temp'),
-                  'x-dsi2-restful' : localStorage.getItem('client_id'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getToken(),
+                  'x-dsi-restful' : new VarStorage.getKeyTemp(),
+                  'x-dsi2-restful' : new VarStorage.getClientId(),
                   'x-dsi3-restful' : ''
                 }};
              }else if(_header == 'auth'){
@@ -129,10 +126,10 @@ export class ChatMessages extends Component{
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : localStorage.getItem('client'),
-                  'x-dsi3-restful' : localStorage.getItem('_id')
+                  'x-dsi2-restful' : new VarStorage.getSite(),
+                  'x-dsi3-restful' : new VarStorage.getUserId()
                 }};
              }
              const request = await axios.post(_url,JSON.stringify(data),header);
@@ -151,18 +148,18 @@ export class ChatMessages extends Component{
              if(_header == 'front'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                  'x-dsi-restful' : localStorage.getItem('key_temp'),
-                  'x-dsi2-restful' : localStorage.getItem('client_id'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getToken(),
+                  'x-dsi-restful' : new VarStorage.getKeyTemp(),
+                  'x-dsi2-restful' : new VarStorage.getClientId(),
                   'x-dsi3-restful' : ''
                 }};
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : localStorage.getItem('client'),
-                  'x-dsi3-restful' : localStorage.getItem('_id')
+                  'x-dsi2-restful' : new VarStorage.getSite(),
+                  'x-dsi3-restful' : new VarStorage.getUserId()
                 }};
              }
              const request = await axios.put(_url,JSON.stringify(data),header);
@@ -181,9 +178,9 @@ export class ChatMessages extends Component{
              if(_header == 'front'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                  'x-dsi-restful' : localStorage.getItem('key_temp'),
-                  'x-dsi2-restful' : localStorage.getItem('client_id'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getToken(),
+                  'x-dsi-restful' : new VarStorage.getKeyTemp(),
+                  'x-dsi2-restful' : new VarStorage.getClientId(),
                   'x-dsi3-restful' : ''
                 }};
              }else if(_header == 'init'){
@@ -195,10 +192,10 @@ export class ChatMessages extends Component{
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : localStorage.getItem('client'),
-                  'x-dsi3-restful' : localStorage.getItem('_id')
+                  'x-dsi2-restful' : new VarStorage.getSite(),
+                  'x-dsi3-restful' : new VarStorage.getUserId()
                 }};
              }
              const request = await axios.get(_url,header);
@@ -257,10 +254,10 @@ export class ChatMessages extends Component{
              const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
                     {headers: {
                       'Content-Type': 'application/json;charset=UTF-8',
-                      'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                      'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
                       'x-dsi-restful' : '',
-                      'x-dsi2-restful' : localStorage.getItem('client'),
-                      'x-dsi3-restful' : localStorage.getItem('_id')
+                      'x-dsi2-restful' : new VarStorage.getSite(),
+                      'x-dsi3-restful' : new VarStorage.getUserId()
                     }
              });
              const result = await request.data.data;
@@ -280,9 +277,9 @@ export class ChatMessages extends Component{
              const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?limit=20', 
                     {headers: {
                       'Content-Type': 'application/json;charset=UTF-8',
-                      'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                      'x-dsi-restful' : localStorage.getItem('key_temp'),
-                      'x-dsi2-restful' : localStorage.getItem('client_id'),
+                      'Authorization' : 'Bearer ' + new VarStorage.getToken(),
+                      'x-dsi-restful' : new VarStorage.getKeyTemp(),
+                      'x-dsi2-restful' : new VarStorage.getClientId(),
                       'x-dsi3-restful' : ''
                     }
              });
@@ -299,10 +296,10 @@ export class ChatMessages extends Component{
              const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?id='+_id, 
                 {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm'),
+                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : localStorage.getItem('client'),
-                  'x-dsi3-restful' : localStorage.getItem('_id')
+                  'x-dsi2-restful' : new VarStorage.getSite(),
+                  'x-dsi3-restful' : new VarStorage.getUserId()
                 }
              });
              const result = await request.data.data.items;
@@ -398,11 +395,16 @@ export class ChatMessages extends Component{
                      <div>
                          <div className="contentUser">
                               
-                              {item.user_id  == "" &&
+                              {typeof item.user_id  == "undefined" &&
                                   <h5>Belisa</h5>
                               }
 
-                              {item.user_id != "" &&
+                              {item.user_id == "" &&
+                                <h5>Belisa</h5>
+                              }
+
+
+                              {typeof item.user_name != "undefined" &&
                                 <h5>{item.user_name}</h5>
                               }
 
