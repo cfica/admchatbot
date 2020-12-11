@@ -9,11 +9,11 @@ import './../css/belisa.css';
 import Utils from './utils';
 import {GetSlide} from './components/slide';
 import {ChatMessages} from './components/chat';
+import {VarStorage} from './components/varsStorage';
 //import {Validation} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
 //events
-//import RNEventSource from 'react-native-event-source';
 
 
 
@@ -32,9 +32,6 @@ export default class Login extends Component {
       inputName: '',
       inputEmail: '',
       inputTelephone: '',
-      welcomeInputs:[],
-      welcomeMessageInit: '',
-      isOpenSSE: false,
       confChatInit: {
         welcome_message_init: '<p>Please complete the following information to start a conversation.</p>',
         welcome_message: 'Hello, My name is BELISA and I am a virutal assistant. How I can help?',
@@ -43,7 +40,6 @@ export default class Login extends Component {
       },
       recaptchaRef: React.createRef(),
       messagesEnd: React.createRef(),
-      eventSource: '',
       connectionSSE: null
     };
   }
@@ -105,19 +101,12 @@ export default class Login extends Component {
       this.getSettings(client_id, init);
       this.initSettings();
       
-      /*localStorage.removeItem('messages');
-      localStorage.removeItem('token');
-      localStorage.removeItem('key_temp');
-      localStorage.removeItem('manual_response');
-      localStorage.removeItem('m_messages');
-      localStorage.removeItem('sseConnection');*/
+      //this._closeSession();
 
       this.scrollToBottom();
   }
 
   componentWillUnmount(){
-    //this.state.eventSource.removeAllListeners();
-    //this.state.eventSource.close();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -134,48 +123,34 @@ export default class Login extends Component {
 
   initSettings = () =>{
       if(this._vldParamasGet() == false){
-      //if(true == false){
       }else{
-        //console.log(localStorage.getItem('token'));
-        //console.log(localStorage.getItem('messages'));
-        if(localStorage.getItem('token') != "undefined" && localStorage.getItem('messages') != "undefined"){
+        if(new VarStorage().getToken() && new VarStorage().getMessages()){
           this.setState({showContHello : false});
           this.setState({showContChat : true});
           //this.getMessages();
-          var items = JSON.parse(localStorage.getItem('messages')) || [];
+          var items = JSON.parse(new VarStorage().getMessages()) || [];
           this.setState({'listMessages' : items});
           
-          if(new ChatMessages().getManualResponse()){
+          if(new VarStorage().getManualResponse()){
               this.getMessagesSSE(this);
           }
+        }else{
+          this._closeSession();
         }
       }
       return null;
   }
 
   getSettings(client_id, init){
-    var self = this;
-    function setData(response) {
-        self.setState({
-            confChatInit: response,
-        });
+    async function _requestApi(_this){
+        var _url = config.get('baseUrlApi')+'/api/v1/setting-init';
+        const res = await new ChatMessages().getRequest(_url,'init',{client_id: client_id, init: init});
+        _this.setState({confChatInit: res.config[0]});
+
     }
-    const result = axios.post(config.get('baseUrlApi')+'/api/v1/setting-init',JSON.stringify({}),
-      {headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        'x-dsi-restful-i' : client_id,
-        'x-dsi-restful-init' : init
-      }})
-    .then(res => {
-      setData(res.data.data.config[0]);
-    }).catch(error => {
-       if(error.response){
-          if(error.response.status == 401){
-            this.setState({errorInit: true});
-          }
-       }
-    });
+    _requestApi(this);
   }
+
 
   setMessage = (_type, message) =>{
     const items = new ChatMessages().setMessage(_type, message);
@@ -190,29 +165,16 @@ export default class Login extends Component {
     }
   }
 
-  /*getMessages = () =>{
-    async function _requestApi(_this){
-        const _messages = await new ChatMessages().loadMessages();
-        //console.log(_messages);
-        if(typeof _messages != "undefined"){
-          _this.setMessages(_messages);
-        }else{
-          _this.setState({showContHello : true});
-          _this.setState({showContChat : false});
-          _this.setState({inputMessage: ''});
-        }
-    }
-    _requestApi(this);
-  }*/
+
 
   sendAction = (x, index, indexParent) =>{
     //console.log(x);
     const _items = this.state.listMessages;
     _items[indexParent]['msg'] = x.title;
     _items[indexParent]['type_resp'] = 'Text';
-    localStorage.setItem('messages', JSON.stringify(_items));
+    new VarStorage().setMessages(JSON.stringify(_items));
 
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
     this.setMessage('_req', {type:'Text', response: x.title});
     /**/
     async function _requestApi(_this, x){
@@ -224,14 +186,14 @@ export default class Login extends Component {
         _this.setMessages(res.messages.items);
       }
 
-      if(x.action == "Contact" && new ChatMessages().getManualResponse()){
+      if(x.action == "Contact" && new VarStorage().getManualResponse()){
         if(typeof res.options._id != "undefined"){
-          new ChatMessages().setManualResponse(res.options._id);
+          new VarStorage().setManualResponse(res.options._id);
         }
       }
 
-      //console.log(new ChatMessages().getManualResponse());
-      if(new ChatMessages().getManualResponse()){
+      //console.log(new VarStorage().getManualResponse());
+      if(new VarStorage().getManualResponse()){
         //console.log('aquii - 1');
          _this.getMessagesSSE(_this, null, res.options._id);
       }
@@ -241,7 +203,7 @@ export default class Login extends Component {
 
   _handleSend = (event)=>{
     event.preventDefault();
-    if(localStorage.getItem('token') == "undefined" || localStorage.getItem('token') == null){
+    if(!new VarStorage().getToken()){
       this.setState({showContHello : true});
       this.setState({showContChat : false});
     }else{
@@ -261,7 +223,7 @@ export default class Login extends Component {
             //console.log(res.messages);
             _this.closeSession();
           }else{
-            if(!new ChatMessages().getManualResponse()){
+            if(!new VarStorage().getManualResponse()){
               //console.log('aaa111');
               _this.setMessages(res.messages.items);
               //_this.setMessage('_res', res.response, res.previus_responses);
@@ -269,7 +231,7 @@ export default class Login extends Component {
             form.reset();
           }
 
-          //if(new ChatMessages().getManualResponse()){
+          //if(new VarStorage().getManualResponse()){
           //    _this.getMessagesSSE(_this);
           //}
         }
@@ -288,7 +250,7 @@ export default class Login extends Component {
         //console.log(res.messages);
         _this.closeSession();
       }else{
-        if(!new ChatMessages().getManualResponse() && res.messages.length > 0){
+        if(!new VarStorage().getManualResponse() && res.messages.length > 0){
           _this.setMessages(res.messages.items);
         }
       }
@@ -301,8 +263,12 @@ export default class Login extends Component {
   }
 
   endConversationManual = (event) =>{
-    var _id = new ChatMessages().getManualResponse();
-    new ChatMessages().setManualResponse(false);
+    this._endConversationManual();
+  }
+
+  _endConversationManual(){
+    var _id = new VarStorage().getManualResponse();
+    new VarStorage().setManualResponse(false);
     this.sendRequestMessage("Conversation ended", "Contact_End", {id: _id});
   }
 
@@ -317,7 +283,7 @@ export default class Login extends Component {
     }else{
         //console.log('start event');
         if(_idcontact != null){
-          var _strUrl = localStorage.getItem('token')+'&x-dsi1-restful='+localStorage.getItem('key_temp')+'&x-dsi2-restful='+localStorage.getItem('client_id')+'&_id='+_idcontact;
+          var _strUrl = new VarStorage().getToken()+'&x-dsi1-restful='+new VarStorage().getKeyTemp()+'&x-dsi2-restful='+new VarStorage().getClientId()+'&_id='+_idcontact;
           var sse = new ChatMessages().loadMessagesSSE(_strUrl);
           this.setState({connectionSSE: sse});
 
@@ -334,16 +300,16 @@ export default class Login extends Component {
               //console.log(data);
               if(data.state == 'processing' && data.status == 'closed'){
                 sse.close();
-                new ChatMessages().setManualResponse(false);
+                new VarStorage().setManualResponse(false);
                 self.setState({connectionSSE: null});
               }
+
               /*for (const object in data.items) {
                 if(data.items[object].action == 'Contact_End'){
                   sse.close();
                   self.setState({connectionSSE: null});
                 }
               }*/
-
           }, false);
 
           sse.onerror = msg => {
@@ -363,41 +329,39 @@ export default class Login extends Component {
       }else{
         //console.log(recaptchaValue);
         this.setState({validated : false});
-        const client_id = this.props.location.query.i;
-        const init = this.props.location.query.init;
         var url = (window.location != window.parent.location)
                 ? document.referrer
-                : document.location.href;
-        axios.post(
-          config.get('baseUrlApi')+'/api/v1/auth',
-          JSON.stringify({name: this.state.inputName, email: this.state.inputEmail, telephone: this.state.inputTelephone}), 
-          {headers: {
-            'Content-Type': 'application/json;charset=UTF-8', 
-            'x-dsi-restful-i' :  client_id,
-            'x-dsi-restful-init' : init,'x-dsi-time' : 2300
-          }}
-        ).then(res => {
-             this.setState({showContHello : false});
-             this.setState({showContChat : true});
-             this.setState({'listMessages' : []});
-             localStorage.setItem('messages', []);
+                : document.location.href; /*?*/
+        
+        
+        async function _requestApi(_this){
+            var _url = config.get('baseUrlApi')+'/api/v1/auth';
+            var _data = {name: _this.state.inputName, email: _this.state.inputEmail, telephone: _this.state.inputTelephone};
+            const res = await new ChatMessages().postRequest(_url, _data, 'auth', {client_id: _this.props.location.query.i, init: _this.props.location.query.init});
+            if(typeof res != "undefined"){
+               _this.setState({showContHello : false});
+               _this.setState({showContChat : true});
+               _this.setState({'listMessages' : []});
 
-             localStorage.removeItem('manual_response');
-             localStorage.setItem('token', res.data.data.token);
-             localStorage.setItem('key_temp', res.data.data.key_temp);
-             localStorage.setItem('client_id', client_id);
+               new VarStorage().setMessages([]);
+               new VarStorage().setToken(res.token);
+               new VarStorage().setNameClient(_this.state.inputName);
+               new VarStorage().setKeyTemp(res.key_temp);
+               new VarStorage().setClientId(_this.props.location.query.i);
+               new VarStorage().delManualResponse();
 
-             const _init = this.state.confChatInit;
-             this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
-        }).catch(error => {
-            if(error.response){
+               const _init = _this.state.confChatInit;
+               _this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
+            }
+
+            /*if(error.response){
               if(error.response.status == 401){
                 this.setState({errorInit: true});
               }
-            }
-        }).then(function () {
-              // always executed
-        });
+            }*/
+
+        }
+        _requestApi(this);
       }
   }
 
@@ -415,8 +379,8 @@ export default class Login extends Component {
     _items[indexParent]['msg']['inputs'][index]['errorValidation'] = _result.error;
     /*validation*/
     //this.setState({listMessages: _items});
-    localStorage.setItem('messages', JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    new VarStorage().setMessages(JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
   }
 
   statusValidation(result, item, index,indexParent){
@@ -424,8 +388,8 @@ export default class Login extends Component {
     _items[indexParent]['msg']['inputs'][index]['validation'] = result.error;
     //this.setState({listMessages: _items});
     /*##*/
-    localStorage.setItem('messages', JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    new VarStorage().setMessages(JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
   }
 
   inputChangeOptions = (value, item, indexItems, index, indexParent,type) =>{
@@ -445,8 +409,8 @@ export default class Login extends Component {
       }
     }
     //this.setState({listMessages: _items});
-    localStorage.setItem('messages', JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    new VarStorage().setMessages(JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
   }
 
   updateScheduleEvents = (itemSelected, events, index, indexParent) =>{
@@ -454,8 +418,8 @@ export default class Login extends Component {
      _items[indexParent]['msg']['inputs'][index]['itemSelected'] = itemSelected;
      _items[indexParent]['msg']['inputs'][index]['items'] = events;
      //this.setState({listMessages: _items});
-     localStorage.setItem('messages', JSON.stringify(_items));
-     this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+     new VarStorage().setMessages(JSON.stringify(_items));
+     this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
   }
 
   successSentForm = (indexParent, code) => {
@@ -466,17 +430,20 @@ export default class Login extends Component {
       _items[indexParent]['status'] = 'Form-Error-Saved';
     }
     /**/
-    localStorage.setItem('messages', JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(localStorage.getItem('messages'))});
+    new VarStorage().setMessages(JSON.stringify(_items));
+    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
   }
   /*#########EVENTS CHANGES###########*/
 
   closeSession = (event) =>{
-      localStorage.removeItem('messages');
-      localStorage.removeItem('token');
-      localStorage.removeItem('key_temp');
-      localStorage.removeItem('client_id');
-      localStorage.removeItem('manual_response');
+      this._closeSession();
+  }
+
+  _closeSession(){
+      if(new VarStorage().getManualResponse()){
+        this._endConversationManual();
+      }
+      new VarStorage().delAll();
       this.setState({showContHello : true});
       this.setState({showContChat : false});
   }
@@ -539,7 +506,7 @@ export default class Login extends Component {
                                     <div className="contentResponse" >
                                       {(this.state.listMessages || []).map((item, index) => {
                                         if(item.type == '_req'){
-                                          return new ChatMessages().messageClien(index, item, this.state.listMessages, this.state.messagesEnd);
+                                          return new ChatMessages().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
                                         }else if(item.type == '_res'){
                                           return new ChatMessages().messageResponse(
                                             index, 
@@ -560,19 +527,25 @@ export default class Login extends Component {
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
 
-                                    {new ChatMessages().getManualResponse() &&
+                                    
                                       <div className="options">
                                             <ButtonGroup size="sm">
                                               {/*<Button variant="outline-secondary">1</Button>
                                               <Button variant="outline-secondary">2</Button>*/}
 
                                               <DropdownButton variant="outline-secondary" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-                                                <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
-                                                {/*<Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item>*/}
+                                                {new VarStorage().getManualResponse() &&
+                                                  <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
+                                                }
+
+                                                <Dropdown.Item eventKey="2">Menu</Dropdown.Item>
+                                                <Dropdown.Item eventKey="3" onClick={this.closeSession}>Close Sesion</Dropdown.Item>
+
                                               </DropdownButton>
+
                                             </ButtonGroup>
                                       </div>
-                                    }
+                                    
 
                                     
                                     <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>

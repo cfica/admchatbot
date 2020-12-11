@@ -4,6 +4,7 @@ import config from 'react-global-configuration';
 import * as moment from 'moment';
 import {InputsTypeForm,ResponseForm,ResponseTopic,Validation} from './componentsUtils';
 import {GetSlide} from './slide';
+import {VarStorage} from './varsStorage';
 
 export class ChatMessages extends Component{
     	constructor(props){
@@ -23,10 +24,10 @@ export class ChatMessages extends Component{
 
           var oldItems = [];
           var items = [];
-          if(localStorage.getItem('messages') != 'undefined' && localStorage.getItem('messages') != null){
+          if(new VarStorage().getMessages()){
             //console.log(oldItems);
-            if(localStorage.getItem('messages').length > 0){
-              oldItems = JSON.parse(localStorage.getItem('messages'));
+            if(new VarStorage().getMessages().length > 0){
+              oldItems = JSON.parse(new VarStorage().getMessages());
               items = oldItems.slice();
             }
           }
@@ -40,38 +41,21 @@ export class ChatMessages extends Component{
              item.status = 'Init';
           }
            items.push(item);
-           localStorage.setItem('messages', JSON.stringify(items));
-           return JSON.parse(localStorage.getItem('messages'));
+           new VarStorage().setMessages(JSON.stringify(items));
+           return JSON.parse(new VarStorage().getMessages());
       }
 
       setMessages(messages){
          if(typeof messages != "undefined" && messages.length > 0){
-           localStorage.setItem('messages', JSON.stringify(messages));
-           return JSON.parse(localStorage.getItem('messages'));
+           new VarStorage().setMessages(JSON.stringify(messages));
+           return JSON.parse(new VarStorage().getMessages());
          }
       }
 
-      setManualResponse(_param){
-        //console.log(_param);
-        if(_param){
-          localStorage.setItem('manual_response', _param);
-        }else{
-          localStorage.removeItem('manual_response');
-        }
-      }
-
-      getManualResponse(){
-        if(typeof localStorage.getItem('manual_response') != "undefined"){
-          if(localStorage.getItem('manual_response')){
-            return localStorage.getItem('manual_response');
-          }
-        }
-        return false;
-      }
 
       async sendMessage(_value, _type = null, _options = null){
               try{
-                     if(this.getManualResponse()){
+                     if(new VarStorage().getManualResponse()){
                       _type = 'manual_response';
                      }
 
@@ -85,14 +69,16 @@ export class ChatMessages extends Component{
                       data.options = _options;
                      }
 
+                     data.name_client = new VarStorage().getNameClient();
+
                      if(_type == 'Contact'){
                        /*Answer through executives*/
-                       this.setManualResponse(true);
+                       new VarStorage().setManualResponse(true);
                      }
 
                      if(_type == 'Contact_End'){
                        /*Answer through executives*/
-                       this.setManualResponse(false);
+                       new VarStorage().setManualResponse(false);
                      }
 
                      const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
@@ -124,7 +110,7 @@ export class ChatMessages extends Component{
 
       }
 
-      async postRequest(_url, data, _header){
+      async postRequest(_url, data, _header, options = null){
           try{
              if(_header == 'front'){
                 var header = {headers: {
@@ -133,6 +119,12 @@ export class ChatMessages extends Component{
                   'x-dsi-restful' : localStorage.getItem('key_temp'),
                   'x-dsi2-restful' : localStorage.getItem('client_id'),
                   'x-dsi3-restful' : ''
+                }};
+             }else if(_header == 'auth'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8', 
+                  'x-dsi-restful-i' :  options.client_id,
+                  'x-dsi-restful-init' : options.init,'x-dsi-time' : 2300
                 }};
              }else if(_header == 'back'){
                 var header = {headers: {
@@ -184,7 +176,7 @@ export class ChatMessages extends Component{
           }
       }
 
-      async getRequest(_url, _header){
+      async getRequest(_url, _header, options = null){
           try{
              if(_header == 'front'){
                 var header = {headers: {
@@ -193,6 +185,12 @@ export class ChatMessages extends Component{
                   'x-dsi-restful' : localStorage.getItem('key_temp'),
                   'x-dsi2-restful' : localStorage.getItem('client_id'),
                   'x-dsi3-restful' : ''
+                }};
+             }else if(_header == 'init'){
+                var header = {headers: {
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  'x-dsi-restful-i' : options.client_id,
+                  'x-dsi-restful-init' : options.init
                 }};
              }else if(_header == 'back'){
                 var header = {headers: {
@@ -291,16 +289,6 @@ export class ChatMessages extends Component{
              const result = await request.data.data.items;
              return result;
           } catch(e){
-             /*if(e.response){
-               if(e.response.status == 403){
-                   localStorage.removeItem('messages');
-                   localStorage.removeItem('token');
-                   localStorage.removeItem('key_temp');
-                   localStorage.removeItem('client_id');
-                   return false;
-               }
-             }*/ 
-             //throw e;
           }
       }
 
@@ -318,19 +306,8 @@ export class ChatMessages extends Component{
                 }
              });
              const result = await request.data.data.items;
-             //console.log(result);
              return result;
           } catch(e){
-             /*if(e.response){
-               if(e.response.status == 403){
-                   localStorage.removeItem('messages');
-                   localStorage.removeItem('token');
-                   localStorage.removeItem('key_temp');
-                   localStorage.removeItem('client_id');
-                   return false;
-               }
-             }*/ 
-             //throw e;
           }
       }
 
@@ -341,8 +318,6 @@ export class ChatMessages extends Component{
       }
 
       formatDate(date){
-        //console.log(date);
-
         var __date = date.split(" ");
         var _month = __date[0].split("/");
         var _hours = __date[1];
@@ -356,15 +331,38 @@ export class ChatMessages extends Component{
       }
 
 
-      messageClien(index, item, listMessages, messagesEnd){
+      getNameClient(item){
+        if(typeof item.name_client == "undefined"){
+           return new VarStorage().getNameClient();
+        }else{
+            return item.name_client;
+        }
+      }
+
+
+      /*getName(item){
+        //console.log(item);
+        if(typeof item.name_client == "undefined" || item.name_client.length == 0){
+           if(item.user_id != ""){
+              return item.user_name;
+           }else if(new VarStorage().getTokenBack()){
+            return 'user';
+           }else{
+            return new VarStorage().getNameClient();
+           }
+        }else{
+            return item.name_client;
+        }
+      }*/
+
+
+      messageClient(index, item, listMessages, messagesEnd){
         return (
           <div key={index} className="contentMessageClient" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
               <div>
                  
                  <div className="contentUser">
-                        {item.user_id  == "" &&
-                            <h5>You</h5>
-                        }
+                        <h5>{this.getNameClient(item)}</h5>
 
                         {item.user_id != "" &&
                           <h5>{item.user_name}</h5>

@@ -89,7 +89,7 @@ export default class ContactDetail extends Component {
 
 	startChat = (event) =>{
 		var _message = 'An executive has joined the conversation.';
-		this.setMessage('_req', {type:'Text', response: _message});
+		this.setMessage('_res', {type:'Text', response: _message});
       	this.sendMessage(this, _message);
 
 		async function _requestApi(_this){
@@ -104,7 +104,7 @@ export default class ContactDetail extends Component {
 
 	endChat = (event) =>{
 		var _message = 'The session has ended.';
-		this.setMessage('_req', {type:'Text', response: _message});
+		this.setMessage('_res', {type:'Text', response: _message});
       	this.sendMessage(this, _message, null, {'action': 'Contact_End'});
 
 		async function _requestApi(_this){
@@ -134,7 +134,7 @@ export default class ContactDetail extends Component {
 	      event.stopPropagation();
 	      this.setState({validated : true});
 	    }else{
-	      this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
+	      this.setMessage('_res', {type:'Text', response: this.state.inputMessage});
 	      this.setState({validated : false});
 
 	      this.sendMessage(this, this.state.inputMessage, form);
@@ -212,7 +212,7 @@ export default class ContactDetail extends Component {
 					          				<div className="contentResponse">
 					          					{this.state.listMessages.map((item, index) => {
 			                                        if(item.type == '_req'){
-			                                          return new ChatMessages().messageClien(index, item, this.state.listMessages, this.state.messagesEnd);
+			                                          return new ChatMessages().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
 			                                        }else if(item.type == '_res'){
 			                                          return new ChatMessages().messageResponse(
 			                                            index, 

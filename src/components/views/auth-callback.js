@@ -3,6 +3,7 @@ import config from 'react-global-configuration';
 import {Alert} from 'react-bootstrap';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
+import {VarStorage} from './components/varsStorage';
 
 export default class Contact extends Component {
     constructor(props){
@@ -20,10 +21,12 @@ export default class Contact extends Component {
 			    .then(res => {
 			    	//console.log(res.data.data.client);
 			    	if(typeof res.data.data.scope != 'undefined'){
-			    	   localStorage.setItem('tokenAdm', _token);
-			    	   localStorage.setItem('_id', res.data.data.user_id);
-			    	   localStorage.setItem('scope', res.data.data.scope);
-			    	   localStorage.setItem('client', res.data.data.client);
+			    	   
+			    	   new VarStorage().setTokenBack(_token);
+			    	   new VarStorage().setUserId(res.data.data.user_id);
+			    	   new VarStorage().setScope(res.data.data.scope);
+			    	   new VarStorage().setSite(res.data.data.client);
+
 			    	   browserHistory.push('/dashboard');
 			    	}else{
 			    		browserHistory.push('/login');
