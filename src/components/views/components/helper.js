@@ -6,7 +6,7 @@ import {InputsTypeForm,ResponseForm,ResponseTopic,Validation} from './components
 import {GetSlide} from './slide';
 import {VarStorage} from './varsStorage';
 
-export class ChatMessages extends Component{
+export class Helper extends Component{
     	constructor(props){
     	    super(props);
     	    this.state = {};
@@ -311,6 +311,11 @@ export class ChatMessages extends Component{
 
       loadMessagesSSE(_strUrl){
           var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+_strUrl);
+          return sse;
+      }
+
+      requestSSE(_strUrl){
+          var sse = new EventSource(_strUrl);
           return sse;
       }
 

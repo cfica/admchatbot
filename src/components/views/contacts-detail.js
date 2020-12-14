@@ -4,7 +4,7 @@ import $ from "jquery";
 import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './components/sidebar-menu';
-import {ChatMessages} from './components/chat';
+import {Helper} from './components/helper';
 import SidebarAction from './components/sidebar-action';
 import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
@@ -41,12 +41,12 @@ export default class ContactDetail extends Component {
 	}
 
 	setMessage = (_type, message) =>{
-	    const items = new ChatMessages().setMessageV2(_type, message);
+	    const items = new Helper().setMessageV2(_type, message);
 	    this.setState({'listMessages' : items});
 	}
 
 	setMessages(messages){
-	    const _messages = new ChatMessages().setMessagesV2(messages);
+	    const _messages = new Helper().setMessagesV2(messages);
 	    this.setState({'listMessages' : _messages});
 	}
 
@@ -59,7 +59,7 @@ export default class ContactDetail extends Component {
 	getDetail(){
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact?id='+_this.props.params.id;
-		    const res = await new ChatMessages().getRequest(_url,'back');
+		    const res = await new Helper().getRequest(_url,'back');
 		    //console.log(res);
 		    _this.setState({'detail': res});
 		}
@@ -75,7 +75,7 @@ export default class ContactDetail extends Component {
 			}
 		}else{
 			var _strUrl = localStorage.getItem('tokenAdm')+'&x-dsi1-restful=&x-dsi2-restful='+localStorage.getItem('client')+'&x-dsi3-restful='+localStorage.getItem('_id')+'&_id='+this.props.params.id; 
-		    var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+		    var sse = new Helper().loadMessagesSSE(_strUrl);
 		    this.setState({connectionSSE: sse});
 		    sse.onmessage = function(event){
 		      var _res = JSON.parse(event.data);
@@ -94,7 +94,7 @@ export default class ContactDetail extends Component {
 
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
-		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'open'}, 'back');
+		    const res = await new Helper().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'open'}, 'back');
 		    //_this.setState({'detail': res});
 		    //add message join conversation user
 		    _this.getDetail();
@@ -109,7 +109,7 @@ export default class ContactDetail extends Component {
 
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact';
-		    const res = await new ChatMessages().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'close'}, 'back');
+		    const res = await new Helper().putRequest(_url, {'id': _this.props.params.id, 'state': 'processing', 'status': 'close'}, 'back');
 		    //_this.setState({'detail': res});
 		    //add message join conversation user
 		    _this.getDetail();
@@ -119,7 +119,7 @@ export default class ContactDetail extends Component {
 
 	getMessages = () =>{
 		async function _requestApi(_this){
-		    const _messages = await new ChatMessages().loadMessagesV2(_this.props.params.id);
+		    const _messages = await new Helper().loadMessagesV2(_this.props.params.id);
 		    //console.log(_messages);
 		    _this.setMessages(_messages);
 		}
@@ -150,7 +150,7 @@ export default class ContactDetail extends Component {
 
 	sendMessage(_this, message, form = null, options = null){
 		async function _requestApi(_this, message, form, options){
-	        const res = await new ChatMessages().sendMessageV2(message, 'manual_response', _this.props.params.id, options);
+	        const res = await new Helper().sendMessageV2(message, 'manual_response', _this.props.params.id, options);
 	        //_this.setMessages(res.messages.items);
 	        if(form){
 	        	form.reset();
@@ -212,9 +212,9 @@ export default class ContactDetail extends Component {
 					          				<div className="contentResponse">
 					          					{this.state.listMessages.map((item, index) => {
 			                                        if(item.type == '_req'){
-			                                          return new ChatMessages().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
+			                                          return new Helper().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
 			                                        }else if(item.type == '_res'){
-			                                          return new ChatMessages().messageResponse(
+			                                          return new Helper().messageResponse(
 			                                            index, 
 			                                            item, 
 			                                            this.state.listMessages, 

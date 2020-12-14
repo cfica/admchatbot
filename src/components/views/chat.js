@@ -8,7 +8,7 @@ import { browserHistory } from 'react-router';
 import './../css/belisa.css';
 import Utils from './utils';
 import {GetSlide} from './components/slide';
-import {ChatMessages} from './components/chat';
+import {Helper} from './components/helper';
 import {VarStorage} from './components/varsStorage';
 //import {Validation} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
@@ -144,7 +144,7 @@ export default class Login extends Component {
   getSettings(client_id, init){
     async function _requestApi(_this){
         var _url = config.get('baseUrlApi')+'/api/v1/setting-init';
-        const res = await new ChatMessages().getRequest(_url,'init',{client_id: client_id, init: init});
+        const res = await new Helper().getRequest(_url,'init',{client_id: client_id, init: init});
         _this.setState({confChatInit: res.config[0]});
 
     }
@@ -153,14 +153,14 @@ export default class Login extends Component {
 
 
   setMessage = (_type, message) =>{
-    const items = new ChatMessages().setMessage(_type, message);
+    const items = new Helper().setMessage(_type, message);
     //console.log(items);
     this.setState({'listMessages' : items});
   }
 
   setMessages(messages){
     if(messages.length > 0){
-      const _messages = new ChatMessages().setMessages(messages);
+      const _messages = new Helper().setMessages(messages);
       this.setState({'listMessages' : _messages});
     }
   }
@@ -178,7 +178,7 @@ export default class Login extends Component {
     this.setMessage('_req', {type:'Text', response: x.title});
     /**/
     async function _requestApi(_this, x){
-      const res = await new ChatMessages().sendMessage(x.title, x.action, {id: x.value});
+      const res = await new Helper().sendMessage(x.title, x.action, {id: x.value});
       //if(typeof res.type != 'undefined'){
       //  _this.setMessage('_res', res);
       //}
@@ -217,7 +217,7 @@ export default class Login extends Component {
         this.setState({validated : false});
         
         async function _requestApi(_this, form){
-          const res = await new ChatMessages().sendMessage(_this.state.inputMessage);
+          const res = await new Helper().sendMessage(_this.state.inputMessage);
           //console.log(res);
           if(typeof res.messages == "undefined"){
             //console.log(res.messages);
@@ -244,7 +244,7 @@ export default class Login extends Component {
   sendRequestMessage(_message, _type = null, _options = null){
     this.setMessage('_req', {type:'Text', response: _message});
     async function _requestApi(_this, _message, _options){
-      const res = await new ChatMessages().sendMessage(_message, _type, _options);
+      const res = await new Helper().sendMessage(_message, _type, _options);
       //console.log(res);
       if(typeof res.messages == "undefined"){
         //console.log(res.messages);
@@ -284,7 +284,7 @@ export default class Login extends Component {
         //console.log('start event');
         if(_idcontact != null){
           var _strUrl = new VarStorage().getToken()+'&x-dsi1-restful='+new VarStorage().getKeyTemp()+'&x-dsi2-restful='+new VarStorage().getClientId()+'&_id='+_idcontact;
-          var sse = new ChatMessages().loadMessagesSSE(_strUrl);
+          var sse = new Helper().loadMessagesSSE(_strUrl);
           this.setState({connectionSSE: sse});
 
           sse.onmessage = function(event){
@@ -294,8 +294,6 @@ export default class Login extends Component {
 
           var self = this;
           sse.addEventListener('message', function(event) {
-              //console.log('Received a message event:', event.data);
-              //console.log('Received a message event: [' + event.lastEventId + ']', event.data);
               var data = JSON.parse(event.data);
               //console.log(data);
               if(data.state == 'processing' && data.status == 'closed'){
@@ -303,13 +301,6 @@ export default class Login extends Component {
                 new VarStorage().setManualResponse(false);
                 self.setState({connectionSSE: null});
               }
-
-              /*for (const object in data.items) {
-                if(data.items[object].action == 'Contact_End'){
-                  sse.close();
-                  self.setState({connectionSSE: null});
-                }
-              }*/
           }, false);
 
           sse.onerror = msg => {
@@ -337,7 +328,7 @@ export default class Login extends Component {
         async function _requestApi(_this){
             var _url = config.get('baseUrlApi')+'/api/v1/auth';
             var _data = {name: _this.state.inputName, email: _this.state.inputEmail, telephone: _this.state.inputTelephone};
-            const res = await new ChatMessages().postRequest(_url, _data, 'auth', {client_id: _this.props.location.query.i, init: _this.props.location.query.init});
+            const res = await new Helper().postRequest(_url, _data, 'auth', {client_id: _this.props.location.query.i, init: _this.props.location.query.init});
             if(typeof res != "undefined"){
                _this.setState({showContHello : false});
                _this.setState({showContChat : true});
@@ -374,7 +365,7 @@ export default class Login extends Component {
     const _validation = _items[indexParent]['msg']['inputs'][index]['validation'];
     /*validation*/
     //const _result = new Validation()._validation(_value, _validation);
-    const _result = new ChatMessages()._validation(_value, _validation);
+    const _result = new Helper()._validation(_value, _validation);
     _items[indexParent]['msg']['inputs'][index]['classValidation'] = _result._class;
     _items[indexParent]['msg']['inputs'][index]['errorValidation'] = _result.error;
     /*validation*/
@@ -506,9 +497,9 @@ export default class Login extends Component {
                                     <div className="contentResponse" >
                                       {(this.state.listMessages || []).map((item, index) => {
                                         if(item.type == '_req'){
-                                          return new ChatMessages().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
+                                          return new Helper().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
                                         }else if(item.type == '_res'){
-                                          return new ChatMessages().messageResponse(
+                                          return new Helper().messageResponse(
                                             index, 
                                             item, 
                                             this.state.listMessages, 
