@@ -46,32 +46,42 @@ export default class RealTime extends Component {
 	    };
 	}
 
+	async setConnectionSSE(value, _where){
+		await this.setState({ connectionSSE: value });
+		console.log(value, _where);
+	}
+
 	getRealTimeSSE(_close = null, _filters = null){
-	    var sse = this.state.connectionSSE;
-	    if(sse){
-	      if(_close){
-	        sse.close();
-	        this.setState({connectionSSE: null});
-	      }
+	    if(_close){
+	    	  var sse = this.state.connectionSSE;
+		      if(sse){
+		        sse.close();
+		        async function updateSSE(_this, sse){
+		        	await _this.setConnectionSSE(null, 'close connection state');
+		        }
+		        updateSSE(this, sse);
+		      }
 	    }else{
-	      var _filters = _filters == null ? '' : _filters;
-          var _strUrl = config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
-          //console.log(_strUrl);
-          var sse = new Helper().requestSSE(_strUrl);
-          this.setState({connectionSSE: sse});
-          var self = this;
-          sse.onmessage = function(event){
-            var _res = JSON.parse(event.data);
-            self.setState({
-	          items: _res.items,
-	          pageCountWords: Math.ceil(_res.total_count / _res.limit),
-	        });
-          };
+		      var _filters = _filters == null ? '' : _filters;
+	          var _strUrl = config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
+	          var sse = new Helper().requestSSE(_strUrl);
+	          /*###*/
+	          async function updateSSE(_this, sse){
+	          	await _this.setConnectionSSE(sse, 'open connection state');
+	          	sse.onmessage = function(event){
+		            var _res = JSON.parse(event.data);
+		            _this.setState({
+			          items: _res.items,
+			          pageCountWords: Math.ceil(_res.total_count / _res.limit),
+			        });
+		        };
 
-          sse.addEventListener('message', function(event) {
-          }, false);
+		        sse.addEventListener('message', function(event) {
+		        }, false);
 
-          sse.onerror = msg => {}
+		        sse.onerror = msg => {}
+	          }
+	          updateSSE(this, sse);
 	    }
 	}
 
@@ -125,18 +135,18 @@ export default class RealTime extends Component {
 	
 	_handleFilter = (e) =>{
 		e.preventDefault();
-		console.log('sdfsdf');
+		this._resetFilter();
 		const form = e.currentTarget;
 		if (form.checkValidity() === false) {
           e.stopPropagation();
-          console.log('aqui');
+          //console.log('aqui');
           this.setState({validated : true});
+          //console.log('validated: true');
         }else{
           this.setState({validated : false});
-          //console.log(this.state.filter_from);
           var _strFilter = '';
           if(this.state.filter_user !== ""){
-          	_strFilter += '&filter_user='+this.state.filter_user;
+          	_strFilter += '&user='+this.state.filter_user;
           	/*#*/
           	var _filters = this.state.filters_active;
           	_filters.push({label: 'User', 'value': this.state.filter_user});
@@ -144,7 +154,7 @@ export default class RealTime extends Component {
           }
 
           if(this.state.filter_from !== ""){
-          	_strFilter += '&filter_from='+moment(this.state.filter_from).format('DD/MM/YYYY');
+          	_strFilter += '&from='+moment(this.state.filter_from).format('DD/MM/YYYY');
           	/*#*/
           	var _filters = this.state.filters_active;
           	_filters.push({label: 'From', 'value': moment(this.state.filter_from).format('DD/MM/YYYY')});
@@ -152,7 +162,7 @@ export default class RealTime extends Component {
           }
 
           if(this.state.filter_to !== ""){
-          	_strFilter +=  '&filters_to='+moment(this.state.filter_to).format('DD/MM/YYYY');
+          	_strFilter +=  '&to='+moment(this.state.filter_to).format('DD/MM/YYYY');
           	/*#*/
           	var _filters = this.state.filters_active;
           	_filters.push({label: 'To', 'value': moment(this.state.filter_to).format('DD/MM/YYYY')});
@@ -166,13 +176,17 @@ export default class RealTime extends Component {
         }
 	}
 
-	_handleResetFilter = () =>{
+	async _resetFilter(){
+		await this.setState({filters_active: []});
+	}
+
+	_handleResetFilter = (e) =>{
 		this.getRealTimeSSE(true);
-        var _strFilter = '';
-        this.getRealTimeSSE(false,_strFilter);
+        this.getRealTimeSSE(false,'');
         this.setState({filters_active: []});
 	}
 
+	
   render() {
 
     return (

@@ -219,17 +219,21 @@ export default class Login extends Component {
         async function _requestApi(_this, form){
           const res = await new Helper().sendMessage(_this.state.inputMessage);
           //console.log(res);
-          if(typeof res.messages == "undefined"){
-            //console.log(res.messages);
-            _this.closeSession();
-          }else{
-            if(!new VarStorage().getManualResponse()){
-              //console.log('aaa111');
-              _this.setMessages(res.messages.items);
-              //_this.setMessage('_res', res.response, res.previus_responses);
+          //if(typeof res == "undefined"){
+          //  _this.closeSession();
+          //}else{
+            if(typeof res.messages == "undefined"){
+              //console.log(res.messages);
+              _this.closeSession();
+            }else{
+              if(!new VarStorage().getManualResponse()){
+                //console.log('aaa111');
+                _this.setMessages(res.messages.items);
+                //_this.setMessage('_res', res.response, res.previus_responses);
+              }
+              form.reset();
             }
-            form.reset();
-          }
+          //}
 
           //if(new VarStorage().getManualResponse()){
           //    _this.getMessagesSSE(_this);
