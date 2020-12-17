@@ -201,50 +201,6 @@ export default class Login extends Component {
     _requestApi(this, x);
   }
 
-  _handleSend = (event)=>{
-    event.preventDefault();
-    if(!new VarStorage().getToken()){
-      this.setState({showContHello : true});
-      this.setState({showContChat : false});
-    }else{
-      const form = event.currentTarget;
-      if (form.checkValidity() === false) {
-        event.stopPropagation();
-        this.setState({validated : true});
-      }else{
-        this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
-        this.setState({inputMessage : ''});
-        this.setState({validated : false});
-        
-        async function _requestApi(_this, form){
-          const res = await new Helper().sendMessage(_this.state.inputMessage);
-          //console.log(res);
-          //if(typeof res == "undefined"){
-          //  _this.closeSession();
-          //}else{
-            if(typeof res.messages == "undefined"){
-              //console.log(res.messages);
-              _this.closeSession();
-            }else{
-              if(!new VarStorage().getManualResponse()){
-                //console.log('aaa111');
-                _this.setMessages(res.messages.items);
-                //_this.setMessage('_res', res.response, res.previus_responses);
-              }
-              form.reset();
-            }
-          //}
-
-          //if(new VarStorage().getManualResponse()){
-          //    _this.getMessagesSSE(_this);
-          //}
-        }
-
-        _requestApi(this, form);
-      }
-    }  
-  }
-
   sendRequestMessage(_message, _type = null, _options = null){
     this.setMessage('_req', {type:'Text', response: _message});
     async function _requestApi(_this, _message, _options){
@@ -333,6 +289,7 @@ export default class Login extends Component {
             var _url = config.get('baseUrlApi')+'/api/v1/auth';
             var _data = {name: _this.state.inputName, email: _this.state.inputEmail, telephone: _this.state.inputTelephone};
             const res = await new Helper().postRequest(_url, _data, 'auth', {client_id: _this.props.location.query.i, init: _this.props.location.query.init});
+            //console.log(res, 'start res');
             if(typeof res != "undefined"){
                _this.setState({showContHello : false});
                _this.setState({showContChat : true});
@@ -347,7 +304,11 @@ export default class Login extends Component {
 
                const _init = _this.state.confChatInit;
                _this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
+
+               //console.log(new VarStorage().getToken(), 'token 0');
             }
+
+            //console.log(new VarStorage().getToken(), 'token 1');
 
             /*if(error.response){
               if(error.response.status == 401){
@@ -358,6 +319,53 @@ export default class Login extends Component {
         }
         _requestApi(this);
       }
+  }
+
+  _handleSend = (event)=>{
+    event.preventDefault();
+    if(!new VarStorage().getToken()){
+      this.setState({showContHello : true});
+      this.setState({showContChat : false});
+    }else{
+      const form = event.currentTarget;
+      if (form.checkValidity() === false) {
+        event.stopPropagation();
+        this.setState({validated : true});
+      }else{
+        this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
+        var message = this.state.inputMessage;
+        this.setState({inputMessage : ''});
+        this.setState({validated : false});
+        
+        //console.log(new VarStorage().getToken(),'token _handleSend');
+
+        async function _requestApi(_this, form, message){
+          const res = await new Helper().sendMessage(message);
+          //console.log(res);
+          if(typeof res == "undefined"){
+            _this.closeSession();
+          }else{
+            //if(typeof res.messages == "undefined"){
+              //console.log(res.messages);
+              //_this.closeSession();
+            //}else{
+              if(!new VarStorage().getManualResponse()){
+                //console.log('aaa111');
+                _this.setMessages(res.messages.items);
+                //_this.setMessage('_res', res.response, res.previus_responses);
+              }
+              form.reset();
+            //}
+          }
+
+          //if(new VarStorage().getManualResponse()){
+          //    _this.getMessagesSSE(_this);
+          //}
+        }
+
+        _requestApi(this, form, message);
+      }
+    }  
   }
 
 

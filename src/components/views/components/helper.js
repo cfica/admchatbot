@@ -81,12 +81,14 @@ export class Helper extends Component{
                        new VarStorage().setManualResponse(false);
                      }
 
+                     //console.log(data, 'sendMessage');
+
                      const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
                             {headers: {
                               'Content-Type': 'application/json;charset=UTF-8',
-                              'Authorization' : 'Bearer ' + new VarStorage.getToken(),
-                              'x-dsi-restful' : new VarStorage.getKeyTemp(),
-                              'x-dsi2-restful' : new VarStorage.getClientId(),
+                              'Authorization' : 'Bearer ' + new VarStorage().getToken(),
+                              'x-dsi-restful' : new VarStorage().getKeyTemp(),
+                              'x-dsi2-restful' : new VarStorage().getClientId(),
                               'x-dsi3-restful' : ''
                             }
                      });
@@ -112,9 +114,9 @@ export class Helper extends Component{
              if(_header == 'front'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getToken(),
-                  'x-dsi-restful' : new VarStorage.getKeyTemp(),
-                  'x-dsi2-restful' : new VarStorage.getClientId(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getToken(),
+                  'x-dsi-restful' : new VarStorage().getKeyTemp(),
+                  'x-dsi2-restful' : new VarStorage().getClientId(),
                   'x-dsi3-restful' : ''
                 }};
              }else if(_header == 'auth'){
@@ -126,10 +128,10 @@ export class Helper extends Component{
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : new VarStorage.getSite(),
-                  'x-dsi3-restful' : new VarStorage.getUserId()
+                  'x-dsi2-restful' : new VarStorage().getSite(),
+                  'x-dsi3-restful' : new VarStorage().getUserId()
                 }};
              }
              const request = await axios.post(_url,JSON.stringify(data),header);
@@ -148,18 +150,18 @@ export class Helper extends Component{
              if(_header == 'front'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getToken(),
-                  'x-dsi-restful' : new VarStorage.getKeyTemp(),
-                  'x-dsi2-restful' : new VarStorage.getClientId(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getToken(),
+                  'x-dsi-restful' : new VarStorage().getKeyTemp(),
+                  'x-dsi2-restful' : new VarStorage().getClientId(),
                   'x-dsi3-restful' : ''
                 }};
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : new VarStorage.getSite(),
-                  'x-dsi3-restful' : new VarStorage.getUserId()
+                  'x-dsi2-restful' : new VarStorage().getSite(),
+                  'x-dsi3-restful' : new VarStorage().getUserId()
                 }};
              }
              const request = await axios.put(_url,JSON.stringify(data),header);
@@ -178,9 +180,9 @@ export class Helper extends Component{
              if(_header == 'front'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getToken(),
-                  'x-dsi-restful' : new VarStorage.getKeyTemp(),
-                  'x-dsi2-restful' : new VarStorage.getClientId(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getToken(),
+                  'x-dsi-restful' : new VarStorage().getKeyTemp(),
+                  'x-dsi2-restful' : new VarStorage().getClientId(),
                   'x-dsi3-restful' : ''
                 }};
              }else if(_header == 'init'){
@@ -192,10 +194,10 @@ export class Helper extends Component{
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : new VarStorage.getSite(),
-                  'x-dsi3-restful' : new VarStorage.getUserId()
+                  'x-dsi2-restful' : new VarStorage().getSite(),
+                  'x-dsi3-restful' : new VarStorage().getUserId()
                 }};
              }
              const request = await axios.get(_url,header);
@@ -254,10 +256,10 @@ export class Helper extends Component{
              const request = await axios.post(config.get('baseUrlApi')+'/api/v1/message',JSON.stringify(data), 
                     {headers: {
                       'Content-Type': 'application/json;charset=UTF-8',
-                      'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
+                      'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                       'x-dsi-restful' : '',
-                      'x-dsi2-restful' : new VarStorage.getSite(),
-                      'x-dsi3-restful' : new VarStorage.getUserId()
+                      'x-dsi2-restful' : new VarStorage().getSite(),
+                      'x-dsi3-restful' : new VarStorage().getUserId()
                     }
              });
              const result = await request.data.data;
@@ -277,9 +279,9 @@ export class Helper extends Component{
              const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?limit=20', 
                     {headers: {
                       'Content-Type': 'application/json;charset=UTF-8',
-                      'Authorization' : 'Bearer ' + new VarStorage.getToken(),
-                      'x-dsi-restful' : new VarStorage.getKeyTemp(),
-                      'x-dsi2-restful' : new VarStorage.getClientId(),
+                      'Authorization' : 'Bearer ' + new VarStorage().getToken(),
+                      'x-dsi-restful' : new VarStorage().getKeyTemp(),
+                      'x-dsi2-restful' : new VarStorage().getClientId(),
                       'x-dsi3-restful' : ''
                     }
              });
@@ -296,10 +298,10 @@ export class Helper extends Component{
              const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?id='+_id, 
                 {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
-                  'Authorization' : 'Bearer ' + new VarStorage.getTokenBack(),
+                  'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                   'x-dsi-restful' : '',
-                  'x-dsi2-restful' : new VarStorage.getSite(),
-                  'x-dsi3-restful' : new VarStorage.getUserId()
+                  'x-dsi2-restful' : new VarStorage().getSite(),
+                  'x-dsi3-restful' : new VarStorage().getUserId()
                 }
              });
              const result = await request.data.data.items;

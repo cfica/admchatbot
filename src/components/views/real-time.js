@@ -48,7 +48,7 @@ export default class RealTime extends Component {
 
 	async setConnectionSSE(value, _where){
 		await this.setState({ connectionSSE: value });
-		console.log(value, _where);
+		//console.log(value, _where);
 	}
 
 	getRealTimeSSE(_close = null, _filters = null){
@@ -135,7 +135,6 @@ export default class RealTime extends Component {
 	
 	_handleFilter = (e) =>{
 		e.preventDefault();
-		this._resetFilter();
 		const form = e.currentTarget;
 		if (form.checkValidity() === false) {
           e.stopPropagation();
@@ -144,6 +143,7 @@ export default class RealTime extends Component {
           //console.log('validated: true');
         }else{
           this.setState({validated : false});
+
           var _strFilter = '';
           if(this.state.filter_user !== ""){
           	_strFilter += '&user='+this.state.filter_user;
@@ -176,8 +176,8 @@ export default class RealTime extends Component {
         }
 	}
 
-	async _resetFilter(){
-		await this.setState({filters_active: []});
+	_resetFilter = (e)=>{
+		this.setState({filters_active: []});
 	}
 
 	_handleResetFilter = (e) =>{
@@ -230,7 +230,7 @@ export default class RealTime extends Component {
 										    <DatePicker className="form-control"  dateFormat="dd/MM/yyyy" selected={this.state.filter_to} onChange={date => this.setState({filter_to: date})} />
 										</InputGroup>
 
-										<Button  size="sm" variant="secondary" type="submit">
+										<Button  size="sm" onClick={this._resetFilter} variant="secondary" type="submit">
 										    Filter
 										</Button>
 
