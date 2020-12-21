@@ -64,12 +64,6 @@ export default class Contact extends Component {
 	    });
 	};
 
-	componentDidMount(){
-	    //this.loadWords();
-	    this.loadContacts();
-	}
-
-
 	handlePageClick = data => {
 	    let selected = data.selected;
 	    let offset = Math.ceil(selected * this.state.perPage);
@@ -77,6 +71,14 @@ export default class Contact extends Component {
 	      //this.loadWords();
 	    });
 	};
+
+	componentDidMount(){
+	    //this.loadWords();
+	    this.loadContacts();
+	}
+
+
+	
 
 	
 	handleClickToLearn(data){
@@ -159,12 +161,6 @@ export default class Contact extends Component {
 			        </div>
 		        </section>
 
-		        {this.state.showModalToLearn && 
-		        	<ModalToLearn
-		        	 hiddenModal = {this.hiddenModalToLearn} 
-		        	 patternSelected = {this.state.patternSelected}
-		        	/>
-		        }
 
 	        </div>
 
@@ -174,11 +170,3 @@ export default class Contact extends Component {
   }
 }
 
-/*
-<Greeting {...greeting} />
-const Greeting = ({ subject, description }) => (
-  <div>
-    <Title title={`Welcome to ${subject}`} />
-    <Description description={description} />
-  </div>
-);*/

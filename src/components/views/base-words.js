@@ -129,6 +129,7 @@ export default class BaseWords extends Component {
 	            <SidebarAction/>
 	            <h2>Words Base</h2>
 	            <p>You can generate question patterns that can be asked by chat.</p>
+	            
 	            <div className="line"></div>
 	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
 		            <Button variant="primary">Import Patterns</Button>{' '}
@@ -155,8 +156,8 @@ export default class BaseWords extends Component {
 							</div>
 			           </div>
 					}
-
 				</Jumbotron>
+				
 				<Tabs defaultActiveKey="patterns">
 				  <Tab eventKey="patterns" title="Patterns">
 				  			<br/>

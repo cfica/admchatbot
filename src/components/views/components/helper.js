@@ -97,7 +97,7 @@ export class Helper extends Component{
               } catch(e){
                      if(e.response){
                        if(e.response.status == 403){
-                           new VarStorage.delAll();
+                           new VarStorage().delAll();
                            return false;
                        }
                      } 
@@ -335,11 +335,11 @@ export class Helper extends Component{
       }
 
 
-      getNameClient(item){
-        if(typeof item.name_client == "undefined"){
+      getName(item){
+        if(typeof item.user_name == "undefined"){
            return new VarStorage().getNameClient();
         }else{
-            return item.name_client;
+            return item.user_name;
         }
       }
 
@@ -366,11 +366,7 @@ export class Helper extends Component{
               <div>
                  
                  <div className="contentUser">
-                        <h5>{this.getNameClient(item)}</h5>
-
-                        {item.user_id != "" &&
-                          <h5>{item.user_name}</h5>
-                        }
+                        <h5>{this.getName(item)}</h5>
 
                         <span>{moment(this.formatDate(item._created)).fromNow()}</span>
                  </div>

@@ -8,11 +8,11 @@ export class VarStorage extends Component{
 	}
 
       setNameClient(value){
-        return localStorage.setItem('name_client', value);
+        return localStorage.setItem('user_name', value);
       }
 
       getNameClient(value){
-          var _var = localStorage.getItem('name_client');
+          var _var = localStorage.getItem('user_name');
           if(_var != "undefined" && _var != null){
               return _var;
           }
@@ -20,7 +20,7 @@ export class VarStorage extends Component{
       }
 
       delNameClient(value){
-        return localStorage.removeItem('name_client');
+        return localStorage.removeItem('user_name');
       }
 
 
@@ -120,7 +120,7 @@ export class VarStorage extends Component{
           localStorage.removeItem('manual_response');
           localStorage.removeItem('key_temp');
           localStorage.removeItem('client_id');
-          localStorage.removeItem('name_client');
+          localStorage.removeItem('user_name');
           return;    
        }
 

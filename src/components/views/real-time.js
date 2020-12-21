@@ -12,9 +12,12 @@ import ModalToLearn from './components/modal-add-pattern';
 import { browserHistory } from 'react-router';
 import * as moment from 'moment';
 import {Helper} from './components/helper';
+import {Filters} from './components/filters';
+import {ConnectionSSE} from './components/connectionSSE';
 
 import DatePicker from "react-datepicker"; 
 import "react-datepicker/dist/react-datepicker.css";
+import * as Icon from 'react-bootstrap-icons';
 
 
 
@@ -34,10 +37,13 @@ export default class RealTime extends Component {
 	      perPage: 50,
 	      items: [],
 	      offset: 0,
+	      pageCountWords: 50,
 	      showModalToLearn: false,
 	      itemsAccess: [],
+	      itemsContact: [],
+	      perPageContact: 50,
 	      patternSelected: [],
-	      connectionSSE: null,
+	      connectionSSERealTime: null,
 	      filter_from: '',
 	      filter_to: '',
 	      filter_user: '',
@@ -46,14 +52,15 @@ export default class RealTime extends Component {
 	    };
 	}
 
-	async setConnectionSSE(value, _where){
-		await this.setState({ connectionSSE: value });
-		//console.log(value, _where);
-	}
+	/*async setConnectionSSE(value, _where){
+		await this.setState({connectionSSERealTime: value });
+	}*/
 
 	getRealTimeSSE(_close = null, _filters = null){
-	    if(_close){
-	    	  var sse = this.state.connectionSSE;
+	    return new ConnectionSSE().getRealTimeSSE(_close, _filters);
+
+	    /*if(_close){
+	    	  var sse = this.state.connectionSSERealTime;
 		      if(sse){
 		        sse.close();
 		        async function updateSSE(_this, sse){
@@ -65,7 +72,7 @@ export default class RealTime extends Component {
 		      var _filters = _filters == null ? '' : _filters;
 	          var _strUrl = config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
 	          var sse = new Helper().requestSSE(_strUrl);
-	          /*###*/
+	          
 	          async function updateSSE(_this, sse){
 	          	await _this.setConnectionSSE(sse, 'open connection state');
 	          	sse.onmessage = function(event){
@@ -82,7 +89,7 @@ export default class RealTime extends Component {
 		        sse.onerror = msg => {}
 	          }
 	          updateSSE(this, sse);
-	    }
+	    }*/
 	}
 
 
@@ -106,8 +113,9 @@ export default class RealTime extends Component {
 	};
 
 	componentDidMount(){
-	    this.getRealTimeSSE();
+	    //this.getRealTimeSSE();
 	    this.loadAccess();
+	    this.loadContacts();
 	}
 
 
@@ -132,63 +140,45 @@ export default class RealTime extends Component {
 	   console.log(data);
 	}
 
+
+	loadContacts() {
+		axios.get(config.get('baseUrlApi')+'/api/v1/contacts?limit='+this.state.perPage+'&offset='+this.state.offset, 
+    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+	    .then(res => {
+	    	this.setState({
+	          itemsContact: res.data.data.items,
+	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
+	        });
+	    });
+	}
+
+	handlePageClickContact = data => {
+	    let selected = data.selected;
+	    let offset = Math.ceil(selected * this.state.perPageContact);
+	    this.setState({ offset: offset }, () => {
+	      this.loadContacts();
+	    });
+	};
+
+	handlePageClick = data => {
+	    let selected = data.selected;
+	    let offset = Math.ceil(selected * this.state.perPageContact);
+	    this.setState({ offset: offset }, () => {
+	      //this.loadWords();
+	    });
+	};
+
 	
-	_handleFilter = (e) =>{
-		e.preventDefault();
-		const form = e.currentTarget;
-		if (form.checkValidity() === false) {
-          e.stopPropagation();
-          //console.log('aqui');
-          this.setState({validated : true});
-          //console.log('validated: true');
-        }else{
-          this.setState({validated : false});
-
-          var _strFilter = '';
-          if(this.state.filter_user !== ""){
-          	_strFilter += '&user='+this.state.filter_user;
-          	/*#*/
-          	var _filters = this.state.filters_active;
-          	_filters.push({label: 'User', 'value': this.state.filter_user});
-          	this.setState({filters_active: _filters});
-          }
-
-          if(this.state.filter_from !== ""){
-          	_strFilter += '&from='+moment(this.state.filter_from).format('DD/MM/YYYY');
-          	/*#*/
-          	var _filters = this.state.filters_active;
-          	_filters.push({label: 'From', 'value': moment(this.state.filter_from).format('DD/MM/YYYY')});
-          	this.setState({filters_active: _filters});
-          }
-
-          if(this.state.filter_to !== ""){
-          	_strFilter +=  '&to='+moment(this.state.filter_to).format('DD/MM/YYYY');
-          	/*#*/
-          	var _filters = this.state.filters_active;
-          	_filters.push({label: 'To', 'value': moment(this.state.filter_to).format('DD/MM/YYYY')});
-          	this.setState({filters_active: _filters});
-          }
-          
-          if(this.state.filters_active.length > 0) {
-          	this.getRealTimeSSE(true);
-          	this.getRealTimeSSE(false,_strFilter);
-          }
-        }
+	setItemsRealTime = (items) =>{
+		this.setState({'items': items});
 	}
 
-	_resetFilter = (e)=>{
-		this.setState({filters_active: []});
-	}
-
-	_handleResetFilter = (e) =>{
-		this.getRealTimeSSE(true);
-        this.getRealTimeSSE(false,'');
-        this.setState({filters_active: []});
+	setPageCount = (value) =>{
+		this.setState({'pageCountWords': value});
 	}
 
 	
   render() {
-
     return (
         <div className="wrapper">
 		    <SidebarMenu/>
@@ -196,70 +186,23 @@ export default class RealTime extends Component {
 	            <SidebarAction/>
 
 	            <Tabs defaultActiveKey="Messages" transition={false} id="noanim-tab-example">
-				  <Tab eventKey="Messages" title="Messages">
-				    		<h2>Real Time Chat</h2>
+				  <Tab eventKey="Messages" title={
+		            <React.Fragment>
+		              <Icon.ChatQuote size={20}/> Messages
+		            </React.Fragment>
+		          }>
+				    		<h2 className="title-page">Real Time Chat</h2>
 				            <p>Last messages</p>
 				            <div className="line"></div>
 				            
-				            <section className="grup-filters">
-				            	<Form noValidate validated={this.state.validated} onSubmit={this._handleFilter}>
-						            	<InputGroup  size="sm" >
-										    <InputGroup.Prepend>
-										      <InputGroup.Text id="basic-addon1">User</InputGroup.Text>
-										    </InputGroup.Prepend>
-										    <FormControl
-										      placeholder="Username"
-										      aria-label="Username"
-										      aria-describedby="basic-addon1"
-										      value={this.state.filter_user}
-										      onChange={(e) => this.setState({filter_user: e.target.value})}
-										    />
-										</InputGroup>
 
-							            <InputGroup  size="sm" >
-										    <InputGroup.Prepend>
-										      <InputGroup.Text id="inputGroup-sizing-sm">From</InputGroup.Text>
-										    </InputGroup.Prepend>
-										    <DatePicker className="form-control"  dateFormat="dd/MM/yyyy" selected={this.state.filter_from} onChange={date => this.setState({filter_from: date})} />
-										</InputGroup>
+				            <ConnectionSSE _setItems={this.setItemsRealTime} _setPageCount = {this.setPageCount}/>
 
-										<InputGroup  size="sm" >
-										    <InputGroup.Prepend>
-										      <InputGroup.Text id="inputGroup-sizing-sm">To</InputGroup.Text>
-										    </InputGroup.Prepend>
-										    <DatePicker className="form-control"  dateFormat="dd/MM/yyyy" selected={this.state.filter_to} onChange={date => this.setState({filter_to: date})} />
-										</InputGroup>
-
-										<Button  size="sm" onClick={this._resetFilter} variant="secondary" type="submit">
-										    Filter
-										</Button>
-
-										{this.state.filters_active.length > 0 &&
-											<Button  size="sm" onClick={this._handleResetFilter} variant="warning" type="button">
-											    Reset
-											</Button>
-										}
-								</Form>
-
-								{this.state.filters_active.length > 0 &&
-									<div className="filters_active">
-										<ul>
-											<li><strong>Filters Active: </strong></li>
-											{this.state.filters_active.map((item) => 
-												<li>{item.label} = {item.value}</li>
-											)}
-										</ul>
-									</div>
-								}
-				            </section>
-
-					          <section className="parent-cont-real-time">
-					            
+					        <section className="parent-cont-real-time">
 					            {this.state.items.map((item) =>
 						            <div key={item._id.$oid}>
 						            	<div className={item.type + " cont-real-time"}>
 							                <div className="header">
-							                	<Alert.Heading className="name_client">{item.name_client}</Alert.Heading>
 							                	<Alert.Heading className="name_client">{item.user_name}</Alert.Heading>
 
 
@@ -281,20 +224,30 @@ export default class RealTime extends Component {
 
 											  
 											  <div className="body">
+											  		{/*item.type == '_req' &&
 											  		  <p>
 													    {item._input.message}
 													  </p>
+													*/}
 
-													  <p>
-													    {item.type == 'Text' && item._response}
-													  </p>
+													{/*<div>{JSON.stringify(item)}</div>*/}
+
+													  {item.type_resp == 'Text' &&
+														  <p>
+														     {item.msg}
+														  </p>
+													  }
+
+													  {item.type_resp != 'Text' &&
+														  <p>
+														     {item.type_resp}
+														  </p>
+													  }
 											  </div>
 										
 										</div>
 						            </div>
 								)}
-
-
 
 					            <div id="react-paginate">
 						            <ReactPaginate
@@ -311,14 +264,12 @@ export default class RealTime extends Component {
 							          activeClassName={'active'}
 							        />
 						        </div>
-
-					        
 					        </section>
 				  </Tab>
 				  
 
-				  <Tab eventKey="access" title="Access Chat">
-				    			<h2>Access Chat</h2>
+				  <Tab eventKey="access" title="Login Chat History">
+				    			<h2 className="title-page">Login Chat History</h2>
 					            <p>Last hits</p>
 					            <div className="line"></div>
 					            <section>
@@ -376,7 +327,86 @@ export default class RealTime extends Component {
 						          </section>
 						        </section>
 				  </Tab>
+
+				  <Tab eventKey="contact-chat" title={
+		            <React.Fragment>
+		              <Icon.ChatQuote size={20}/> Contact Chat <Badge variant='warning'>9</Badge>
+		            </React.Fragment>
+		          }>
+				  	<h2 className="title-page">Contact Chat</h2>
+					<p>Last hits</p>
+					<section>
+				            <Table id="itemTable" striped bordered hover size="sm">
+				              <thead>
+				                <tr>
+				                  {this.state.scope &&
+				                  	<th>Client</th>
+				                  }
+				                  <th>Name</th>
+				                  <th>Email</th>
+				                  <th>Telephone</th>
+				                  <th>Status</th>
+				                  <th>Created</th>
+				                  <th>Action</th>
+				                </tr>
+				              </thead>
+				              <tbody>
+				                {this.state.itemsContact.map((item) => 
+				                  <tr key={item._id.$oid}>
+				                    {this.state.scope &&
+					                    <td>
+					                    	{item._client.map((item1) => 
+				                    			<span>
+						                    		{item1.client_domain}
+					                    		</span>
+					                    	)}
+					                    </td>
+					                }
+
+				                  	<td>{item._customer[0].name}</td>
+				                  	<td>{item._customer[0].email}</td>
+				                  	<td>{item._customer[0].telephone}</td>
+				                  	<td>{item.status}</td>
+				                  	<td>{item._created}</td>
+				                  	<td>
+				                  		<DropdownButton size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+										    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
+										    <Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+										</DropdownButton>
+				                  	</td>
+				                  </tr>
+				                )}
+				              </tbody>
+				            </Table>
+
+				            <div id="react-paginate">
+					            <ReactPaginate
+						          previousLabel={'Anterior'}
+						          nextLabel={'Siguiente'}
+						          breakLabel={'...'}
+						          breakClassName={'break-me'}
+						          pageCount={this.state.perPageContact}
+						          marginPagesDisplayed={2}
+						          pageRangeDisplayed={5}
+						          onPageChange={this.handlePageClickContact}
+						          containerClassName={'pagination'}
+						          subContainerClassName={'pages pagination'}
+						          activeClassName={'active'}
+						        />
+					        </div>
+				        </section>
+				  </Tab>
+
+				  {/*<Tab eventKey="words-base" title={
+		            <React.Fragment>
+		              <Icon.FileText size={20}/> Words Base
+		            </React.Fragment>
+		          }>
+
+		          </Tab>*/}
 				</Tabs>
+
+
 
 
 		        {this.state.showModalToLearn && 

@@ -55,9 +55,9 @@ export default class SidebarMenu extends Component {
 		            	<a href="/real-time"><Icon.ChatQuote size={20}/> Real Time</a>
 		            </li>
 
-		            <li>
+		            {/*<li>
 		            	<a href="/contacts"><Icon.ChatQuote size={20}/> Contacts Chat <Badge variant="warning">9</Badge></a>
-		            </li>
+		            </li>*/}
 
 		            <li>
 		            	<a href="/base-words"><Icon.FileText size={20}/> Words Base</a>
