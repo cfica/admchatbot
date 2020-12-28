@@ -717,7 +717,8 @@ a[data-toggle="collapse"] {
    width: 100%;
    margin-bottom: 10px
 }
- .form-control {
+
+.form-control {
    border: 0;
    border-bottom: 1px solid #ced4da;
    border-radius: 0px;
@@ -733,6 +734,10 @@ a[data-toggle="collapse"] {
    font-weight: 700;
    padding-left: 10px;
    padding-right: 10px;
+}
+
+.react-datepicker-wrapper .form-control{
+  border: 1px solid #ced4da;
 }
 
 .contentSend .form-control{
@@ -1370,6 +1375,22 @@ a[data-toggle="collapse"] {
 
 .title-page{
   margin-top: 10px
+}
+
+.cont-real-time.card{
+  padding: 0px
+}
+
+.cont-real-time.card .header.card-header{
+  padding: 0px
+}
+
+.name_client.btn.btn-link:focus{
+  box-shadow: none;
+}
+
+.accordion{
+  margin-bottom: 20px
 }
 
 

@@ -5,7 +5,7 @@ import Mousewheel from "jquery-mousewheel";
 import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './components/sidebar-menu';
 import SidebarAction from './components/sidebar-action';
-import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, DropdownButton, Dropdown, Accordion, Card, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
@@ -34,21 +34,28 @@ export default class RealTime extends Component {
           user_id: localStorage.getItem('_id'),
           client: localStorage.getItem('client'),
 	      error: null,
-	      perPage: 50,
+	      
 	      items: [],
-	      offset: 0,
-	      pageCountWords: 50,
+	      
+	      pageCountWords: 0,
+	      pageCountAccess: 0,
+	      pageCountContact: 0,
+
 	      showModalToLearn: false,
 	      itemsAccess: [],
 	      itemsContact: [],
-	      perPageContact: 50,
+	      
 	      patternSelected: [],
 	      connectionSSERealTime: null,
+	      connectionSSERAccess: null,
+	      connectionSSEcontact: null,
+	      
 	      filter_from: '',
 	      filter_to: '',
 	      filter_user: '',
 	      filters_active: [],
-	      validated: false
+	      validated: false,
+	      
 	    };
 	}
 
@@ -56,44 +63,12 @@ export default class RealTime extends Component {
 		await this.setState({connectionSSERealTime: value });
 	}*/
 
-	getRealTimeSSE(_close = null, _filters = null){
+	/*getRealTimeSSE(_close = null, _filters = null){
 	    return new ConnectionSSE().getRealTimeSSE(_close, _filters);
-
-	    /*if(_close){
-	    	  var sse = this.state.connectionSSERealTime;
-		      if(sse){
-		        sse.close();
-		        async function updateSSE(_this, sse){
-		        	await _this.setConnectionSSE(null, 'close connection state');
-		        }
-		        updateSSE(this, sse);
-		      }
-	    }else{
-		      var _filters = _filters == null ? '' : _filters;
-	          var _strUrl = config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
-	          var sse = new Helper().requestSSE(_strUrl);
-	          
-	          async function updateSSE(_this, sse){
-	          	await _this.setConnectionSSE(sse, 'open connection state');
-	          	sse.onmessage = function(event){
-		            var _res = JSON.parse(event.data);
-		            _this.setState({
-			          items: _res.items,
-			          pageCountWords: Math.ceil(_res.total_count / _res.limit),
-			        });
-		        };
-
-		        sse.addEventListener('message', function(event) {
-		        }, false);
-
-		        sse.onerror = msg => {}
-	          }
-	          updateSSE(this, sse);
-	    }*/
-	}
+	}*/
 
 
-	loadAccess() {
+	/*loadAccess() {
 		axios.get(config.get('baseUrlApi')+'/api/v1/access-chat?limit='+this.state.perPage+'&offset='+this.state.offset, 
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
@@ -102,30 +77,18 @@ export default class RealTime extends Component {
 	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
 	    });
-	}
+	}*/
 
-	handlePageClickAccess = data => {
-	    let selected = data.selected;
-	    let offset = Math.ceil(selected * this.state.perPage);
-	    this.setState({ offset: offset }, () => {
-	      this.loadAccess();
-	    });
-	};
+	
 
 	componentDidMount(){
 	    //this.getRealTimeSSE();
-	    this.loadAccess();
-	    this.loadContacts();
+	    //this.loadAccess();
+	    //this.loadContacts();
 	}
 
 
-	handlePageClick = data => {
-	    let selected = data.selected;
-	    let offset = Math.ceil(selected * this.state.perPage);
-	    this.setState({ offset: offset }, () => {
-	      //this.getRealTimeSSE();
-	    });
-	};
+	
 
 	
 	handleClickToLearn(data){
@@ -141,7 +104,7 @@ export default class RealTime extends Component {
 	}
 
 
-	loadContacts() {
+	/*loadContacts() {
 		axios.get(config.get('baseUrlApi')+'/api/v1/contacts?limit='+this.state.perPage+'&offset='+this.state.offset, 
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
@@ -150,25 +113,18 @@ export default class RealTime extends Component {
 	          pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),
 	        });
 	    });
+	}*/
+
+
+	/*CONNECTION REAL TIME CHAT*/
+	async setConnectionSSErealtime  (_this, value){
+		await _this.setState({connectionSSERealTime: value});
 	}
 
-	handlePageClickContact = data => {
-	    let selected = data.selected;
-	    let offset = Math.ceil(selected * this.state.perPageContact);
-	    this.setState({ offset: offset }, () => {
-	      this.loadContacts();
-	    });
-	};
+	getConnectionSSErealtime(_this){
+		return _this.state.connectionSSERealTime;
+	}
 
-	handlePageClick = data => {
-	    let selected = data.selected;
-	    let offset = Math.ceil(selected * this.state.perPageContact);
-	    this.setState({ offset: offset }, () => {
-	      //this.loadWords();
-	    });
-	};
-
-	
 	setItemsRealTime = (items) =>{
 		this.setState({'items': items});
 	}
@@ -176,6 +132,58 @@ export default class RealTime extends Component {
 	setPageCount = (value) =>{
 		this.setState({'pageCountWords': value});
 	}
+
+	getPageCount = (_this) =>{
+		return _this.state.pageCountWords;
+	}
+	/*CONNECTION REAL TIME CHAT*/
+
+
+	/*CONNECTION ACCESS*/
+	async setConnectionSSEaccess(_this, value){
+		await _this.setState({connectionSSERAccess: value});
+	}
+
+	getConnectionSSEaccess(_this){
+		return _this.state.connectionSSERAccess;
+	}
+
+	setItemsAccess = (items) =>{
+		this.setState({'itemsAccess': items});
+	}
+
+	setPageCountAccess = (value) =>{
+		this.setState({'pageCountAccess': value});
+	}
+
+	getPageCountAccess(_this){
+		return _this.state.pageCountAccess;
+	}
+	/*CONNECTION ACCESS*/
+
+
+	/*CONNECTION CONTACT*/
+	async setConnectionSSEcontact  (_this, value){
+		await _this.setState({connectionSSEcontact: value});
+	}
+
+	getConnectionSSEcontact (_this){
+		return _this.state.connectionSSEcontact;
+	}
+
+	setItemsContact = (items) =>{
+		this.setState({'itemsContact': items});
+	}
+
+	setPageCountContact = (value) =>{
+		this.setState({'pageCountContact': value});
+	}
+
+	getPageCountContact(_this){
+		return _this.state.pageCountContact;
+	}
+	/*CONNECTION CONTACT*/
+
 
 	
   render() {
@@ -196,7 +204,15 @@ export default class RealTime extends Component {
 				            <div className="line"></div>
 				            
 
-				            <ConnectionSSE _setItems={this.setItemsRealTime} _setPageCount = {this.setPageCount}/>
+				            <ConnectionSSE
+				                _setConnectionSSE={this.setConnectionSSErealtime}
+					            _getConnectionSSE={this.getConnectionSSErealtime}
+				            	_setItems={this.setItemsRealTime} 
+				            	_setPageCount = {this.setPageCount}
+				            	_getPageCount = {this.state.pageCountWords}
+				            	_url = {'/api/v1/real-time'}
+				            	_this = {this}
+				            />
 
 					        <section className="parent-cont-real-time">
 					            {this.state.items.map((item) =>
@@ -249,21 +265,6 @@ export default class RealTime extends Component {
 						            </div>
 								)}
 
-					            <div id="react-paginate">
-						            <ReactPaginate
-							          previousLabel={'Anterior'}
-							          nextLabel={'Siguiente'}
-							          breakLabel={'...'}
-							          breakClassName={'break-me'}
-							          pageCount={this.state.pageCountWords}
-							          marginPagesDisplayed={2}
-							          pageRangeDisplayed={5}
-							          onPageChange={this.handlePageClick}
-							          containerClassName={'pagination'}
-							          subContainerClassName={'pages pagination'}
-							          activeClassName={'active'}
-							        />
-						        </div>
 					        </section>
 				  </Tab>
 				  
@@ -272,59 +273,52 @@ export default class RealTime extends Component {
 				    			<h2 className="title-page">Login Chat History</h2>
 					            <p>Last hits</p>
 					            <div className="line"></div>
+					            
+					            <ConnectionSSE 
+					            	_setItems={this.setItemsAccess} 
+					            	_setPageCount = {this.setPageCountAccess}
+					            	_getPageCount = {this.state.pageCountAccess}
+					            	_setConnectionSSE={this.setConnectionSSEaccess}
+					            	_getConnectionSSE={this.getConnectionSSEaccess}
+					            	_url = {'/api/v1/access-chat'}
+					            	_this = {this}
+					            />
+
 					            <section>
-						          <section>
-						            <Table id="itemTable" striped bordered hover size="sm">
-						              <thead>
-						                <tr>
-						                  {this.state.scope &&
-						                  	<th>Client</th>
-						                  }
-						                  <th>Name</th>
-						                  <th>Email</th>
-						                  <th>Telephone</th>
-						                  <th>Created</th>
-						                </tr>
-						              </thead>
-						              <tbody>
-						                {this.state.itemsAccess.map((item) => 
-						                  <tr key={item._id.$oid}>
-						                    {this.state.scope &&
-							                    <td>
-							                    	{item._client.map((item1) => 
-						                    			<span>
-								                    		{item1.client_domain}
-							                    		</span>
-							                    	)}
-							                    </td>
-							                }
+					            	<Accordion defaultActiveKey="">
+											{this.state.itemsAccess.map((item, index) =>
+									          	
+								          		<Card className="cont-real-time">
+												    <Card.Header className="header">
+													    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
+													      	{item.name}
+													    </Accordion.Toggle>
 
-						                  	<td>{item.name}</td>
-						                  	<td>{item.email}</td>
-						                  	<td>{item.telephone}</td>
-						                  	<td>{item._created}</td>
-						                  </tr>
-						                )}
-						              </tbody>
-						            </Table>
+												        <DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+														    <Dropdown.Item eventKey="2" onClick="">Messages</Dropdown.Item>
+														    <Dropdown.Item eventKey="2" onClick="">To Lock</Dropdown.Item>
+														</DropdownButton>
 
-						            <div id="react-paginate">
-							            <ReactPaginate
-								          previousLabel={'Anterior'}
-								          nextLabel={'Siguiente'}
-								          breakLabel={'...'}
-								          breakClassName={'break-me'}
-								          pageCount={this.state.pageCount}
-								          marginPagesDisplayed={2}
-								          pageRangeDisplayed={5}
-								          onPageChange={this.handlePageClickAccess}
-								          containerClassName={'pagination'}
-								          subContainerClassName={'pages pagination'}
-								          activeClassName={'active'}
-								        />
-							        </div>
+									                	{this.state.scope &&
+								                    	item._client.map((item1) => 
+									                    		<div className="domain">{item1.client_domain}</div>
+									                    	)
+										                }
+														<div className="_created">{moment(item._created).fromNow()}</div>
+														
+												    </Card.Header>
 
-						          </section>
+												    <Accordion.Collapse eventKey={index}>
+												      <Card.Body>Hello! I'm the body
+												      	{/*<td>{item.name}</td>
+										                  	<td>{item.email}</td>
+										                  	<td>{item.telephone}</td>
+										                  	<td>{item._created}</td>*/}
+												      </Card.Body>
+												    </Accordion.Collapse>
+												</Card>
+									        )}
+							        </Accordion>
 						        </section>
 				  </Tab>
 
@@ -335,8 +329,76 @@ export default class RealTime extends Component {
 		          }>
 				  	<h2 className="title-page">Contact Chat</h2>
 					<p>Last hits</p>
+					
+					<ConnectionSSE 
+		            	_setItems={this.setItemsContact} 
+		            	_setPageCount = {this.setPageCountContact}
+		            	_getPageCount = {this.state.pageCountContact}
+		            	_setConnectionSSE={this.setConnectionSSEcontact}
+		            	_getConnectionSSE={this.getConnectionSSEcontact}
+		            	_url = {'/api/v1/contacts'}
+		            	_this = {this}
+		            />
+
 					<section>
-				            <Table id="itemTable" striped bordered hover size="sm">
+				           	
+							<Accordion defaultActiveKey="">
+									{this.state.itemsContact.map((item, index) =>
+							          	
+						          		<Card className="cont-real-time">
+										    <Card.Header className="header">
+											    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
+											      	{item._customer[0].name}
+											    </Accordion.Toggle>
+
+										        <DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+												    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
+										   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+												</DropdownButton>
+
+							                	{this.state.scope &&
+						                    	item._client.map((item1) => 
+							                    		<div className="domain">{item1.client_domain}</div>
+							                    	)
+								                }
+												<div className="_created">{moment(item._created).fromNow()}</div>
+
+										    </Card.Header>
+
+										    <Accordion.Collapse eventKey={index}>
+										      <Card.Body>Hello! I'm the body</Card.Body>
+										    </Accordion.Collapse>
+										</Card>
+
+							          	
+							        )}
+					        </Accordion>
+
+
+										          	{/*<div key={item._id.$oid}>
+										          		<div className="cont-real-time">
+												                
+												                <div className="header">
+												                	<Alert.Heading className="name_client">{item._customer[0].name}</Alert.Heading>
+												                	<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+																	    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
+															   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+																	</DropdownButton>
+
+												                	{this.state.scope &&
+											                    	item._client.map((item1) => 
+												                    		<div className="domain">{item1.client_domain}</div>
+												                    	)
+													                }
+																	<div className="_created">{moment(item._created).fromNow()}</div>
+												                </div>	
+
+																<div className="body">
+																</div>
+														</div>
+										          	</div>*/}
+
+				            {/*<Table id="itemTable" striped bordered hover size="sm">
 				              <thead>
 				                <tr>
 				                  {this.state.scope &&
@@ -377,23 +439,7 @@ export default class RealTime extends Component {
 				                  </tr>
 				                )}
 				              </tbody>
-				            </Table>
-
-				            <div id="react-paginate">
-					            <ReactPaginate
-						          previousLabel={'Anterior'}
-						          nextLabel={'Siguiente'}
-						          breakLabel={'...'}
-						          breakClassName={'break-me'}
-						          pageCount={this.state.perPageContact}
-						          marginPagesDisplayed={2}
-						          pageRangeDisplayed={5}
-						          onPageChange={this.handlePageClickContact}
-						          containerClassName={'pagination'}
-						          subContainerClassName={'pages pagination'}
-						          activeClassName={'active'}
-						        />
-					        </div>
+				            </Table>*/}
 				        </section>
 				  </Tab>
 

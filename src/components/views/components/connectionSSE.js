@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import * as Icon from 'react-bootstrap-icons';
 import {Helper} from './helper';
 import {Filters} from './filters';
+import ReactPaginate from 'react-paginate';
 
 export class ConnectionSSE extends Component{
 	constructor(props) {
@@ -24,16 +25,18 @@ export class ConnectionSSE extends Component{
 	      connectionSSE: null,
 	      perPage: 50,
 	      items: [],
-	      offset: 0
+	      offset: 0,
+	      pageCount: 0
 	    };
 	}
 
 	componentDidMount(){
-		this.getRealTimeSSE();
+		this.connectionSSE();
 	}
 
 	async setConnectionSSE(value, _where){
-		await this.setState({connectionSSE: value });
+		//await this.setState({connectionSSE: value });
+		this.props._setConnectionSSE(this.props._this, value);
 	}
 
 	setItems = (items) =>{
@@ -44,9 +47,19 @@ export class ConnectionSSE extends Component{
        this.props._setPageCount(value);
 	}
 
-	getRealTimeSSE = (_close = null, _filters = null) => {
+
+	handlePageClick = data => {
+	    let selected = data.selected;
+	    let offset = Math.ceil(selected * this.state.perPage);
+	    this.setState({offset: offset}, () => {
+	      this.connectionSSE(true);
+          this.connectionSSE(false);
+	    });
+	};
+
+	connectionSSE = (_close = null, _filters = null) => {
 	    if(_close){
-	    	  var sse = this.state.connectionSSE;
+	    	  var sse = this.props._getConnectionSSE(this.props._this);
 		      if(sse){
 		        sse.close();
 		        async function updateSSE(_this, sse){
@@ -56,7 +69,7 @@ export class ConnectionSSE extends Component{
 		      }
 	    }else{
 		      var _filters = _filters == null ? '' : _filters;
-	          var _strUrl = config.get('baseUrlApi')+'/api/v1/real-time?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
+	          var _strUrl = config.get('baseUrlApi')+this.props._url+'?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
 	          var sse = new Helper().requestSSE(_strUrl);
 	          /*###*/
 	          async function updateSSE(_this, sse){
@@ -65,7 +78,7 @@ export class ConnectionSSE extends Component{
 	          	sse.onmessage = function(event){
 		            var _res = JSON.parse(event.data);
 		            _this.setItems(_res.items);
-		            _this.setPageCount(Math.ceil(_res.total_count / _res.limit));
+		            _this.setPageCount(Math.ceil(_res.total_count / _this.state.perPage));
 		            //_this.props._setItems(_res.items);
 
 
@@ -85,8 +98,30 @@ export class ConnectionSSE extends Component{
 	    }
 	}
 
+
+
+
 	render() {
-		return (<Filters _handleSSE={this.getRealTimeSSE}/>);
+		return (
+			<div>
+				<Filters _handleSSE={this.connectionSSE}/>
+				<div id="react-paginate">
+		            <ReactPaginate
+			          previousLabel={'Anterior'}
+			          nextLabel={'Siguiente'}
+			          breakLabel={'...'}
+			          breakClassName={'break-me'}
+			          pageCount={this.props._getPageCount}
+			          marginPagesDisplayed={2}
+			          pageRangeDisplayed={5}
+			          onPageChange={this.handlePageClick}
+			          containerClassName={'pagination'}
+			          subContainerClassName={'pages pagination'}
+			          activeClassName={'active'}
+			        />
+		        </div>
+			</div>
+		);
 	}
 
 }
