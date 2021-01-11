@@ -38,6 +38,7 @@ export default class ModalConfChat extends Component {
 		    	const client_id = res.data.data.result[0].client_id;
 		    	const token_init = res.data.data.result[0].token_init;
 		    	const settings = res.data.data.settings;
+		    	
 		    	this.setState({codeInitChat : this.codeInitChat(
 		    		client_id,
 		    		token_init,
@@ -45,7 +46,8 @@ export default class ModalConfChat extends Component {
 		    		config.get('staticFrontChat'),
 		    		config.get('baseUrlApp'), 
 		    		'app.min',
-		    		settings.header_message
+		    		settings.header_message,
+		    		res.data.data.result[0].client_domain
 		    	)});
 		    }).catch(function (error) {
 		    	console.log(error);
@@ -59,7 +61,7 @@ export default class ModalConfChat extends Component {
 			this.props.handleConfirm();
 		}
 
-		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage){
+		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage, domain){
 			var _headerMessage = headerMessage == null ? 'BELISA, Virtual assistant' : headerMessage;
 			const code = `
 <script type="text/javascript">
@@ -70,6 +72,7 @@ export default class ModalConfChat extends Component {
         bElisa.fileName = '`+fileName+`';
         bElisa.tokenToInit = '`+tokenToInit+`';
         bElisa.baseApp = '`+baseUrl+`';
+        bElisa.domain = '`+domain+`';
         bElisa.headerMessage = '`+_headerMessage+`';
         var ref = d.getElementsByTagName('script')[0];
         var app, appId = 'app-bElisa';

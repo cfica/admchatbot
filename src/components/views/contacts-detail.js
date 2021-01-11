@@ -200,7 +200,24 @@ export default class ContactDetail extends Component {
 	            <SidebarAction/>
 
 				<h2>Detail Chat</h2>
-	            <p>Last hits</p>
+	            <p>
+	            		{this.state.detail.status == 'pending' &&
+				      	   <Badge variant='warning'>Pending</Badge>	
+				      	}
+
+				      	{this.state.detail.status == 'open' &&
+				      	   <Badge variant='warning'>Open</Badge>	
+				      	}
+
+				      	{this.state.detail.status == 'closed' &&
+				      	   <Badge variant='success'>Closed</Badge>	
+				      	}
+
+				      	
+				      	{'  Created at '}
+				      	
+				      	{moment(this.state.detail._created).fromNow()}
+	            </p>
 	            <div className="line"></div>
 	            <section>
 		          <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -223,7 +240,7 @@ export default class ContactDetail extends Component {
 								    <Col lg={8}>
 							    		<div className="main-buttons">
 							    			<ButtonGroup>
-												  <DropdownButton as={ButtonGroup} variant="light" title="Dropdown" id="bg-nested-dropdown">
+												  <DropdownButton as={ButtonGroup} variant="light" title="Options" id="bg-nested-dropdown">
 												    <Dropdown.Item eventKey="1">Lock</Dropdown.Item>
 												    <Dropdown.Item eventKey="2">Asign</Dropdown.Item>
 												  </DropdownButton>
@@ -295,7 +312,7 @@ export default class ContactDetail extends Component {
 
 								    <Col lg={4}>
 								    		<div>
-								    			<h1>Information</h1>
+								    			<h3>Information</h3>
 								    		</div>
 
 								    		
@@ -345,7 +362,6 @@ export default class ContactDetail extends Component {
 
 								    		<div className="comments">
 								    			<h5>Last Comments</h5>
-								    			
 								    			<div className="list">
 								    				{
 
@@ -357,7 +373,6 @@ export default class ContactDetail extends Component {
 										    			)
 									    			}
 								    			</div>
-
 								    		</div>
 								    </Col>
 								  </Row>

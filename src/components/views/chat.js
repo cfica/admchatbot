@@ -145,7 +145,10 @@ export default class Login extends Component {
     async function _requestApi(_this){
         var _url = config.get('baseUrlApi')+'/api/v1/setting-init';
         const res = await new Helper().getRequest(_url,'init',{client_id: client_id, init: init});
-        _this.setState({confChatInit: res.config[0]});
+        //console.log(res);
+        if(res){
+          _this.setState({confChatInit: res.config[0]});
+        }
 
     }
     _requestApi(this);

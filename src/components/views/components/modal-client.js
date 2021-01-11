@@ -17,6 +17,7 @@ export default class ModalClient extends Component {
 		      errorSaveForm: "",
 		      token: localStorage.getItem('tokenAdm'),
 		      inputDomain : '',
+		      inputIp : '',
 		      inputName : ''
 		    };
 		}
@@ -42,6 +43,7 @@ export default class ModalClient extends Component {
 		    	this.setState({validated : false});
 	   		    var _dataPost = {
 	   		    	"domain" : this.state.inputDomain,
+	   		    	"ip" : this.state.inputIp,
 	   		    	"name" : this.state.inputName
 	   		    };
 
@@ -73,11 +75,26 @@ export default class ModalClient extends Component {
 					        </Modal.Header>
 
 					        <Modal.Body>
+					        		    
 					        		    <Form.Group  controlId="formDomain">
 								            <Form.Control required size="sm" 
 								                          type="text" value={this.state.inputDomain} 
 								                          onChange={this.changeDomain = (event)=>{this.setState({inputDomain: event.target.value});}} placeholder="Domain" />
 								            <Form.Label >Domain</Form.Label>
+								            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+								            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+								            <Form.Text className="text-muted">
+								              This tag must be unique. Example, hello_how_are_you
+								            </Form.Text>
+								        </Form.Group>
+
+								        <Form.Group  controlId="formIp">
+								            
+								            <Form.Control required size="sm" 
+								                          type="text" value={this.state.inputIp} 
+								                          onChange={this.changeDomain = (event)=>{this.setState({inputIp: event.target.value});}} placeholder="Domain" />
+								            <Form.Label >Ip Domain</Form.Label>
+
 								            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
 								            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 								            <Form.Text className="text-muted">

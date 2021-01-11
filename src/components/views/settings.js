@@ -268,7 +268,13 @@ export default class Settings extends Component {
 						                    </td>
 						                    <td>
 						                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
+												    <Dropdown.Item eventKey="4" onClick="">Edit</Dropdown.Item>
+
 												    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
+												    
+
+												    <Dropdown.Item eventKey="5" onClick="">Group Client Account</Dropdown.Item>
+
 												    {item.status == 'Active' &&
 												      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Inactive', e)}>Deactivate</Dropdown.Item>
 												    }
