@@ -1393,4 +1393,40 @@ a[data-toggle="collapse"] {
   margin-bottom: 20px
 }
 
+/*
+.accordion > .card{
+  overflow: initial;
+}*/
+
+
+.detail-info{
+  margin-bottom: 10px;
+  border-bottom: solid 1px #ccc;
+}
+
+.add-comment{
+  margin-top: 30px
+}
+
+.comments{
+  margin-top:10px;
+}
+
+.comments .list{
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.comments .list .item{
+  border-bottom: solid 1px #ccc;
+  margin-bottom: 10px
+}
+
+.comments .list .item .footer{
+  font-size: 0.8rem
+}
+
+.comments .list .item .content{
+  font-size: 1rem
+}
 

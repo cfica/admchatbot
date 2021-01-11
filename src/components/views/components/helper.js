@@ -3,6 +3,7 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 import * as moment from 'moment';
 import {InputsTypeForm,ResponseForm,ResponseTopic,Validation} from './componentsUtils';
+import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import {GetSlide} from './slide';
 import {VarStorage} from './varsStorage';
 
@@ -376,6 +377,15 @@ export class Helper extends Component{
                  </div>
               </div>
           </div>
+        );
+      }
+
+
+      setAlertApp(variant, message){
+        return (
+          <Alert key={0} variant={variant}>
+            {message}
+          </Alert>
         );
       }
 

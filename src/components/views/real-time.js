@@ -55,7 +55,7 @@ export default class RealTime extends Component {
 	      filter_user: '',
 	      filters_active: [],
 	      validated: false,
-	      
+	      contactPendingCount:0
 	    };
 	}
 
@@ -172,6 +172,13 @@ export default class RealTime extends Component {
 	}
 
 	setItemsContact = (items) =>{
+		var _itemsPending = 0;
+		items.forEach(function(el){
+           if(el.status == 'pending'){
+           	_itemsPending++;
+           }
+		});
+		this.setState({'contactPendingCount': _itemsPending});
 		this.setState({'itemsContact': items});
 	}
 
@@ -187,6 +194,10 @@ export default class RealTime extends Component {
 
 	
   render() {
+  	const filtersContact = [{'name': 'from'}, {'name': 'to'}, {'name': 'status'}];
+  	const filtersRealTime = [{'name': 'from'}, {'name': 'to'}];
+  	const filtersAccess = [{'name': 'from'}, {'name': 'to'}];
+
     return (
         <div className="wrapper">
 		    <SidebarMenu/>
@@ -194,6 +205,7 @@ export default class RealTime extends Component {
 	            <SidebarAction/>
 
 	            <Tabs defaultActiveKey="Messages" transition={false} id="noanim-tab-example">
+				 
 				  <Tab eventKey="Messages" title={
 		            <React.Fragment>
 		              <Icon.ChatQuote size={20}/> Messages
@@ -212,6 +224,7 @@ export default class RealTime extends Component {
 				            	_getPageCount = {this.state.pageCountWords}
 				            	_url = {'/api/v1/real-time'}
 				            	_this = {this}
+				            	_filters= {filtersRealTime}
 				            />
 
 					        <section className="parent-cont-real-time">
@@ -265,6 +278,9 @@ export default class RealTime extends Component {
 						            </div>
 								)}
 
+								{this.state.items.length == 0 &&
+								   new Helper().setAlertApp('warning', 'There are no records to display.')
+								}
 					        </section>
 				  </Tab>
 				  
@@ -282,6 +298,7 @@ export default class RealTime extends Component {
 					            	_getConnectionSSE={this.getConnectionSSEaccess}
 					            	_url = {'/api/v1/access-chat'}
 					            	_this = {this}
+					            	_filters= {filtersAccess}
 					            />
 
 					            <section>
@@ -318,13 +335,19 @@ export default class RealTime extends Component {
 												    </Accordion.Collapse>
 												</Card>
 									        )}
+
+									        {this.state.itemsAccess.length == 0 &&
+											   new Helper().setAlertApp('warning', 'There are no records to display.')
+											}
 							        </Accordion>
 						        </section>
 				  </Tab>
 
 				  <Tab eventKey="contact-chat" title={
 		            <React.Fragment>
-		              <Icon.ChatQuote size={20}/> Contact Chat <Badge variant='warning'>9</Badge>
+		              <Icon.ChatQuote size={20}/> Contact Chat {this.state.contactPendingCount > 0 && 
+                        <Badge variant='warning'>{this.state.contactPendingCount}</Badge>
+		              }
 		            </React.Fragment>
 		          }>
 				  	<h2 className="title-page">Contact Chat</h2>
@@ -338,6 +361,7 @@ export default class RealTime extends Component {
 		            	_getConnectionSSE={this.getConnectionSSEcontact}
 		            	_url = {'/api/v1/contacts'}
 		            	_this = {this}
+		            	_filters= {filtersContact}
 		            />
 
 					<section>
@@ -348,13 +372,28 @@ export default class RealTime extends Component {
 						          		<Card className="cont-real-time">
 										    <Card.Header className="header">
 											    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
-											      	{item._customer[0].name}
+											      	{item._customer[0].name}&nbsp;
+											      	
+											      	{item.status == 'pending' &&
+											      	   <Badge variant='warning'>Pending</Badge>	
+											      	}
+
+											      	{item.status == 'open' &&
+											      	   <Badge variant='warning'>Open</Badge>	
+											      	}
+
+											      	{item.status == 'closed' &&
+											      	   <Badge variant='success'>Closed</Badge>	
+											      	}
 											    </Accordion.Toggle>
 
-										        <DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-												    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
+										        {/*<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+												    <Dropdown.Item eventKey="1" href={"contacts/" + item._id}>Detail</Dropdown.Item>
 										   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
-												</DropdownButton>
+												</DropdownButton>*/}
+
+												<Button href={"contacts/" + item._id} size="sm" variant="outline-secondary">Detail</Button>
+
 
 							                	{this.state.scope &&
 						                    	item._client.map((item1) => 
@@ -366,80 +405,18 @@ export default class RealTime extends Component {
 										    </Card.Header>
 
 										    <Accordion.Collapse eventKey={index}>
-										      <Card.Body>Hello! I'm the body</Card.Body>
+										      <Card.Body>{item.status}</Card.Body>
 										    </Accordion.Collapse>
 										</Card>
 
 							          	
 							        )}
+
+							        {this.state.itemsContact.length == 0 &&
+									   new Helper().setAlertApp('warning', 'There are no records to display.')
+									}
+
 					        </Accordion>
-
-
-										          	{/*<div key={item._id.$oid}>
-										          		<div className="cont-real-time">
-												                
-												                <div className="header">
-												                	<Alert.Heading className="name_client">{item._customer[0].name}</Alert.Heading>
-												                	<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-																	    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
-															   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
-																	</DropdownButton>
-
-												                	{this.state.scope &&
-											                    	item._client.map((item1) => 
-												                    		<div className="domain">{item1.client_domain}</div>
-												                    	)
-													                }
-																	<div className="_created">{moment(item._created).fromNow()}</div>
-												                </div>	
-
-																<div className="body">
-																</div>
-														</div>
-										          	</div>*/}
-
-				            {/*<Table id="itemTable" striped bordered hover size="sm">
-				              <thead>
-				                <tr>
-				                  {this.state.scope &&
-				                  	<th>Client</th>
-				                  }
-				                  <th>Name</th>
-				                  <th>Email</th>
-				                  <th>Telephone</th>
-				                  <th>Status</th>
-				                  <th>Created</th>
-				                  <th>Action</th>
-				                </tr>
-				              </thead>
-				              <tbody>
-				                {this.state.itemsContact.map((item) => 
-				                  <tr key={item._id.$oid}>
-				                    {this.state.scope &&
-					                    <td>
-					                    	{item._client.map((item1) => 
-				                    			<span>
-						                    		{item1.client_domain}
-					                    		</span>
-					                    	)}
-					                    </td>
-					                }
-
-				                  	<td>{item._customer[0].name}</td>
-				                  	<td>{item._customer[0].email}</td>
-				                  	<td>{item._customer[0].telephone}</td>
-				                  	<td>{item.status}</td>
-				                  	<td>{item._created}</td>
-				                  	<td>
-				                  		<DropdownButton size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-										    <Dropdown.Item eventKey="1" href={"contacts/" + item._id.$oid}>Detail</Dropdown.Item>
-										    <Dropdown.Item eventKey="2">Asign</Dropdown.Item>
-										</DropdownButton>
-				                  	</td>
-				                  </tr>
-				                )}
-				              </tbody>
-				            </Table>*/}
 				        </section>
 				  </Tab>
 

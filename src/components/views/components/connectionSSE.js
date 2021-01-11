@@ -26,11 +26,13 @@ export class ConnectionSSE extends Component{
 	      perPage: 50,
 	      items: [],
 	      offset: 0,
-	      pageCount: 0
+	      pageCount: 0,
+	      _filters: ''
 	    };
 	}
 
 	componentDidMount(){
+		//console.log(this.props._filters);
 		this.connectionSSE();
 	}
 
@@ -52,12 +54,13 @@ export class ConnectionSSE extends Component{
 	    let selected = data.selected;
 	    let offset = Math.ceil(selected * this.state.perPage);
 	    this.setState({offset: offset}, () => {
+	      console.log(offset);
 	      this.connectionSSE(true);
-          this.connectionSSE(false);
+          this.connectionSSE(false, null, true);
 	    });
 	};
 
-	connectionSSE = (_close = null, _filters = null) => {
+	connectionSSE = (_close = null, _filters = null, _paginate = null) => {
 	    if(_close){
 	    	  var sse = this.props._getConnectionSSE(this.props._this);
 		      if(sse){
@@ -68,8 +71,28 @@ export class ConnectionSSE extends Component{
 		        updateSSE(this, sse);
 		      }
 	    }else{
-		      var _filters = _filters == null ? '' : _filters;
-	          var _strUrl = config.get('baseUrlApi')+this.props._url+'?limit='+this.state.perPage+'&offset='+this.state.offset+'&t-dsi-restful='+this.state.token+_filters;
+		      var __filters = '';
+		      if(_paginate && this.state._filters != ''){
+		      	__filters = this.state._filters;
+		      }else{
+		      	if(_filters == null){
+		      		this.setState({_filters: ''});
+					__filters = '';
+		      	}else{
+		      		this.setState({_filters: _filters});
+					__filters = _filters;
+		      	}
+		      }
+		      
+	          var _strUrl = config.get('baseUrlApi')+
+	          				this.props._url+
+	          				'?limit='+this.state.perPage+
+	          				'&offset='+
+	          				this.state.offset+
+	          				'&t-dsi-restful='+
+	          				this.state.token+
+	          				__filters;
+	          				
 	          var sse = new Helper().requestSSE(_strUrl);
 	          /*###*/
 	          async function updateSSE(_this, sse){
@@ -104,7 +127,8 @@ export class ConnectionSSE extends Component{
 	render() {
 		return (
 			<div>
-				<Filters _handleSSE={this.connectionSSE}/>
+				<Filters _handleSSE={this.connectionSSE} _filters={this.props._filters}/>
+				
 				<div id="react-paginate">
 		            <ReactPaginate
 			          previousLabel={'Anterior'}

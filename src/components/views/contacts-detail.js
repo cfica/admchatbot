@@ -6,11 +6,12 @@ import mCustomScrollbar from "malihu-custom-scrollbar-plugin";
 import SidebarMenu from './components/sidebar-menu';
 import {Helper} from './components/helper';
 import SidebarAction from './components/sidebar-action';
-import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, Accordion, Card,DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
 import { browserHistory } from 'react-router';
+import * as moment from 'moment';
 
 
 export default class ContactDetail extends Component {
@@ -33,10 +34,13 @@ export default class ContactDetail extends Component {
 	      itemsAccess: [],
 	      patternSelected: [],
 	      validated : false,
+	      vldFormComment : false,
 	      inputMessage: '',
 	      listMessages: [],
 	      detail: {},
-	      connectionSSE: null
+	      connectionSSE: null,
+	      inputComment: '',
+	      comments: []
 	    };
 	}
 
@@ -54,13 +58,14 @@ export default class ContactDetail extends Component {
 		localStorage.setItem('m_messages', []);	
 		this.getDetail();
 		this.getMessagesSSE(this);
+		this.getComments();
 	}
 
 	getDetail(){
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/contact?id='+_this.props.params.id;
 		    const res = await new Helper().getRequest(_url,'back');
-		    //console.log(res);
+		    console.log(res);
 		    _this.setState({'detail': res});
 		}
 		_requestApi(this);
@@ -139,14 +144,41 @@ export default class ContactDetail extends Component {
 
 	      this.sendMessage(this, this.state.inputMessage, form);
 		  this.setState({inputMessage : ''});
-
-	      /*if(localStorage.getItem('token') == undefined){
-	        this.setState({showContHello : true});
-	        this.setState({showContChat : false});
-	      }*/
-
 	    }  
 	}
+
+	_handleSendComment = (event) => {
+		event.preventDefault();
+		const form = event.currentTarget;
+		if (form.checkValidity() === false) {
+	      event.stopPropagation();
+	      this.setState({vldFormComment : true});
+	    }else{
+	    	this.setState({vldFormComment : false});
+	    	//this.sendMessage(this, this.state.inputComment, form);
+	    	async function _requestApi(_this, comment, form){
+		        var _url = config.get('baseUrlApi')+'/api/v1/comment';
+		        const res = await new Helper().postRequest(_url,{id: _this.props.params.id, comment: comment}, 'back');
+		        _this.setState({inputComment : ''});
+		        if(form){
+		        	form.reset();
+		        }
+		        _this.getComments();
+		    }
+		    _requestApi(this, this.state.inputComment, form);
+	    }
+	}
+
+	getComments(){
+		async function _requestApi(_this){
+		    var _url = config.get('baseUrlApi')+'/api/v1/comments?id='+_this.props.params.id;
+		    const res = await new Helper().getRequest(_url,'back');
+		    //console.log(res);
+		    _this.setState({'comments': res['items']});
+		}
+		_requestApi(this);
+	}
+
 
 	sendMessage(_this, message, form = null, options = null){
 		async function _requestApi(_this, message, form, options){
@@ -266,8 +298,66 @@ export default class ContactDetail extends Component {
 								    			<h1>Information</h1>
 								    		</div>
 
-								    		<div>
-								    			<h1>Location</h1>
+								    		
+								    		{this.state.detail.info && 
+								    			 <div className="detail-info">
+								    			 	<strong>IP:</strong>{' '}{this.state.detail.info.ip}
+								    			 </div>
+								    		}
+
+								    		{this.state.detail.info && 
+									    		<div className="detail-info">
+								    			 	<strong>User Agent:</strong>{' '}{this.state.detail.info.user_agent}
+								    			</div>
+								    		}
+
+								    		{this.state.detail._customer && 
+									    		<div className="detail-info">
+								    			 	<strong>Name:</strong>{' '}{this.state.detail._customer[0].name}
+								    			</div>
+								    		}
+
+								    		{this.state.detail._customer && 
+									    		<div className="detail-info">
+								    			 	<strong>Telephone:</strong>{' '}{this.state.detail._customer[0].telephone}
+								    			</div>
+								    		}
+
+								    		{this.state.detail._customer && 
+									    		<div className="detail-info">
+								    			 	<strong>Email:</strong>{' '}{this.state.detail._customer[0].email}
+								    			</div>
+								    		}
+
+
+								    		<Form className="add-comment" noValidate validated={this.state.vldFormComment} onSubmit={this._handleSendComment}>
+												  <Form.Group controlId="comment.ControlTextarea">
+												    <Form.Label>Add Comment</Form.Label>
+												    <Form.Control value={this.state.inputComment} required minLength="3" size="sm" onChange={(e) => this.setState({inputComment: e.target.value})} as="textarea" rows={1} />
+												  </Form.Group>
+
+												  <Button variant="primary" type="submit">
+												    Add
+												  </Button>
+
+											</Form>
+								    		
+
+								    		<div className="comments">
+								    			<h5>Last Comments</h5>
+								    			
+								    			<div className="list">
+								    				{
+
+										    			this.state.comments.map((item, index) => 
+									    					<div className="item">
+									    							<div className="comment">{item.comment}</div>
+									    							<div className="footer"><strong>{item._user[0].fullname}</strong> {' '} {moment(item._created).fromNow()}</div>
+									    					</div>
+										    			)
+									    			}
+								    			</div>
+
 								    		</div>
 								    </Col>
 								  </Row>
@@ -275,7 +365,28 @@ export default class ContactDetail extends Component {
 					        </Tab.Pane>
 
 					        <Tab.Pane eventKey="second">
-					          
+					          	<Accordion defaultActiveKey="0">
+								  <Card>
+								    <Card.Header>
+								      <Accordion.Toggle as={Button} variant="link" eventKey="0">
+								        Movements
+								      </Accordion.Toggle>
+								    </Card.Header>
+								    <Accordion.Collapse eventKey="0">
+								      <Card.Body>Hello! I'm the body</Card.Body>
+								    </Accordion.Collapse>
+								  </Card>
+								  <Card>
+								    <Card.Header>
+								      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+								        Chats with clients
+								      </Accordion.Toggle>
+								    </Card.Header>
+								    <Accordion.Collapse eventKey="1">
+								      <Card.Body>Hello! I'm another body</Card.Body>
+								    </Accordion.Collapse>
+								  </Card>
+								</Accordion>
 					        </Tab.Pane>
 
 					      </Tab.Content>
