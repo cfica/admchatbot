@@ -72,7 +72,6 @@ export default class ModalConfChat extends Component {
         bElisa.fileName = '`+fileName+`';
         bElisa.tokenToInit = '`+tokenToInit+`';
         bElisa.baseApp = '`+baseUrl+`';
-        bElisa.domain = '`+domain+`';
         bElisa.headerMessage = '`+_headerMessage+`';
         var ref = d.getElementsByTagName('script')[0];
         var app, appId = 'app-bElisa';

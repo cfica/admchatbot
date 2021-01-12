@@ -3,6 +3,7 @@ import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, Butt
 import axios from 'axios';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
+import {Helper} from './helper';
 
 export default class ModalClient extends Component {
   		constructor(props) {
@@ -32,6 +33,20 @@ export default class ModalClient extends Component {
 			this.props.handleConfirm();
 		}
 
+		componentDidMount(){
+			if(this.props.id.length > 0){
+				async function _requestApi(_this, id){
+				    var _url = config.get('baseUrlApi')+'/api/v1/client?id='+id;
+				    const res = await new Helper().getRequest(_url,'back');
+				    //console.log(res);
+				    _this.setState({'inputDomain': res.result.domain});
+				    _this.setState({'inputIp': res.result.ip});
+				    _this.setState({'inputName': res.result.name});
+				}
+				_requestApi(this, this.props.id);
+			}
+		}
+
 		handleSubmitForm = (event)=>{
 			event.preventDefault();
 			const form = event.currentTarget;
@@ -47,21 +62,20 @@ export default class ModalClient extends Component {
 	   		    	"name" : this.state.inputName
 	   		    };
 
-	   		    axios.post(config.get('baseUrlApi')+'/api/v1/add-client', 
-	   		    	JSON.stringify(_dataPost), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-			    .then(res => {
-			    	this.setState({errorSaveForm : false});
-			    	form.reset();
-			    })
-			    .catch(function (error) {
-				    //this.setState({errorSaveForm : true});
-				    if(error.response.status == 423){
-			    		//user exist..
-			    	}
-				})
-				.then(function () {
-				    // always executed
-				});
+	   		    async function _requestApi(_this, _dataPost){
+				    if(_this.props.id.length > 0){
+				    	var _url = config.get('baseUrlApi')+'/api/v1/client?id='+_this.props.id;
+				    	const res = await new Helper().putRequest(_url,_dataPost,'back');
+	   		    	}else{
+	   		    		var _url = config.get('baseUrlApi')+'/api/v1/client';
+	   		    		const res = await new Helper().postRequest(_url,_dataPost,'back');
+	   		    	}
+	   		    	_this.setState({errorSaveForm : false});
+	   		    	form.reset();
+	   		    	_this.props.hiddenModal();
+
+				}
+				_requestApi(this, _dataPost);
 		    }
 		}
 
@@ -71,7 +85,10 @@ export default class ModalClient extends Component {
 		  			<Modal show={this.state.showModal} onHide={this.handleClose}>
 		  			    <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
 					        <Modal.Header closeButton>
-					          <Modal.Title>Add Client</Modal.Title>
+					          <Modal.Title>
+					            {this.props.id.length > 0 && 'Update Client'}
+					            {this.props.id.length == 0 && 'Add Client'}
+					          </Modal.Title>
 					        </Modal.Header>
 
 					        <Modal.Body>

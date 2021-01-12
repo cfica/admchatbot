@@ -289,7 +289,7 @@ export default class ContactDetail extends Component {
 			                                          <Form.Group  controlId="sendMessage">
 			                                            <InputGroup>
 			                                                
-			                                                <FormControl placeholder="Add Message" required minLength="3" value={this.state.inputMessage} size="lg" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
+			                                                <FormControl placeholder="Add Message" required minLength="3" value={this.state.inputMessage} size="sm" onChange={this.inp = (e) => {this.setState({inputMessage: e.target.value})}}
 			                                                  aria-label="Add Message"
 			                                                  autocomplete="off"
 			                                                />

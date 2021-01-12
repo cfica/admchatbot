@@ -89,11 +89,22 @@ export default class Settings extends Component {
 
 	handleShowModalClient = (event)=>{
 		this.setState({showModalClient : true});
+		this.setState({idClient : ''});
 	}
 
 	handleHiddenModalClient = data => {
 	    this.setState({showModalClient : false});
+	    this.loadClients();
 	};
+
+	editClient(id){
+		this.setState({idClient: id});
+		this.setState({showModalClient : true});
+	}
+
+	delClient(id){
+
+	}
 
 	handleGenConfigChat(id){
 		//console.log(id);
@@ -207,7 +218,8 @@ export default class Settings extends Component {
 
 				{this.state.showModalClient && 
 		        	<ModalClient
-		        	 hiddenModal = {this.handleHiddenModalClient} 
+		        	 hiddenModal = {this.handleHiddenModalClient}
+		        	 id = {this.state.idClient}
 		        	/>
 		        }
 
@@ -266,9 +278,12 @@ export default class Settings extends Component {
 						                    <td>
 						                      <Status status={item.status}/>
 						                    </td>
+
 						                    <td>
-						                      <DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-												    <Dropdown.Item eventKey="4" onClick="">Edit</Dropdown.Item>
+						                      <DropdownButton as={ButtonGroup} size="sm" variant="outline-primary" title="Options" id="bg-vertical-dropdown-1">
+												    <Dropdown.Item eventKey="4" onClick={(e) => this.editClient(item._id.$oid)}>Edit</Dropdown.Item>
+
+												    {/*<Dropdown.Item eventKey="4" onClick={(e) => this.delClient(item._id.$oid)}>Delete</Dropdown.Item>*/}
 
 												    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
 												    

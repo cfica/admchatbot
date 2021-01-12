@@ -125,7 +125,7 @@ export default class RealTime extends Component {
 		return _this.state.connectionSSERealTime;
 	}
 
-	setItemsRealTime = (items) =>{
+	setItemsRealTime = (items, res) =>{
 		this.setState({'items': items});
 	}
 
@@ -148,7 +148,7 @@ export default class RealTime extends Component {
 		return _this.state.connectionSSERAccess;
 	}
 
-	setItemsAccess = (items) =>{
+	setItemsAccess = (items, res) =>{
 		this.setState({'itemsAccess': items});
 	}
 
@@ -171,14 +171,15 @@ export default class RealTime extends Component {
 		return _this.state.connectionSSEcontact;
 	}
 
-	setItemsContact = (items) =>{
-		var _itemsPending = 0;
+	setItemsContact = (items, res) =>{
+		/*var _itemsPending = 0;
 		items.forEach(function(el){
            if(el.status == 'pending'){
            	_itemsPending++;
            }
-		});
-		this.setState({'contactPendingCount': _itemsPending});
+		});*/
+
+		this.setState({'contactPendingCount': res.pending});
 		this.setState({'itemsContact': items});
 	}
 

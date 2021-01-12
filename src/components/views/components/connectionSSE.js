@@ -41,8 +41,8 @@ export class ConnectionSSE extends Component{
 		this.props._setConnectionSSE(this.props._this, value);
 	}
 
-	setItems = (items) =>{
-		this.props._setItems(items);
+	setItems = (items, res) =>{
+		this.props._setItems(items, res);
 	}
 
 	setPageCount = (value) =>{
@@ -100,7 +100,7 @@ export class ConnectionSSE extends Component{
 	          	
 	          	sse.onmessage = function(event){
 		            var _res = JSON.parse(event.data);
-		            _this.setItems(_res.items);
+		            _this.setItems(_res.items, _res);
 		            _this.setPageCount(Math.ceil(_res.total_count / _this.state.perPage));
 		            //_this.props._setItems(_res.items);
 
