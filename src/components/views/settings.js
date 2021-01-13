@@ -17,6 +17,7 @@ import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
 import {Validation, Status} from './components/componentsUtils';
+import {Helper} from './components/helper';
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -58,16 +59,12 @@ export default class Settings extends Component {
 	}
 
 	loadClients() {
-	    axios.get(config.get('baseUrlApi')+'/api/v1/clients?limit='+this.state.perPage+'&offset='+this.state.offset, 
-    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-	    .then(res => {
-	    	this.setState({items: res.data.data.items,pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),});
-	    }).catch(function (error) {
-	    	//if(error.response.status == 401){
-	    	//	delete_cookie('token');
-	    	//	browserHistory.push('/login');
-	    	//}
-		});
+		async function _requestApi(_this, allReg){
+		    var _url = config.get('baseUrlApi')+'/api/v1/clients?limit='+_this.state.perPage+'&offset='+_this.state.offset;
+		    const res = await new Helper().getRequest(_url,'back');
+		    _this.setState({items: res.items,pageCount: Math.ceil(res.total_count / res.limit)});
+		}
+		_requestApi(this);
 	}
 
 

@@ -1430,3 +1430,12 @@ a[data-toggle="collapse"] {
   font-size: 1rem
 }
 
+
+.form-inline-train{
+  display: inline-flex;
+  margin-right: 10px
+}
+
+.form-inline-train .btn.btn-primary{
+  margin-left: 5px
+}

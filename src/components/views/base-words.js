@@ -8,6 +8,8 @@ import ModalToLearn from './components/modal-add-pattern';
 import ModalToConfirm from './components/confirm';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
+import {Helper} from './components/helper';
+import {VarStorage} from './components/varsStorage';
 
 export default class BaseWords extends Component {
 	constructor(props) {
@@ -30,6 +32,9 @@ export default class BaseWords extends Component {
 	      showModalConfirm: false,
 	      idPattern: 0,
 	      logTraining: [],
+	      clients: [],
+	      validated: false,
+	      clientSelected: null
 	    };
 	}
 
@@ -77,6 +82,10 @@ export default class BaseWords extends Component {
 	    this.loadWords();
 	    this.loadPatterns();
 	    this.loadLogTraining();
+
+	    if(this.state.scope){
+	    	this.loadClients();
+	    }
 	}
 
 	handlePageClickWords = data => {
@@ -111,7 +120,43 @@ export default class BaseWords extends Component {
 		this.setState({idPattern : _id});
 	};
 
-	handleTrain = (event) =>{
+
+
+	loadClients() {
+		async function _requestApi(_this){
+		    var _url = config.get('baseUrlApi')+'/api/v1/clients';
+		    const res = await new Helper().getRequest(_url,'back');
+		    console.log(res);
+		    _this.setState({clients: res.items});
+		}
+		_requestApi(this);
+	}
+
+	submitTrain = (event)=>{
+		event.preventDefault();
+		const form = event.currentTarget;
+	    if (form.checkValidity() === false) {
+	      event.stopPropagation();
+	      this.setState({validated : true});
+	    }else{
+	      	this.setState({validated : false});
+	      	if(this.state.scope){
+	      		var _id = this.state.clientSelected; //users_api -> client_id
+	      	}else{
+	      		var _id = new VarStorage().getSite();
+	      	}
+	      	async function _requestApi(_this, _id){
+			    var _url = config.get('baseUrlApi')+'/api/v1/train?id='+_id;
+			    const res = await new Helper().getRequest(_url,'back');
+			    //console.log(res);
+			    //_this.setState({clients: res.items});
+			    //call sse connection
+			}
+			_requestApi(this, _id);
+	    }
+	}
+
+	/*handleTrain = (event) =>{
 		//alert('training chat..');
 		axios.get(config.get('baseUrlApi')+'/api/v1/train', 
 			{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
@@ -119,7 +164,8 @@ export default class BaseWords extends Component {
 	    	//algo
 	    });
 	    this.loadLogTraining();
-	}
+	}*/
+
 
     render() {
       return (
@@ -132,11 +178,32 @@ export default class BaseWords extends Component {
 	            
 	            <div className="line"></div>
 	            <Jumbotron className="content-form jumbotron-sm jumbotron-right">
-		            <Button variant="primary">Import Patterns</Button>{' '}
-		            
-		            <Button variant="primary" onClick={this.handleTrain}>Train</Button>{' '}
 
-		            <Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
+	            	<Form className="form-inline-train" inline noValidate validated={this.state.validated} onSubmit={this.submitTrain}>
+			             {this.state.scope &&
+			             	<Form.Control
+							    as="select"
+							    custom
+							    required
+							    onChange={(e) => this.setState({clientSelected: e.target.value})}
+							  >
+							    <option value="">Choose Client...</option>
+							    
+							    {this.state.clients.map((item) =>
+							    	<option value={item._id.$oid}>{item.domain}</option>
+							    )}
+							  </Form.Control>
+			             }
+
+						<Button variant="primary" type="submit">Train</Button>{'  '}
+					</Form>
+
+
+					<Button variant="primary">Import Patterns</Button>{'  '}
+
+					<Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
+					
+		            
 		            {this.state.showModalAddPattern && 
 		            	<ModalToLearn
 			        	 hiddenModal = {this.handleHiddenModalAddPattern} 
