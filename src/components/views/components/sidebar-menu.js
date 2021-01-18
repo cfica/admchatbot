@@ -69,7 +69,7 @@ export default class SidebarMenu extends Component {
 		            </li>
 
 		            <li>
-		            	<a href="/report"><Icon.GraphUp size={20}/> Report</a>
+		            	<a href="/reports"><Icon.GraphUp size={20}/> Report</a>
 		            </li>
 
 		            <li>

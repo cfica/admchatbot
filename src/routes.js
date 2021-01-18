@@ -11,6 +11,7 @@ import AuthCallback from './components/views/auth-callback';
 import Logout from './components/views/logout';
 import Settings from './components/views/settings';
 import AccessChat from './components/views/access-chat';
+import Reports from './components/views/reports';
 
 export default (
   <Route path='/' component={App}>
@@ -24,6 +25,7 @@ export default (
     <Route path='base-words' component={BaseWords} />
     <Route path='contacts/:id' component={ContactDetail} />
     <Route path='dashboard' component={Dashboard} />
+    <Route path='reports' component={Reports} />
     <Route path='*' component={Login} />
   </Route>
 );
