@@ -62,7 +62,9 @@ export default class Settings extends Component {
 		async function _requestApi(_this, allReg){
 		    var _url = config.get('baseUrlApi')+'/api/v1/clients?limit='+_this.state.perPage+'&offset='+_this.state.offset;
 		    const res = await new Helper().getRequest(_url,'back');
-		    _this.setState({items: res.items,pageCount: Math.ceil(res.total_count / res.limit)});
+		    if(typeof res != "undefined"){
+		    	_this.setState({items: res.items,pageCount: Math.ceil(res.total_count / res.limit)});
+		    }
 		}
 		_requestApi(this);
 	}
@@ -79,6 +81,7 @@ export default class Settings extends Component {
 	componentDidMount(){
 	    this.loadClients();
 	    this.selectedCheckSettingChat = new Set();
+	    //console.log(this.state.client);
         if(!this.state.scope){
 			this.loadSettingChat(this.state.client);
 		}

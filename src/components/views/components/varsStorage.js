@@ -192,5 +192,22 @@ export class VarStorage extends Component{
         return localStorage.removeItem('client');
        }
 
+
+       setClientIdApi(value){
+        return localStorage.setItem('client_id_api', value);
+       }
+
+       getClientIdApi(value){
+          var _var = localStorage.getItem('client_id_api');
+          if(_var != "undefined" && _var != null){
+              return _var;
+          }
+          return false;
+       }
+
+       delClientIdApi(value){
+        return localStorage.removeItem('client_id_api');
+       }
+
 	render(){return('');}
 }

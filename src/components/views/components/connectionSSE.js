@@ -13,15 +13,14 @@ import {Helper} from './helper';
 import {Filters} from './filters';
 import ReactPaginate from 'react-paginate';
 
+
 export class ConnectionSSE extends Component{
 	constructor(props) {
 	    super(props);
 	    this.props = props;
 	    this.state = {
-    	  scope: ['admin'].includes(localStorage.getItem('scope')),
-          token: localStorage.getItem('tokenAdm'),
-          user_id: localStorage.getItem('_id'),
-          client: localStorage.getItem('client'),
+    	  scope: ['admin'].includes(new VarStorage().getScope()),
+          token: new VarStorage().getTokenBack(),
 	      connectionSSE: null,
 	      perPage: 50,
 	      items: [],

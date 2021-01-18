@@ -26,6 +26,7 @@ export default class Contact extends Component {
 			    	   new VarStorage().setUserId(res.data.data.user_id);
 			    	   new VarStorage().setScope(res.data.data.scope);
 			    	   new VarStorage().setSite(res.data.data.client);
+			    	   new VarStorage().setClientIdApi(res.data.data.client_id_api);
 
 			    	   browserHistory.push('/dashboard');
 			    	}else{

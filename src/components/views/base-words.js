@@ -143,7 +143,8 @@ export default class BaseWords extends Component {
 	      	if(this.state.scope){
 	      		var _id = this.state.clientSelected; //users_api -> client_id
 	      	}else{
-	      		var _id = new VarStorage().getSite();
+	      		var _id = new VarStorage().getClientIdApi();
+	      		//console.log(_id);
 	      	}
 	      	async function _requestApi(_this, _id){
 			    var _url = config.get('baseUrlApi')+'/api/v1/train?id='+_id;
@@ -189,8 +190,12 @@ export default class BaseWords extends Component {
 							  >
 							    <option value="">Choose Client...</option>
 							    
-							    {this.state.clients.map((item) =>
-							    	<option value={item._id.$oid}>{item.domain}</option>
+							    {this.state.clients.map((item) =>{
+							    	   if(typeof item._client[0] != "undefined"){
+							    		return(<option value={item._client[0].client_id}>{item.domain}</option>);
+							    	
+							    	   }
+							    	}
 							    )}
 							  </Form.Control>
 			             }
