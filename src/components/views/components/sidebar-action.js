@@ -46,7 +46,7 @@ export default class SidebarAction extends Component {
             <div className="container-fluid">
                 <button type="button" id="sidebarCollapse" className="btn btn-info">
                     <i className="fas fa-align-left"></i>
-                    <span>&nbsp;Menú</span>
+                    <span></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="nav navbar-nav ml-auto">

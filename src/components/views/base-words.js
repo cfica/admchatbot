@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import SidebarMenu from './components/sidebar-menu';
 import SidebarAction from './components/sidebar-action';
-import { Alert, Navbar, Nav, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, Tab, Modal, Accordion, Card, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
@@ -10,6 +10,8 @@ import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import {Helper} from './components/helper';
 import {VarStorage} from './components/varsStorage';
+import {ConnectionSSE} from './components/connectionSSE';
+import * as moment from 'moment';
 
 export default class BaseWords extends Component {
 	constructor(props) {
@@ -42,6 +44,8 @@ export default class BaseWords extends Component {
 	    axios.get(config.get('baseUrlApi')+'/api/v1/base-words?limit='+this.state.perPage+'&offset='+this.state.offset, 
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
+	    	console.log(res.data.data.items);
+
 	    	this.setState({
 	          items: res.data.data.items,
 	          pageCountWords: Math.ceil(res.data.data.total_count / res.data.data.limit),
@@ -61,14 +65,6 @@ export default class BaseWords extends Component {
 	    }).catch(function (error) {});
 	}
 
-	loadLogTraining(){
-	    axios.get(config.get('baseUrlApi')+'/api/v1/log-training', 
-    		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-	    .then(res => {
-	    	this.setState({logTraining : res.data.data.items});
-	    }).catch(function (error) {});
-
-	}
 
 	handlePageClickPatterns = data => {
 	    let selected = data.selected;
@@ -81,7 +77,8 @@ export default class BaseWords extends Component {
 	componentDidMount(){
 	    this.loadWords();
 	    this.loadPatterns();
-	    this.loadLogTraining();
+	    this.getLogTrainSSE();
+
 
 	    if(this.state.scope){
 	    	this.loadClients();
@@ -126,7 +123,7 @@ export default class BaseWords extends Component {
 		async function _requestApi(_this){
 		    var _url = config.get('baseUrlApi')+'/api/v1/clients';
 		    const res = await new Helper().getRequest(_url,'back');
-		    console.log(res);
+		    //console.log(res);
 		    _this.setState({clients: res.items});
 		}
 		_requestApi(this);
@@ -146,15 +143,23 @@ export default class BaseWords extends Component {
 	      		var _id = new VarStorage().getClientIdApi();
 	      		//console.log(_id);
 	      	}
+	      	
+	      	//this.getLogTrainSSE();
+
 	      	async function _requestApi(_this, _id){
 			    var _url = config.get('baseUrlApi')+'/api/v1/train?id='+_id;
 			    const res = await new Helper().getRequest(_url,'back');
-			    //console.log(res);
-			    //_this.setState({clients: res.items});
-			    //call sse connection
 			}
 			_requestApi(this, _id);
+
+			
 	    }
+	}
+
+
+	getLogTrainSSE(){
+		var _url = config.get('baseUrlApi')+'/api/v1/log-training?'+"t-dsi-restful="+new VarStorage().getTokenBack();
+	    var connect = new ConnectionSSE().connectionSSEV2(this, _url, {});
 	}
 
 	/*handleTrain = (event) =>{
@@ -334,51 +339,57 @@ export default class BaseWords extends Component {
 						          </section>
 						        </section>
 				  </Tab>
-				  <Tab eventKey="words" title="Words">
+				  <Tab eventKey="words" title="Words Library">
 				  		<br/>
 				        <div className="line"></div>
 				  		<p>You can generate question patterns that can be asked by chat.</p>
 					    <section>
 				          <section>
 				            
-				            <Table id="itemTable" striped bordered hover size="sm">
-				              <thead>
-				                <tr>
-				                  <th>ID</th>
-				                  {this.state.scope &&
-				                  	<th>Client</th>
-				                  }
-				                  <th>Tag</th>
-				                  <th>Category</th>
-				                  <th>Word</th>
-				                  <th></th>
-				                </tr>
-				              </thead>
-				              <tbody>
-				                {this.state.items.map((item) => 
-				                  <tr key={item._id.$oid}>
-				                    <td>#{item.code}</td>
-				                    {this.state.scope &&
-					                    <td>
-					                    	{item._client.map((item1) => 
-				                    			<span>
-						                    		{item1.domain}
-					                    		</span>
-					                    	)}
-					                    </td>
-					                }
-				                    <td>{item.tag}</td>
-				                    <td>{item.category}</td>
-				                    <td>{item.word}</td>
-				                    <td>
-				                      {/* Here add the onClick for the action "remove it" on the span 
-				                      <a href="" ><span>Bloquear</span></a> / <a href="" ><span>Aprender</span></a>*/}
-				                      Algo
-				                    </td>
-				                  </tr>
+				                
+				              <Accordion defaultActiveKey="">
+				                {this.state.items.map((item, index) => 
+				                  
+
+				                	<Card key={item._id.$oid} className="cont-real-time">
+									    <Card.Header className="header">
+										   
+										    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
+										      	{item.word}
+										    </Accordion.Toggle>
+
+									        {/*<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+											    <Dropdown.Item eventKey="1" href={"contacts/" + item._id}>Detail</Dropdown.Item>
+									   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+											</DropdownButton>*/}
+
+											{/*
+											<Button href={"contacts/" + item._id.$oid} size="sm" variant="outline-secondary">Detail</Button>
+											*/}
+
+						                	{this.state.scope &&
+					                    	item._client.map((item1) => 
+						                    		<div className="domain">{item1.domain}</div>
+						                    	)
+							                }
+
+											<div className="_created">{moment(item._created).fromNow()}</div>
+
+									    </Card.Header>
+
+									    <Accordion.Collapse eventKey={index}>
+									      <Card.Body>
+									      {item.tag}
+									      <br/>
+									      {item.category}
+									      </Card.Body>
+									    </Accordion.Collapse>
+									</Card>
+
 				                )}
-				              </tbody>
-				            </Table>
+
+				             </Accordion>
+
 
 				            <div id="react-paginate">
 					            <ReactPaginate

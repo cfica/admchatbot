@@ -59,6 +59,43 @@ export class ConnectionSSE extends Component{
 	    });
 	};
 
+
+
+	connectionSSEV2(_this, _url, options, _close = null){
+	    var sse = _this.state.connectionSSE;
+	    if(sse){
+	      if(_close){
+	        sse.close();
+	        _this.setState({connectionSSE: null});
+	      }
+	    }else{
+	          var sse = new EventSource(_url);
+	          _this.setState({connectionSSE: sse});
+
+	          sse.onmessage = function(event){
+	            var _res = JSON.parse(event.data);
+	            //_this.setMessages(_res.items);
+	            //console.log(_res);
+	            _this.setState({logTraining : _res.items});
+	          };
+
+	          //var self = this;
+	          sse.addEventListener('message', function(event) {
+	              //var data = JSON.parse(event.data);
+	              //console.log(data);
+	              /*if(data.state == 'processing' && data.status == 'closed'){
+	                sse.close();
+	                new VarStorage().setManualResponse(false);
+	                self.setState({connectionSSE: null});
+	              }*/
+	          }, false);
+
+	          sse.onerror = msg => {
+	          }
+	    }
+	  }
+
+
 	connectionSSE = (_close = null, _filters = null, _paginate = null) => {
 	    if(_close){
 	    	  var sse = this.props._getConnectionSSE(this.props._this);
