@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import SidebarMenu from './components/sidebar-menu';
 import SidebarAction from './components/sidebar-action';
-import { Alert, Navbar, Nav, Tab, Modal, Accordion, Card, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
+import { Alert, Navbar, Nav, Tab, Modal, Accordion, Card, Badge, DropdownButton, Dropdown, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
@@ -242,38 +242,17 @@ export default class BaseWords extends Component {
 						  		<p>Patterns and responses to display to users</p>
 							    <section>
 						          <section>
-						            <Table id="itemTable" striped bordered hover size="sm">
-						              <thead>
-						                <tr>
-						                  <th>ID</th>
-						                  {this.state.scope &&
-						                  	<th>Client</th>
-						                  }
-						                  <th>Tag</th>
-						                  <th>Patterns</th>
-						                  <th>Type Response</th>
-						                  <th>Responses</th>
-						                  <th>Action</th>
-						                </tr>
-						              </thead>
-						              <tbody>
-						                {this.state.listPatterns.map((item) => 
-						                  <tr key={item._id.$oid}>
-						                    <td>#{item.code}</td>
-						                    
-						                    {this.state.scope &&
-							                    <td>
-							                    	{item._client.map((item1) => 
-						                    			<span>
-								                    		{item1.domain}
-							                    		</span>
-							                    	)}
-							                    </td>
-							                }
 
-						                    <td>{item.tag}</td>
-						                    <td>
-						                    	<ol>
+						                
+						             <Accordion defaultActiveKey="">
+						                {this.state.listPatterns.map((item, index) => 
+
+						                  <Card key={item._id.$oid} className="cont-real-time">
+										    <Card.Header className="header">
+											   
+											    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
+											      	
+											      	<ol>
 						                    		{item.words_origin.map((item1) => 
 							                    		<li>
 							                    			<span>
@@ -282,43 +261,66 @@ export default class BaseWords extends Component {
 							                    		</li>
 							                    	)}
 						                    	</ol>
-						                    	
-						                    </td>
+											    </Accordion.Toggle>
 
-						                    
-							                <td>{item.responses.type}</td>
+										        {/*<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+												    <Dropdown.Item eventKey="1" href={"contacts/" + item._id}>Detail</Dropdown.Item>
+										   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+												</DropdownButton>*/}
 
-							                {item.responses.type == 'Text' &&
-							                    <td>
-							                    	<ol>
-							                    		{item.responses.value.map((item1) => 
-							                    			<li>
-								                    			<span>{item1}</span>
-								                    		</li>
-								                    	)}
-							                    	</ol>
-							                    </td>
-							                }
+												
+												<Button onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)} size="sm" variant="outline-secondary">Delete</Button>
+												
 
-							                {item.responses.type == 'Html' &&
-							                	<td></td>
-							                }
+							                	{this.state.scope &&
+						                    	item._client.map((item1) => 
+							                    		<div className="domain">{item1.domain}</div>
+							                    	)
+								                }
 
-							                {item.responses.type == 'Form' &&
-							                	<td></td>
-							                }
+												<div className="_created">{moment(item._created).fromNow()}</div>
 
-							                {item.responses.type == 'Slide' &&
-							                	<td></td>
-							                }
+										    </Card.Header>
 
-						                    <td>
-						                    	<a href="#" onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)}><span>Delete</span></a>
-						                    </td>
-						                  </tr>
+										    <Accordion.Collapse eventKey={index}>
+										      <Card.Body>
+										      	{item.responses.type}
+
+										      	{item.tag}
+
+						                    	{item.responses.type == 'Text' &&
+								                    <div>
+								                    	<ol>
+								                    		{item.responses.value.map((item1) => 
+								                    			<li>
+									                    			<span>{item1}</span>
+									                    		</li>
+									                    	)}
+								                    	</ol>
+								                    </div>
+								                }
+
+								                {item.responses.type == 'Html' &&
+								                	<div></div>
+								                }
+
+								                {item.responses.type == 'Form' &&
+								                	<div></div>
+								                }
+
+								                {item.responses.type == 'Slide' &&
+								                	<div></div>
+								                }
+
+										      </Card.Body>
+										    </Accordion.Collapse>
+										</Card>
+
+
 						                )}
-						              </tbody>
-						            </Table>
+
+						             </Accordion>
+
 
 						            <div id="react-paginate">
 							            <ReactPaginate
