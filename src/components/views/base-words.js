@@ -77,7 +77,7 @@ export default class BaseWords extends Component {
 	componentDidMount(){
 	    this.loadWords();
 	    this.loadPatterns();
-	    this.getLogTrainSSE();
+	    //this.getLogTrainSSE();
 
 
 	    if(this.state.scope){
