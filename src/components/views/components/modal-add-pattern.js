@@ -25,7 +25,7 @@ export default class ModalToLearn extends Component {
 	          user_id: localStorage.getItem('_id'),
 	          client: localStorage.getItem('client'),
 		      showModal : true,
-		      searchTerm : "",
+		      //searchTerm : "",
 		      resultFiler: [],
 		      searchResults : [],
 		      showFilterInput: false,
@@ -52,16 +52,16 @@ export default class ModalToLearn extends Component {
 			this.props.hiddenModal();
 	    };
 
-		handleChange = event => {
+		/*handleChange = event => {
 			var _value = event.target.value;
 			this.setState({searchTerm: _value});
 			if(this.state.searchTerm.length > 2){
 				this.search(_value);
 			}
-		};
+		};*/
 
 
-		search = async val =>{
+		/*search = async val =>{
 			var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
 			const res = await axios.post(config.get('baseUrlApi')+'/api/v1/filter-tags',JSON.stringify({ tag: val}), _config);
 		    const data = await res.data.data.items;
@@ -78,7 +78,7 @@ export default class ModalToLearn extends Component {
 		    	this.setState({showFilterInput: false});
 		    	this.setState({searchResults : []});
 		    }
-		}
+		}*/
 		
 		_handonchangeInputPattern = (event)=>{
 			var _value = event.target.value;
@@ -139,7 +139,7 @@ export default class ModalToLearn extends Component {
    		    //console.log(this.state.client);
    		    var _dataPost = {
    		    	"client": this.state.client,
-   		    	"tag" : this.state.searchTerm,
+   		    	//"tag" : this.state.searchTerm,
    		    	"patterns" : this.state.listPatternsAdd,
    		    	"responses" : {"type" : this.state.showResponseType, "value" : _valueResponse}
    		    };
@@ -160,7 +160,7 @@ export default class ModalToLearn extends Component {
    		    	/***/
    		    	_dataPost = new FormData();
    		    	_dataPost.append('client', this.state.client);
-   		    	_dataPost.append('tag', this.state.searchTerm);
+   		    	//_dataPost.append('tag', this.state.searchTerm);
    		    	_dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
    		    	_dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
 				this.state.valueDataSlide['items'].forEach((file, i) => {
@@ -184,7 +184,7 @@ export default class ModalToLearn extends Component {
 	   		    axios.post(_url,_dataPost, _config)
 			    .then(res => {
 			    	this.setState({errorSaveForm : false});
-			    	this.setState({searchTerm : ''});
+			    	//this.setState({searchTerm : ''});
 			    	this.setState({valuePatternHidden : ''});
 			    	this.setState({listResponseTextAdd : []});
 			    	this.setState({listPatternsAdd : []});
@@ -237,26 +237,10 @@ export default class ModalToLearn extends Component {
 
 						        <Modal.Body>
 
-						                <Tabs defaultActiveKey="tag" transition={false} id="noanim-tab-example">
-										  <Tab eventKey="tag" title="1) Tag">
+						                <Tabs defaultActiveKey="pattern" transition={false} id="noanim-tab-example">
+										  {/*<Tab eventKey="tag" title="1) Tag">
 											    	<div>&nbsp;</div>
 											    	
-											    	{this.state.scope &&
-												    	<Form.Row>
-										        	        <Col xs={4}>
-												        		<Form.Group required controlId="exampleForm.ControlSelect1">
-																    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
-																        <option value="">Select</option>
-																	    {this.state.clients.map((item) => 
-																	      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
-														                )}
-																    </Form.Control>
-																    <Form.Label>Client</Form.Label>
-																  </Form.Group>
-												    		</Col>
-													    </Form.Row>
-													}
-
 											    	<Form.Row>
 								                        <Col xs={4}>
 										                    <Form.Group  controlId="formBasicTag">
@@ -280,8 +264,26 @@ export default class ModalToLearn extends Component {
 													        </Form.Group>
 													    </Col>
 												    </Form.Row>
-										  </Tab>
-										  <Tab eventKey="pattern" title="2) Pattern">
+										  </Tab>*/}
+
+
+										  <Tab eventKey="pattern" title="1) Pattern">
+										            {this.state.scope &&
+												    	<Form.Row>
+										        	        <Col xs={4}>
+												        		<Form.Group required controlId="exampleForm.ControlSelect1">
+																    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
+																        <option value="">Select</option>
+																	    {this.state.clients.map((item) => 
+																	      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
+														                )}
+																    </Form.Control>
+																    <Form.Label>Client</Form.Label>
+																  </Form.Group>
+												    		</Col>
+													    </Form.Row>
+													}
+
 										            <div>&nbsp;</div>
 											    	<Form.Row>
 												        <Col xs={4}>
@@ -312,7 +314,7 @@ export default class ModalToLearn extends Component {
 												        </Col>
 												    </Form.Row>
 										  </Tab>
-										  <Tab eventKey="response" title="3) Response">
+										  <Tab eventKey="response" title="2) Response">
 										                <div>&nbsp;</div>
 											   			<Form.Row>
 													        <Col xs={9}>

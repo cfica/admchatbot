@@ -19,6 +19,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import * as Icon from 'react-bootstrap-icons';
 
+import { Chart } from 'react-charts';
+
+
 
 
 export default class Reports extends Component {
@@ -28,17 +31,106 @@ export default class Reports extends Component {
 	      browserHistory.push('/login');
 	    }
 
-	    this.state = {
-	    };
+	    this.state = {};
+
+	}
+
+	getDataLinear(){
+		const data =  [
+		      {
+		        label: 'Series 1',
+		        data: [[0, 1], [1, 2], [2, 4], [3, 2], [4, 7]]
+		      },
+		      {
+		        label: 'Series 2',
+		        data: [[0, 3], [1, 1], [2, 5], [3, 6], [4, 4]]
+		      }
+		    ];
+
+		return data;
+	}
+
+	getAxesLinear(){
+		const axes =  [
+	      { primary: true, type: 'linear', position: 'bottom' },
+	      { type: 'linear', position: 'left' }
+	    ];
+
+		return axes;
 	}
 
 	render() {
+
+		const axes = [
+	      { primary: true, type: 'linear', position: 'bottom' },
+	      { type: 'linear', position: 'left' }
+	    ];
+
+	    const data = [
+	      {
+	        label: 'Series 1',
+	        data: [{ x: 1, y: 10 }, { x: 2, y: 10 }, { x: 3, y: 10 }]
+	      },
+	      {
+	        label: 'Series 2',
+	        data: [{ x: 1, y: 10 }, { x: 2, y: 10 }, { x: 3, y: 10 }]
+	      },
+	      {
+	        label: 'Series 3',
+	        data: [{ x: 1, y: 10 }, { x: 2, y: 10 }, { x: 3, y: 10 }]
+	      }
+	    ];
+
+	    const axes2 = [
+	      { primary: true, type: 'ordinal', position: 'bottom' },
+	      { type: 'linear', position: 'left' ,stacked: false}
+	    ];
+
+	    const data2 = [
+	      [[1, 10], [2, 10], [3, 10]],
+	      [[1, 10], [2, 10], [3, 10]],
+	      [[1, 10], [2, 10], [3, 10]]
+	    ];
+
+	    const series = ({
+	      type: 'bar'
+	    });
+
     	return (
     		<div className="wrapper">
 			    <SidebarMenu/>
 			    <div id="content">
 			        <SidebarAction/>
 			        <h1>sdffds</h1>
+			        
+			        <div
+				      style={{
+				        width: '400px',
+				        height: '300px'
+				      }}
+				    >
+				      <Chart data={this.getDataLinear()} tooltip axes={this.getAxesLinear()} />
+				    </div>
+
+				    <div
+				      style={{
+				        width: '400px',
+				        height: '300px'
+				      }}
+				    >
+				      <Chart data={data} axes={axes} tooltip />
+				    </div>
+
+
+				    <div
+				      style={{
+				        width: '400px',
+				        height: '300px'
+				      }}
+				    >
+				      <Chart data={data2} series={series}  tooltip axes={axes2} />
+				    </div>
+
 			    	<div className="overlay"></div>
 				</div>
 			</div>

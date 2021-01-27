@@ -269,7 +269,7 @@ export default class BaseWords extends Component {
 												</DropdownButton>*/}
 
 												
-												<Button onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)} size="sm" variant="outline-secondary">Delete</Button>
+												<Button onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)} className="delete" size="sm" variant="outline-secondary">Delete</Button>
 												
 
 							                	{this.state.scope &&
@@ -341,7 +341,7 @@ export default class BaseWords extends Component {
 						          </section>
 						        </section>
 				  </Tab>
-				  <Tab eventKey="words" title="Words Library">
+				  <Tab eventKey="words" title="Words Library Tokenize">
 				  		<br/>
 				        <div className="line"></div>
 				  		<p>You can generate question patterns that can be asked by chat.</p>
@@ -357,7 +357,7 @@ export default class BaseWords extends Component {
 									    <Card.Header className="header">
 										   
 										    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
-										      	{item.word}
+										      	#{item.code} - {item.word}
 										    </Accordion.Toggle>
 
 									        {/*<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
@@ -381,9 +381,6 @@ export default class BaseWords extends Component {
 
 									    <Accordion.Collapse eventKey={index}>
 									      <Card.Body>
-									      {item.tag}
-									      <br/>
-									      {item.category}
 									      </Card.Body>
 									    </Accordion.Collapse>
 									</Card>

@@ -1439,3 +1439,17 @@ a[data-toggle="collapse"] {
 .form-inline-train .btn.btn-primary{
   margin-left: 5px
 }
+
+
+.header.card-header .name_client.btn.btn-link{
+  text-align: left;
+}
+
+.header.card-header .btn-link:hover{
+  text-decoration: none
+}
+
+/*
+.header.card-header .delete.btn.btn-outline-secondary.btn-sm{
+  float: right;
+}*/
