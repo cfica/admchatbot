@@ -337,7 +337,7 @@ export class Helper extends Component{
 
 
       getName(item){
-        if(typeof item.user_name == "undefined"){
+        if(typeof item.user_name == "undefined" || item.user_name == ""){
            return new VarStorage().getNameClient();
         }else{
             return item.user_name;
@@ -408,18 +408,21 @@ export class Helper extends Component{
                      <div>
                          <div className="contentUser">
                               
-                              {typeof item.user_id  == "undefined" &&
+                              {/*{typeof item.user_id  == "undefined" &&
                                   <h5>Belisa</h5>
                               }
 
                               {item.user_id == "" &&
                                 <h5>Belisa</h5>
-                              }
+                              }*/}
 
 
-                              {typeof item.user_name != "undefined" &&
+                              <h5>{this.getName(item)}</h5>
+
+
+                              {/*{typeof item.user_name != "undefined" || item.user_name != "" &&
                                 <h5>{item.user_name}</h5>
-                              }
+                              }*/}
 
                               <span>{moment(this.formatDate(item._created)).fromNow()}</span>
                          </div>

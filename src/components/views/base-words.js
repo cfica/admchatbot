@@ -44,7 +44,7 @@ export default class BaseWords extends Component {
 	    axios.get(config.get('baseUrlApi')+'/api/v1/base-words?limit='+this.state.perPage+'&offset='+this.state.offset, 
     		{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
 	    .then(res => {
-	    	console.log(res.data.data.items);
+	    	//console.log(res.data.data.items);
 
 	    	this.setState({
 	          items: res.data.data.items,
@@ -77,7 +77,7 @@ export default class BaseWords extends Component {
 	componentDidMount(){
 	    this.loadWords();
 	    this.loadPatterns();
-	    //this.getLogTrainSSE();
+	    this.getLogTrainSSE();
 
 
 	    if(this.state.scope){
@@ -95,6 +95,7 @@ export default class BaseWords extends Component {
 
 	handleShowModalAddPattern = (event)=>{
 		this.setState({showModalAddPattern : true});
+		this.setState({idPattern: 0});
 	}
 
 	handleHiddenModalAddPattern = data => {
@@ -112,8 +113,16 @@ export default class BaseWords extends Component {
 	    });
 	    this.setState({showModalConfirm : false});
 	}
+	
 	handleClickDelPattern(_id){
 		this.setState({showModalConfirm : true});
+		this.setState({idPattern : _id});
+	};
+
+
+	handleEditPattern(_id){
+		//console.log(_id);
+		this.setState({showModalAddPattern : true});
 		this.setState({idPattern : _id});
 	};
 
@@ -218,6 +227,7 @@ export default class BaseWords extends Component {
 		            	<ModalToLearn
 			        	 hiddenModal = {this.handleHiddenModalAddPattern} 
 			        	 patternSelected = {[]}
+			        	 id = {this.state.idPattern}
 			        	/>
 		            }
 
@@ -269,7 +279,8 @@ export default class BaseWords extends Component {
 												</DropdownButton>*/}
 
 												
-												<Button onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)} className="delete" size="sm" variant="outline-secondary">Delete</Button>
+												<Button onClick={(e) => this.handleEditPattern(item._id.$oid, e)} className="delete" size="sm" variant="outline-secondary">Edit</Button>{' '}
+												<Button onClick={(e) => this.handleClickDelPattern(item._id.$oid, e)} className="delete" size="sm" variant="outline-danger">Delete</Button>
 												
 
 							                	{this.state.scope &&

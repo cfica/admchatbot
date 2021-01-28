@@ -340,7 +340,7 @@ export class CalendarSchedule extends Component{
 	    	confirmDelEvent: false,
 	    	eventId: '',
 	    	modalAddEvent: false,
-	    	events: [],
+	    	events: this.props.items,
 	    	dayStart: '',
 	    	dayEnd: ''
 	    };
@@ -1025,6 +1025,9 @@ export class InputsTypeForm extends Component {
 		    };
 		}
 
+		componentDidMount(){
+		}
+
 		deleteInput(i){
 			this.props.inputDelete(i);
 		}
@@ -1051,6 +1054,11 @@ export class InputsTypeForm extends Component {
 
 
   		render() {
+				if(this.props.id.length > 0){
+					//console.log(this.props.inputList);
+					//this.setState({eventsSchedule: data});
+				}
+
 				return (
 					<div className="contentInputsResponseForm">
 					    {this.props.inputList.map((x, i) => {
@@ -1068,7 +1076,7 @@ export class InputsTypeForm extends Component {
 													</Form.Group>
 											</Col>
 											<Col xs={4}>
-										    	<Form.Control placeholder="Choose Validation" size="sm" name="validation" as="select" onChange={e => this.handleInputChange(e, i)}>
+										    	<Form.Control placeholder="Choose Validation" size="sm" name="validation" as="select" value={x.label} onChange={e => this.handleInputChange(e, i)}>
 											        <option value="">Choose Validation...</option>
 											        <option value="RUT">RUT</option>
 											        <option value="String">String</option>
@@ -1149,7 +1157,7 @@ export class InputsTypeForm extends Component {
 											<Form.Row>
 												<Col xs={12}><strong>Schedule</strong></Col>
 												<Col xs={4}>
-											    	<Form.Control placeholder="Choose type Schedule" size="sm" name="value" as="select" onChange={e => this.handleInputChange(e, i)}>
+											    	<Form.Control placeholder="Choose type Schedule" value={x.value} size="sm" name="value" as="select" onChange={e => this.handleInputChange(e, i)}>
 												        <option value="">Choose type Schedule...</option>
 												        {/*<option value="CSV">CSV</option>
 												        <option value="Integration">Integration</option>*/}
@@ -1163,9 +1171,10 @@ export class InputsTypeForm extends Component {
 												</Col>
 											</Form.Row>
 
+											
 											{x.value == 'Manually' &&
 												<div>
-													<ScheduleManually index={i} collect={this.setEventsSchedule}/>
+													<ScheduleManually index={i} collect={this.setEventsSchedule} items={x.items}/>
 													{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.eventsSchedule)}</div>*/}
 												</div>
 										    }
@@ -1199,7 +1208,7 @@ export class ScheduleManually extends Component{
        		<Form.Row>
 			  <Col xs={12}>
 			  		<div className="divide"></div>
-			  		<CalendarSchedule collect={this.setCollect} />
+			  		<CalendarSchedule collect={this.setCollect} items={this.props.items}/>
 					{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.collect)}</div>*/}
 			  </Col>
 			</Form.Row>

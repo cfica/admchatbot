@@ -1,18 +1,42 @@
 import React, { Component } from "react";
 import {Modal,Button,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import {InputsTypeForm} from './componentsUtils';
+import {Helper} from './helper';
+import config from 'react-global-configuration';
 
 export default class ChatForm extends Component {
   		constructor(props) {
 		    super(props);
+		    //console.log(this.props.valueForm);
 		    this.state = {
 		      changeTypeInput: '',
 		      inputs: [],
 		      textDescription: '',
 		      inputSelectAction: '',
-		      collect: {inputs: [], textDescription: '', actionForm:''}
+		      collect: {inputs: [], textDescription: '', actionForm:''},
+		      selectTypeResponse:''
 		    };
 		}
+
+		componentDidMount(){
+			if(this.props.id.length > 0){
+				this.getPattern(this.props.id);
+			}
+		}
+
+		getPattern(_id){
+	    	async function _requestApi(_this,_id){
+			    var _url = config.get('baseUrlApi')+'/api/v1/pattern?id='+_id;
+			    const res = await new Helper().getRequest(_url,'back');
+			    _this.setState({selectTypeResponse: res.data.response.type});
+			    if(_this.state.selectTypeResponse == 'Form'){
+			    	_this.setState({inputs: res.data.response.value.inputs});
+			    	_this.setState({textDescription: res.data.response.value.textDescription});
+			    	_this.setState({actionForm: res.data.response.value.actionForm});
+			    }
+			}
+			_requestApi(this,_id);
+	    }
 
 		changeTypeInput = (event) =>{
 		  this.setState({changeTypeInput: event.target.value});
@@ -77,6 +101,9 @@ export default class ChatForm extends Component {
 		}
 
   		render() {
+				
+
+
 				return (
 				 <Row>
 				    <Col xs={12}>
@@ -84,7 +111,7 @@ export default class ChatForm extends Component {
 							<Col xs={4}>
 							    <Form.Group  controlId="formBasic">
 									<InputGroup className="mb-3">
-									    <Form.Control placeholder="Type Input" required as="select" onChange={this.changeTypeInput}>
+									    <Form.Control placeholder="Type Input" value={this.state.selectTypeResponse} required as="select" onChange={this.changeTypeInput}>
 									        <option value="">Choose...</option>
 									        <option value="Text">Text</option>
 									        <option value="Multi-Choices">Multi Choices</option>
@@ -109,6 +136,7 @@ export default class ChatForm extends Component {
 							inputChange={this.inputChange} 
 							inputDelete={this.deleteInput}
 							addItemToList={this.addItemToList}
+							id = {this.props.id}
 						/>
 
 						{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.inputs)}</div>*/}
@@ -126,7 +154,7 @@ export default class ChatForm extends Component {
 
 						    <Col xs={4}>
 								<Form.Group controlId="formBasicEmail">
-								    <Form.Control placeholder="Action Form" required as="select" defaultValue="Choose..." onChange={this.changeActionForm}>
+								    <Form.Control placeholder="Action Form" value={this.state.actionForm} required as="select" defaultValue="Choose..." onChange={this.changeActionForm}>
 								        <option value="">Choose...</option>
 								        <option value="Save-Form">Save Form</option>
 								        <option value="Send-Email">Send Email</option>

@@ -9,6 +9,7 @@ import MultiChoices from './multiChoices';
 import ChatForm from './chatForm';
 import {Slide} from './slide';
 import Preview from './preview';
+import {Helper} from './helper';
 
 export default class ModalToLearn extends Component {
   		constructor(props) {
@@ -44,6 +45,7 @@ export default class ModalToLearn extends Component {
 		      valuesDataForm: {},
 		      valueDataSlide: {},
 		      clients: [],
+		      selectTypeResponse: ''
 		    };
 		}
 
@@ -111,7 +113,40 @@ export default class ModalToLearn extends Component {
 			}else{
 				this.setState({client: this.state.client});
 			}
+
+			if(this.props.id.length > 0){
+				this.getPattern(this.props.id);
+			}
 		}
+
+
+	    getPattern(_id){
+	    	async function _requestApi(_this,_id){
+			    var _url = config.get('baseUrlApi')+'/api/v1/pattern?id='+_id;
+			    const res = await new Helper().getRequest(_url,'back');
+			    console.log(res);
+			    //_this.setState({clients: res.items});
+			    _this.setState({listPatternsAdd : res.data.sentence});
+			    _this.setState({selectTypeResponse: res.data.response.type});
+			    _this.setState({showResponseType : res.data.response.type});
+
+			    if(_this.state.selectTypeResponse == 'Text'){
+			    	_this.setState({listResponseTextAdd : res.data.response.value});
+			    }else if(_this.state.selectTypeResponse == 'Form'){
+			    	//load data in form
+			    	//console.log(res.data.response.value);
+			    	_this.setState({valuesDataForm: res.data.response.value});
+			    }else if(_this.state.selectTypeResponse == 'Form'){
+			    }else if(_this.state.selectTypeResponse == 'Slide'){
+			    }else if(_this.state.selectTypeResponse == 'Html'){
+			    }else if(_this.state.selectTypeResponse == 'Single-option'){
+			    }else if(_this.state.selectTypeResponse == 'Multiple-choices'){
+			    }else if(_this.state.selectTypeResponse == 'Data-Set'){
+			    }
+			}
+			_requestApi(this,_id);
+	    }
+
 
 		/*INPUT ADD RESPONSE TEXT*/
 		_handleChangeInputResponseText = (event)=>{
@@ -203,6 +238,10 @@ export default class ModalToLearn extends Component {
 		dataForm = (data) =>{
 			this.setState({valuesDataForm: data});
 		}
+
+		//getDataForm(){
+		//	return this.state.valuesDataForm;
+		//}
 
 		dataSlide = (data) =>{
 			this.setState({valueDataSlide: data});
@@ -322,7 +361,8 @@ export default class ModalToLearn extends Component {
 													                <Col xs={4}>
 														                <Form.Group  controlId="formBasicResponse">
 														                    <div className="contentListGroupSelect">
-																			    <Form.Control required size="sm" as="select" onChange={this._handleonTypeResponse}>
+																			    
+																			    <Form.Control required size="sm" as="select" value={this.state.selectTypeResponse} onChange={this._handleonTypeResponse}>
 																				    <option value="">Select</option>
 																				    <option value="Text">Text</option>
 																				    <option value="Form">Form</option>
@@ -332,6 +372,7 @@ export default class ModalToLearn extends Component {
 																				    <option value="Multiple-choices">Multiple choices</option>
 																				    <option value="Data-Set">Data Set</option>
 																				</Form.Control>
+
 																				<Form.Label >Type Response</Form.Label>
 																				<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
 																            	<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
@@ -404,7 +445,7 @@ export default class ModalToLearn extends Component {
 															    {this.state.showResponseType == 'Form' &&
 																    <Form.Row>
 															        	<Col xs={12}>
-															                <ChatForm dataForm={this.dataForm}/>
+															                <ChatForm dataForm={this.dataForm} id={this.props.id} valueForm={this.state.valuesDataForm}/>
 																	    </Col>
 																    </Form.Row>
 															    }
