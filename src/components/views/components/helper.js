@@ -41,9 +41,11 @@ export class Helper extends Component{
              });
              item.status = 'Init';
           }
-           items.push(item);
-           new VarStorage().setMessages(JSON.stringify(items));
-           return JSON.parse(new VarStorage().getMessages());
+          
+
+          items.push(item);
+          new VarStorage().setMessages(JSON.stringify(items));
+          return JSON.parse(new VarStorage().getMessages());
       }
 
       setMessages(messages){
@@ -106,9 +108,7 @@ export class Helper extends Component{
               }
       }
 
-      getDetailContact (_id){
-
-      }
+      
 
       async postRequest(_url, data, _header, options = null){
           try{
@@ -129,6 +129,14 @@ export class Helper extends Component{
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
+                  'x-dsi-restful' : '',
+                  'x-dsi2-restful' : new VarStorage().getSite(),
+                  'x-dsi3-restful' : new VarStorage().getUserId()
+                }};
+             }else if(_header == 'back-multipart'){
+                var header = {headers: {
+                  'Content-Type': 'multipart/form-data',
                   'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                   'x-dsi-restful' : '',
                   'x-dsi2-restful' : new VarStorage().getSite(),
@@ -159,6 +167,14 @@ export class Helper extends Component{
              }else if(_header == 'back'){
                 var header = {headers: {
                   'Content-Type': 'application/json;charset=UTF-8',
+                  'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
+                  'x-dsi-restful' : '',
+                  'x-dsi2-restful' : new VarStorage().getSite(),
+                  'x-dsi3-restful' : new VarStorage().getUserId()
+                }};
+             }else if(_header == 'back-multipart'){
+                var header = {headers: {
+                  'Content-Type': 'multipart/form-data',
                   'Authorization' : 'Bearer ' + new VarStorage().getTokenBack(),
                   'x-dsi-restful' : '',
                   'x-dsi2-restful' : new VarStorage().getSite(),
@@ -273,8 +289,7 @@ export class Helper extends Component{
           }
       }
 
-      async loadMessages(){
-          let result;
+      async loadMessages(){ /*FRONT*/
           try{
              var data = {};
              const request = await axios.get(config.get('baseUrlApi')+'/api/v1/messages?limit=20', 
@@ -286,13 +301,13 @@ export class Helper extends Component{
                       'x-dsi3-restful' : ''
                     }
              });
-             const result = await request.data.data.items;
-             return result;
+             const result = await request;
+             return result.data.data.items;
           } catch(e){
           }
       }
 
-      async loadMessagesV2(_id){
+      async loadMessagesV2(_id){ /*BACK*/
           let result;
           try{
              var data = {};
@@ -313,7 +328,7 @@ export class Helper extends Component{
 
 
       loadMessagesSSE(_strUrl){
-          var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages?token='+_strUrl);
+          var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages-sse?token='+_strUrl);
           return sse;
       }
 
@@ -337,6 +352,7 @@ export class Helper extends Component{
 
 
       getName(item){
+        //console.log(item);
         if(typeof item.user_name == "undefined" || item.user_name == ""){
            return new VarStorage().getNameClient();
         }else{
@@ -361,9 +377,9 @@ export class Helper extends Component{
       }*/
 
 
-      messageClient(index, item, listMessages, messagesEnd){
+      messageClient(index, item, listMessages, messagesEndReq){
         return (
-          <div key={index} className="contentMessageClient" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
+          <div key={index} className="contentMessageClient">
               <div>
                  
                  <div className="contentUser">
@@ -375,7 +391,9 @@ export class Helper extends Component{
                  <div className="contentMsg">
                       <span>{item.msg}</span>
                  </div>
+                 <div className="endMessages" ref={index == (listMessages.length - 1)  ? messagesEndReq : ''}></div>
               </div>
+              
           </div>
         );
       }
@@ -404,8 +422,10 @@ export class Helper extends Component{
         closeSession
       ){
         return(
-              <div key={index} className="contentMessageChat" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
+              <div key={index} className="contentMessageChat">
                      <div>
+                  
+
                          <div className="contentUser">
                               
                               {/*{typeof item.user_id  == "undefined" &&
@@ -445,7 +465,7 @@ export class Helper extends Component{
                                   />
                             }
 
-                            {item.type_resp == 'Form' && item.status == 'Init' &&
+                            {item.type_resp == 'Form' &&
                                   <ResponseForm
                                       setMessage = {setMessage}
                                       statusValidation = {statusValidation}
@@ -486,7 +506,9 @@ export class Helper extends Component{
                                   </div>
                             }
                          </div>
+                         <div className="endMessages" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}></div>
                      </div>
+                     
               </div>
         );
       }

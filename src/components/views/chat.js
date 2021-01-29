@@ -44,12 +44,13 @@ export default class Login extends Component {
     };
   }
 
-  scrollToBottom = () => {
-    //console.log(this.state.messagesEnd);
-    //window.HTMLElement.prototype.scrollIntoView = function() {};
+  scrollToBottom() {
+    console.log(this.state.messagesEnd.current);
+
     if(this.state.messagesEnd.current != null){
       this.state.messagesEnd.current.scrollIntoView({ behavior: "smooth"});
     }
+
   }
 
   onChangeRecaptchaLogin(value){
@@ -100,23 +101,28 @@ export default class Login extends Component {
       const init = this.props.location.query.init;
       this.getSettings(client_id, init);
       this.initSettings();
-      
-      //this._closeSession();
+      this.loadMessages();
 
       this.scrollToBottom();
+
   }
 
   componentWillUnmount(){
+
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //console.log(this.state.listMessages);
-    //console.log(prevState.listMessages.length);
+    /*console.log(this.state.listMessages.length, '1');
     if(typeof this.state.listMessages != "undefined" && typeof prevState.listMessages != "undefined"){
-      if(this.state.listMessages.length !== prevState.listMessages.length){
+      console.log(this.state.listMessages.length, 'listMessages');
+      console.log(prevState, 'prevState');
+      //console.log(prevProps, 'prevProps');
+
+      if(this.state.listMessages.length > prevState.listMessages.length){
+        console.log('aqui');
         this.scrollToBottom();
       }
-    }
+    }*/
   } 
 
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
@@ -124,12 +130,13 @@ export default class Login extends Component {
   initSettings = () =>{
       if(this._vldParamasGet() == false){
       }else{
-        if(new VarStorage().getToken() && new VarStorage().getMessages()){
+        //if(new VarStorage().getToken() && new VarStorage().getMessages()){
+        if(new VarStorage().getToken()){
           this.setState({showContHello : false});
           this.setState({showContChat : true});
           //this.getMessages();
-          var items = JSON.parse(new VarStorage().getMessages()) || [];
-          this.setState({'listMessages' : items});
+          //var items = JSON.parse(new VarStorage().getMessages()) || [];
+          //this.setState({'listMessages' : items});
           
           if(new VarStorage().getManualResponse()){
               this.getMessagesSSE(this);
@@ -140,6 +147,8 @@ export default class Login extends Component {
       }
       return null;
   }
+
+
 
   getSettings(client_id, init){
     async function _requestApi(_this){
@@ -155,38 +164,104 @@ export default class Login extends Component {
   }
 
 
-  setMessage = (_type, message) =>{
-    const items = new Helper().setMessage(_type, message);
-    //console.log(items);
-    this.setState({'listMessages' : items});
-  }
-
-  setMessages(messages){
-    if(messages.length > 0){
-      const _messages = new Helper().setMessages(messages);
-      this.setState({'listMessages' : _messages});
+  loadMessages(){
+    async function _requestApi(_this){
+      const items = await new Helper().loadMessages();
+      _this.setState({'listMessages' : items});
     }
+    _requestApi(this);
   }
 
 
+  setMessage = (message) =>{
+    const _items = this.state.listMessages;
+    _items.push(message);
+    this.setState({'listMessages' : _items});
+    this.scrollToBottom();
+  }
+
+  syncMessage(message, form = null){
+      async function _requestApi(_this, message, form){
+        const res = await new Helper().sendMessage(message);
+        if(typeof res == "undefined"){
+          _this.closeSession();
+        }else{
+            if(!new VarStorage().getManualResponse()){
+              //console.log(res);
+              //_this.setMessages(res.messages.items);
+              _this.setMessage(res.response);
+            }
+            if(form){
+              form.reset();
+            }
+        }
+      }
+      _requestApi(this, message, form);
+  }
+
+  /*setMessages(messages){
+    if(messages.length > 0){
+      //const _messages = new Helper().setMessages(messages);
+      this.setState({'listMessages' : messages});
+    }
+  }*/
+
+
+  _handleSend = (event)=>{
+    event.preventDefault();
+    if(!new VarStorage().getToken()){
+      this.setState({showContHello : true});
+      this.setState({showContChat : false});
+    }else{
+      const form = event.currentTarget;
+      if (form.checkValidity() === false) {
+        event.stopPropagation();
+        this.setState({validated : true});
+      }else{
+        const msg = {
+             _id: '',
+             type : '_req',
+             msg : this.state.inputMessage, 
+             type_resp: 'Text', 
+             status: '',
+             _created: moment().format('YYYY-MM-DD H:mm:ss')
+        };
+        this.setMessage(msg); //request
+        var message = this.state.inputMessage;
+        this.setState({inputMessage : ''});
+        this.setState({validated : false});
+        this.syncMessage(message, form);
+      }
+    }  
+  }
+
+
+  
 
   sendAction = (x, index, indexParent) =>{
-    //console.log(x);
     const _items = this.state.listMessages;
     _items[indexParent]['msg'] = x.title;
     _items[indexParent]['type_resp'] = 'Text';
-    new VarStorage().setMessages(JSON.stringify(_items));
+    //new VarStorage().setMessages(JSON.stringify(_items));
 
-    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
-    this.setMessage('_req', {type:'Text', response: x.title});
+    //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    this.setState({'listMessages' : _items});
+
+    const msg = {
+         _id: '',
+         type : '_req',
+         msg : x.title, 
+         type_resp: 'Text', 
+         status: '',
+         _created: moment().format('YYYY-MM-DD H:mm:ss')
+    };
+    this.setMessage(msg); //request
+
     /**/
     async function _requestApi(_this, x){
       const res = await new Helper().sendMessage(x.title, x.action, {id: x.value});
-      //if(typeof res.type != 'undefined'){
-      //  _this.setMessage('_res', res);
-      //}
       if(typeof res.messages != "undefined"){
-        _this.setMessages(res.messages.items);
+        //_this.setMessages(res.messages.items);
       }
 
       if(x.action == "Contact" && new VarStorage().getManualResponse()){
@@ -195,9 +270,7 @@ export default class Login extends Component {
         }
       }
 
-      //console.log(new VarStorage().getManualResponse());
       if(new VarStorage().getManualResponse()){
-        //console.log('aquii - 1');
          _this.getMessagesSSE(_this, null, res.options._id);
       }
     }
@@ -205,7 +278,16 @@ export default class Login extends Component {
   }
 
   sendRequestMessage(_message, _type = null, _options = null){
-    this.setMessage('_req', {type:'Text', response: _message});
+    const msg = {
+         _id: '',
+         type : '_req',
+         msg : _message, 
+         type_resp: 'Text', 
+         status: '',
+         _created: moment().format('YYYY-MM-DD H:mm:ss')
+    };
+    this.setMessage(msg); //request
+
     async function _requestApi(_this, _message, _options){
       const res = await new Helper().sendMessage(_message, _type, _options);
       //console.log(res);
@@ -214,7 +296,7 @@ export default class Login extends Component {
         _this.closeSession();
       }else{
         if(!new VarStorage().getManualResponse() && res.messages.length > 0){
-          _this.setMessages(res.messages.items);
+          //_this.setMessages(res.messages.items);
         }
       }
 
@@ -239,12 +321,10 @@ export default class Login extends Component {
     var sse = this.state.connectionSSE;
     if(sse){
       if(_close){
-        //console.log("close event");
         sse.close();
         this.setState({connectionSSE: null});
       }
     }else{
-        //console.log('start event');
         if(_idcontact != null){
           var _strUrl = new VarStorage().getToken()+'&x-dsi1-restful='+new VarStorage().getKeyTemp()+'&x-dsi2-restful='+new VarStorage().getClientId()+'&_id='+_idcontact;
           var sse = new Helper().loadMessagesSSE(_strUrl);
@@ -298,7 +378,7 @@ export default class Login extends Component {
                _this.setState({showContChat : true});
                _this.setState({'listMessages' : []});
 
-               new VarStorage().setMessages([]);
+               //new VarStorage().setMessages([]);
                new VarStorage().setToken(res.token);
                new VarStorage().setNameClient(_this.state.inputName);
                new VarStorage().setKeyTemp(res.key_temp);
@@ -306,7 +386,18 @@ export default class Login extends Component {
                new VarStorage().delManualResponse();
 
                const _init = _this.state.confChatInit;
-               _this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
+               //_this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
+                const msg = {
+                     _id: '',
+                     type : '_res',
+                     msg : _init.welcome_message, 
+                     type_resp: 'Text', 
+                     status: '',
+                     _created: moment().format('YYYY-MM-DD H:mm:ss')
+                };
+                _this.setMessage(msg); //request
+                _this.syncMessage(_init.welcome_message);
+
 
                //console.log(new VarStorage().getToken(), 'token 0');
             }
@@ -324,52 +415,7 @@ export default class Login extends Component {
       }
   }
 
-  _handleSend = (event)=>{
-    event.preventDefault();
-    if(!new VarStorage().getToken()){
-      this.setState({showContHello : true});
-      this.setState({showContChat : false});
-    }else{
-      const form = event.currentTarget;
-      if (form.checkValidity() === false) {
-        event.stopPropagation();
-        this.setState({validated : true});
-      }else{
-        this.setMessage('_req', {type:'Text', response: this.state.inputMessage});
-        var message = this.state.inputMessage;
-        this.setState({inputMessage : ''});
-        this.setState({validated : false});
-        
-        //console.log(new VarStorage().getToken(),'token _handleSend');
-
-        async function _requestApi(_this, form, message){
-          const res = await new Helper().sendMessage(message);
-          //console.log(res);
-          if(typeof res == "undefined"){
-            _this.closeSession();
-          }else{
-            //if(typeof res.messages == "undefined"){
-              //console.log(res.messages);
-              //_this.closeSession();
-            //}else{
-              if(!new VarStorage().getManualResponse()){
-                //console.log('aaa111');
-                _this.setMessages(res.messages.items);
-                //_this.setMessage('_res', res.response, res.previus_responses);
-              }
-              form.reset();
-            //}
-          }
-
-          //if(new VarStorage().getManualResponse()){
-          //    _this.getMessagesSSE(_this);
-          //}
-        }
-
-        _requestApi(this, form, message);
-      }
-    }  
-  }
+  
 
 
   /*#########EVENTS CHANGES###########*/
@@ -385,8 +431,9 @@ export default class Login extends Component {
     _items[indexParent]['msg']['inputs'][index]['errorValidation'] = _result.error;
     /*validation*/
     //this.setState({listMessages: _items});
-    new VarStorage().setMessages(JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    //new VarStorage().setMessages(JSON.stringify(_items));
+    //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    this.setState({'listMessages' : _items});
   }
 
   statusValidation(result, item, index,indexParent){
@@ -394,8 +441,9 @@ export default class Login extends Component {
     _items[indexParent]['msg']['inputs'][index]['validation'] = result.error;
     //this.setState({listMessages: _items});
     /*##*/
-    new VarStorage().setMessages(JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    //new VarStorage().setMessages(JSON.stringify(_items));
+    //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    this.setState({'listMessages' : _items});
   }
 
   inputChangeOptions = (value, item, indexItems, index, indexParent,type) =>{
@@ -415,8 +463,9 @@ export default class Login extends Component {
       }
     }
     //this.setState({listMessages: _items});
-    new VarStorage().setMessages(JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    //new VarStorage().setMessages(JSON.stringify(_items));
+    //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    this.setState({'listMessages' : _items});
   }
 
   updateScheduleEvents = (itemSelected, events, index, indexParent) =>{
@@ -424,8 +473,9 @@ export default class Login extends Component {
      _items[indexParent]['msg']['inputs'][index]['itemSelected'] = itemSelected;
      _items[indexParent]['msg']['inputs'][index]['items'] = events;
      //this.setState({listMessages: _items});
-     new VarStorage().setMessages(JSON.stringify(_items));
-     this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+     //new VarStorage().setMessages(JSON.stringify(_items));
+     //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+     this.setState({'listMessages' : _items});
   }
 
   successSentForm = (indexParent, code) => {
@@ -436,8 +486,9 @@ export default class Login extends Component {
       _items[indexParent]['status'] = 'Form-Error-Saved';
     }
     /**/
-    new VarStorage().setMessages(JSON.stringify(_items));
-    this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    //new VarStorage().setMessages(JSON.stringify(_items));
+    //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
+    this.setState({'listMessages' : _items});
   }
   /*#########EVENTS CHANGES###########*/
 
@@ -530,6 +581,7 @@ export default class Login extends Component {
                                           );
                                         }
                                       })}
+
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
 

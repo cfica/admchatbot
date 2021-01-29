@@ -50,37 +50,14 @@ export default class ModalToLearn extends Component {
 		}
 
 		handleClose = (e) => {
-			this.setState({showModal: false})
-			this.props.hiddenModal();
+			this.closeModal();
 	    };
 
-		/*handleChange = event => {
-			var _value = event.target.value;
-			this.setState({searchTerm: _value});
-			if(this.state.searchTerm.length > 2){
-				this.search(_value);
-			}
-		};*/
+	    closeModal(){
+	    	this.setState({showModal: false})
+			this.props.hiddenModal();
+	    }
 
-
-		/*search = async val =>{
-			var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
-			const res = await axios.post(config.get('baseUrlApi')+'/api/v1/filter-tags',JSON.stringify({ tag: val}), _config);
-		    const data = await res.data.data.items;
-		    var _items = [];
-	    	data.forEach(function(elem){
-	    		_items.push(elem.tag);
-	    	});
-	    	this.setState({resultFiler: _items});
-
-	    	if(_items.length > 0){
-		    	this.setState({showFilterInput: true});
-		    	this.setState({searchResults : _items});
-		    }else{
-		    	this.setState({showFilterInput: false});
-		    	this.setState({searchResults : []});
-		    }
-		}*/
 		
 		_handonchangeInputPattern = (event)=>{
 			var _value = event.target.value;
@@ -169,7 +146,7 @@ export default class ModalToLearn extends Component {
 			event.preventDefault();
 			const form = event.currentTarget;
 			var _valueResponse = '';
-			var _url = config.get('baseUrlApi')+'/api/v1/add-pattern';
+			var _url = config.get('baseUrlApi')+'/api/v1/pattern';
 			var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
    		    //console.log(this.state.client);
    		    var _dataPost = {
@@ -181,17 +158,17 @@ export default class ModalToLearn extends Component {
    		    /****/
    		    if(this.state.showResponseType == 'Text'){
    		    	_dataPost.responses.value = this.state.listResponseTextAdd;
-   		    	_dataPost = JSON.stringify(_dataPost);
+   		    	//_dataPost = JSON.stringify(_dataPost);
    		    }else if(this.state.showResponseType == 'Html'){
    		    	_dataPost.responses.value = this.state.responseTypeHtml;
-   		    	_dataPost = JSON.stringify(_dataPost);
+   		    	//_dataPost = JSON.stringify(_dataPost);
    		    }else if(this.state.showResponseType == 'Form'){
    		    	_dataPost.responses.value = this.state.valuesDataForm;
-   		    	_dataPost = JSON.stringify(_dataPost);
+   		    	//_dataPost = JSON.stringify(_dataPost);
    		    }else if(this.state.showResponseType == 'Slide'){
    		    	const FormData = require('form-data');
    		    	_url = config.get('baseUrlApi')+'/api/v1/add-pattern-slide';
-   		    	_config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization' : 'Bearer ' + this.state.token} };
+   		    	//_config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization' : 'Bearer ' + this.state.token} };
    		    	/***/
    		    	_dataPost = new FormData();
    		    	_dataPost.append('client', this.state.client);
@@ -216,18 +193,30 @@ export default class ModalToLearn extends Component {
 		      this.setState({validated : true});
 		    }else{
 		    	this.setState({validated : false});
-	   		    axios.post(_url,_dataPost, _config)
-			    .then(res => {
-			    	this.setState({errorSaveForm : false});
-			    	//this.setState({searchTerm : ''});
-			    	this.setState({valuePatternHidden : ''});
-			    	this.setState({listResponseTextAdd : []});
-			    	this.setState({listPatternsAdd : []});
-			    	this.setState({searchResults : []});
-			    	this.setState({showResponseType : ''});
-			    	this.setState({valueResponseTextHidden : ''});
+	   		    
+
+		    	async function _requestApi(_this, form, _url, _dataPost){
+				    //var _url = config.get('baseUrlApi')+'/api/v1/pattern?id='+_id;
+				    if(_this.props.id.length > 0){
+				    	const res = await new Helper().putRequest(_url+'?id='+_this.props.id, _dataPost, 'back');
+				    }else{
+				    	const res = await new Helper().postRequest(_url, _dataPost, 'back');
+				    }
+
+				    _this.setState({errorSaveForm : false});
+			    	//_this.setState({searchTerm : ''});
+			    	_this.setState({valuePatternHidden : ''});
+			    	_this.setState({listResponseTextAdd : []});
+			    	_this.setState({listPatternsAdd : []});
+			    	_this.setState({searchResults : []});
+			    	_this.setState({showResponseType : ''});
+			    	_this.setState({valueResponseTextHidden : ''});
 			    	form.reset();
-			    }).catch(function (error) {}).then(function () {});
+			    	_this.closeModal();
+				}
+
+				_requestApi(this,form, _url, _dataPost);
+
 		    }
 		}
 
@@ -306,7 +295,7 @@ export default class ModalToLearn extends Component {
 										  </Tab>*/}
 
 
-										  <Tab eventKey="pattern" title="1) Pattern">
+										  <Tab eventKey="pattern" title="1) Message Pattern">
 										            {this.state.scope &&
 												    	<Form.Row>
 										        	        <Col xs={4}>
@@ -325,11 +314,13 @@ export default class ModalToLearn extends Component {
 
 										            <div>&nbsp;</div>
 											    	<Form.Row>
-												        <Col xs={4}>
+												        <Col xs={6}>
 												                <Form.Group  controlId="formBasicPatterns">
 																	<InputGroup className="mb-3">
-																	    <FormControl value={this.state.valuePattern} onChange={this._handonchangeInputPattern} size="sm"
-																	      placeholder="Add Pattern"/>
+																	  
+
+																	    <Form.Control required as="textarea" size="sm"  value={this.state.valuePattern} onChange={this._handonchangeInputPattern} placeholder="Add Pattern" rows={1} />
+																	      
 																	    <Form.Label >Add Pattern</Form.Label>
 
 																	    <InputGroup.Append>
@@ -386,13 +377,14 @@ export default class ModalToLearn extends Component {
 
 												                {this.state.showResponseType == 'Text' &&
 													                <Form.Row>
-															        	<Col xs={4}>
+															        	<Col xs={10}>
 															                <div className="formTypeResponse">						
 																				<Form.Group  controlId="formBasicResponseText">
 																	                    
 																						<InputGroup className="mb-3">
-																						    <FormControl value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} size="sm"
-																						      placeholder="Add Response"/>
+
+																						     <Form.Control size="sm" required as="textarea"  value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} placeholder="Add Response" rows={1} />
+
 																						    <Form.Label >Add Response</Form.Label>
 																						    <InputGroup.Append>
 																						      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
@@ -411,6 +403,8 @@ export default class ModalToLearn extends Component {
 																	    </Col>
 																    </Form.Row>
 																}
+
+
 
 																{this.state.showResponseType == 'Html' &&
 																    <Form.Row>

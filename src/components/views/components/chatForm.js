@@ -111,7 +111,7 @@ export default class ChatForm extends Component {
 							<Col xs={4}>
 							    <Form.Group  controlId="formBasic">
 									<InputGroup className="mb-3">
-									    <Form.Control placeholder="Type Input" value={this.state.selectTypeResponse} required as="select" onChange={this.changeTypeInput}>
+									    <Form.Control placeholder="Type Input" value={this.state.selectTypeResponse} as="select" onChange={this.changeTypeInput}>
 									        <option value="">Choose...</option>
 									        <option value="Text">Text</option>
 									        <option value="Multi-Choices">Multi Choices</option>
@@ -144,13 +144,16 @@ export default class ChatForm extends Component {
 						<Form.Row>
 							<Col xs={4}>
 								<Form.Group controlId="formBasicEmail">
-								    <Form.Control required type="text" value={this.state.textDescription} onChange={this.changeTextDescription} placeholder="Enter Description" />
+								    <Form.Control required as="textarea"  value={this.state.textDescription} onChange={this.changeTextDescription} placeholder="Enter Description" rows={2} />
+								    
 								    <Form.Label>Description Text</Form.Label>
 								    <Form.Text className="text-muted">
 								    	We'll never share your email with anyone else.
 								    </Form.Text>
 								</Form.Group>
 						    </Col>
+
+
 
 						    <Col xs={4}>
 								<Form.Group controlId="formBasicEmail">

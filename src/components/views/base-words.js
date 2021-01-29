@@ -100,6 +100,7 @@ export default class BaseWords extends Component {
 
 	handleHiddenModalAddPattern = data => {
 	    this.setState({showModalAddPattern : false});
+	    this.loadPatterns();
 	};
 
 	
