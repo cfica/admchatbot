@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import ModalToConfirm from './confirm';
 import ModalAddEventSchedule from './modal-addEventSchedule';
 //import {ChatMessages} from './chat';
+import {Helper} from './helper';
 
 export class Status extends Component{
 	constructor(props) {
@@ -86,7 +87,7 @@ export class ResponseTopic extends Component{
 	render(){
        return (
        		<div>
-       			<span>{this.props.messageData.text_response}</span>
+       			<p className="message">{this.props.messageData.text_response}</p>
 				<div className="divide"></div>
 				<ListGroup>
 					    {this.props.messageData.topics.map((x, i) => {
@@ -859,12 +860,12 @@ export class ResponseForm extends Component {
 	}
 
 	handleSubmitForm = (event) =>{
-		//event.preventDefault();
+		event.preventDefault();
 		const form = event.currentTarget;
 		if (new Validation().validateForm(event) === undefined) {
 		      this.setState({errorSaveForm : ''});
 		      this.setState({validated : true});
-		      //event.stopPropagation();
+		      event.stopPropagation();
 		}else{
 			this.setState({validated : false});
 			var _dataPost1 = this.props.messageData;
@@ -877,29 +878,17 @@ export class ResponseForm extends Component {
 					}
 				}
 			});*/
-
-			//if(this.state.validated == false){
+			
 			var _dataPost = {"form" : _dataPost1, '_id': this.props.messageId};
-            axios.post(config.get('baseUrlApi')+'/api/v1/message-save-form',JSON.stringify(_dataPost), 
-              {headers: {
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                'x-dsi-restful' : localStorage.getItem('key_temp')
-              }}
-            ).then(res => {
-	              //this.setMessage('_res', res.data.data);
-	              //this.props.setMessage('_res',{response: 'Acción guardada correctamente!', type: 'Text'}); //mensaje debe venir del patron
-	              this.props.successSentForm(this.props.index, res.data.data.code);
-	              this.setState({showForm: false});
-	              form.reset();
-            }).catch(function (error) {
-            	if(error.response){
-	                if(error.response.status == 403){
-	                    //this.props.closeSesion();
-	                }
-	            }
-            }).then(function () {});
-	        //}
+		    async function _requestApi(_this, _dataPost, _form){
+			    var _url = config.get('baseUrlApi')+'/api/v1/message-save-form';
+		        const res = await new Helper().postRequest(_url, _dataPost, 'front');
+		        //console.log(res);
+		        _this.props.successSentForm(_this.props.index, res.code);
+	            _this.setState({showForm: false});
+	            _form.reset();
+		    }
+		    _requestApi(this, _dataPost, form);
 		}
 	}
 
@@ -920,7 +909,8 @@ export class ResponseForm extends Component {
 	render() {	
 		return (
 			<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
-		    	<span>{this.props.messageData.textDescription}</span>
+		    	<p className="message">{this.props.messageData.textDescription}</p>
+		    	<div className="divide"></div>
 		    	<div className="contentForm">
 		    		{this.props.messageData.inputs.map((x, i) => {
 		    			if(x.type == 'Text'){
@@ -944,18 +934,21 @@ export class ResponseForm extends Component {
 		    				return (
 		    					<Form.Row key={i} className="Multi-Choices">
 									<Col key={i} xs={12}>
-									    {x.items.map((x1, i1) => {
-										    	return (
-										    		  <div key={i1} className="inputGroup">
-													    <Form.Control id={"checkbox"+ i+i1} 
-													                  value={x1.value == true ? 'OK': ''} 
-													                  checked={x1.value} 
-													                  onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} 
-													                  name={"checkbox"+ i+i1} type="checkbox"/>
-													    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
-													  </div>
-										    	);
-									    })}
+									    <div className="label-choices"><h2>{x.label_list}</h2></div>
+									    <div>
+										    {x.items.map((x1, i1) => {
+											    	return (
+											    		  <div key={i1} className="inputGroup">
+														    <Form.Control id={"checkbox"+ i+i1} 
+														                  value={x1.value == true ? 'OK': ''} 
+														                  checked={x1.value} 
+														                  onChange={e => this.handleInputChangeOptions(e, i1,i, x.items,'checkbox')} 
+														                  name={"checkbox"+ i+i1} type="checkbox"/>
+														    <label className="inputCheckbox" htmlFor={"checkbox"+ i+i1}>{x1.label}</label>
+														  </div>
+											    	);
+										    })}
+									    </div>
 									</Col>
 								</Form.Row>
 		    				);
@@ -963,21 +956,24 @@ export class ResponseForm extends Component {
 		    					return (
 			    					<Form.Row key={"Single-Option-Choice"+i} className="Single-Option-Choice">
 										<Col key={i} xs={12}>
-										    {x.items.map((x1, i1) => {
-										    	return (
-										    		  <div key={i1} className="inputGroup">
-													    <Form.Control id={"radio"+ i+i1} 
-													                  value={x1.label} 
-													                  required
-													                  checked={x1.value}
-													                  onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} 
-													                  name={'radio'+i} 
-													                  type="radio"/>
-													    <label className="inputRadio" htmlFor={"radio"+ i+i1}>{x1.label}</label>
-													  </div>
-										    	);
+										    <div className="label-choices"><h2>{x.label_list}</h2></div>
+										    <div>
+											    {x.items.map((x1, i1) => {
+											    	return (
+											    		  <div key={i1} className="inputGroup">
+														    <Form.Control id={"radio"+ i+i1} 
+														                  value={x1.label} 
+														                  required
+														                  checked={x1.value}
+														                  onChange={e => this.handleInputChangeOptions(e, i1, i, x.items, 'radio')} 
+														                  name={'radio'+i} 
+														                  type="radio"/>
+														    <label className="inputRadio" htmlFor={"radio"+ i+i1}>{x1.label}</label>
+														  </div>
+											    	);
 
-										    })}
+											    })}
+											</div>
 										</Col>
 									</Form.Row>
 			    				);
@@ -1114,11 +1110,23 @@ export class InputsTypeForm extends Component {
 							}else if(x.type == 'Multi-Choices' || x.type == 'Single-Option-Choice'){
 								return (
 									<div key={i}>
+									    
 									    <Form.Row>
 											<Col xs={12}><strong>{x.type.replace('-',' ')}</strong></Col>
 										</Form.Row>
+
+										<Form.Row>
+											<Col xs={5}>
+												<Form.Group controlId="formBasicTextArea">
+												    <Form.Control size="sm" type="text" name="label_list" value={x.label_list}  onChange={e => this.handleInputChange(e, i)} placeholder="Enter Label" />
+												    <Form.Label>Enter Label</Form.Label>
+												</Form.Group>
+												<br/>
+											</Col>
+										</Form.Row>
+
 										<Form.Row className="inputMultiChoise">
-									        <Col xs={4}>
+									        <Col xs={5}>
 									                <Form.Group  controlId="formAddOption">
 														<InputGroup className="mb-3">
 														    <FormControl value={x.label} name="label" onChange={(e)=>{ this.handleInputChange(e, i); this.setState({valueItemMultiChoice: e.target.value});}} size="sm"
@@ -1126,6 +1134,7 @@ export class InputsTypeForm extends Component {
 														      aria-label="Add Option"
 														      aria-describedby="basic-addon2"
 														    />
+
 														    <InputGroup.Append>
 														      <Button size="sm" onClick={() => {this.addItemMultiChoice(x.label, i); x.label = '';}} variant="outline-secondary">Add</Button>
 														    </InputGroup.Append>
@@ -1139,7 +1148,7 @@ export class InputsTypeForm extends Component {
 									    </Form.Row>
 
 									    <Form.Row className="inputMultiChoiseItems">
-									        <Col xs={4} className="items">
+									        <Col xs={5} className="items">
 									            <div>
 									            	{this.props.inputList[i].items.map((x, i1) => {
 										            	return (

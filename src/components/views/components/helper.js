@@ -13,7 +13,7 @@ export class Helper extends Component{
     	    this.state = {};
     	}
 
-      setMessage(_type,message){
+      /*setMessage(_type,message){
            const item = {
                _id: message._id,
                type : _type,
@@ -46,14 +46,14 @@ export class Helper extends Component{
           items.push(item);
           new VarStorage().setMessages(JSON.stringify(items));
           return JSON.parse(new VarStorage().getMessages());
-      }
+      }*/
 
-      setMessages(messages){
+      /*setMessages(messages){
          if(typeof messages != "undefined" && messages.length > 0){
            new VarStorage().setMessages(JSON.stringify(messages));
            return JSON.parse(new VarStorage().getMessages());
          }
-      }
+      }*/
 
 
       async sendMessage(_value, _type = null, _options = null){
@@ -143,7 +143,13 @@ export class Helper extends Component{
                   'x-dsi3-restful' : new VarStorage().getUserId()
                 }};
              }
-             const request = await axios.post(_url,JSON.stringify(data),header);
+             
+             if(_header == 'back-multipart'){
+                var request = await axios.post(_url,data,header);
+             }else{
+                var request = await axios.post(_url,JSON.stringify(data),header);
+             }
+
              const result = await request.data.data;
              return result;
           }catch(e){
@@ -379,21 +385,20 @@ export class Helper extends Component{
 
       messageClient(index, item, listMessages, messagesEndReq){
         return (
-          <div key={index} className="contentMessageClient">
-              <div>
-                 
+          <div key={index} className={'contentMessageClient cont'+index} ref={index == (listMessages.length - 1)  ? messagesEndReq : ''}>
+              <div className="content">
+
                  <div className="contentUser">
                         <h5>{this.getName(item)}</h5>
 
-                        <span>{moment(this.formatDate(item._created)).fromNow()}</span>
+                        <span className="_created">{moment(this.formatDate(item._created)).fromNow()}</span>
                  </div>
 
                  <div className="contentMsg">
                       <span>{item.msg}</span>
                  </div>
-                 <div className="endMessages" ref={index == (listMessages.length - 1)  ? messagesEndReq : ''}></div>
               </div>
-              
+
           </div>
         );
       }
@@ -422,7 +427,7 @@ export class Helper extends Component{
         closeSession
       ){
         return(
-              <div key={index} className="contentMessageChat">
+              <div key={index}  className={'contentMessageChat cont'+index} ref={index == (listMessages.length - 1)  ? messagesEnd : ''}>
                      <div>
                   
 
@@ -444,12 +449,13 @@ export class Helper extends Component{
                                 <h5>{item.user_name}</h5>
                               }*/}
 
-                              <span>{moment(this.formatDate(item._created)).fromNow()}</span>
+                              <span className="_created">{moment(this.formatDate(item._created)).fromNow()}</span>
+                              <span className="options-response">...</span>
                          </div>
 
                          <div className="contentMsg">
                             {item.type_resp == 'Text' && 
-                                <span>{item.msg}</span>
+                                <p className="message">{item.msg}</p>
                             }
                            
                             {item.type_resp == 'Html' &&
@@ -465,7 +471,7 @@ export class Helper extends Component{
                                   />
                             }
 
-                            {item.type_resp == 'Form' &&
+                            {item.type_resp == 'Form' && item.status == 'Init' &&
                                   <ResponseForm
                                       setMessage = {setMessage}
                                       statusValidation = {statusValidation}
@@ -498,7 +504,8 @@ export class Helper extends Component{
 
                             {item.type_resp == 'Slide' &&
                                   <div>
-                                    <span>{item.msg.textResponse}</span>
+                                    <p className="message">{item.msg.textResponse}</p>
+                                    <div className="divide"></div>
                                     <GetSlide
                                           index = {index}
                                           messageData = {item.msg}
@@ -506,7 +513,7 @@ export class Helper extends Component{
                                   </div>
                             }
                          </div>
-                         <div className="endMessages" ref={index == (listMessages.length - 1)  ? messagesEnd : ''}></div>
+
                      </div>
                      
               </div>

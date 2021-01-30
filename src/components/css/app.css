@@ -861,14 +861,14 @@ a[data-toggle="collapse"] {
 /*CUSTOM CHECKBOX*/
 .inputGroup {
    /*background-color: #fff;*/
-   border-bottom: 1px solid #ced4da;
+   border-bottom: 1px dashed #ced4da;
    display: block;
    /*margin: 10px 0;*/
    position: relative;
    margin-bottom: 10px
 }
  .inputGroup label {
-   padding: 7px 0px;
+   padding: 5px 0px;
    width: 100%;
    display: block;
    text-align: left;
@@ -878,7 +878,8 @@ a[data-toggle="collapse"] {
    transition: color 200ms ease-in;
    overflow: hidden;
    font-weight: normal;
-   font-size: 0.8rem
+   font-size: 0.8rem;
+   margin-bottom: 3px
 }
  .inputGroup label:before {
    width: 10px;
@@ -1453,3 +1454,31 @@ a[data-toggle="collapse"] {
 .header.card-header .delete.btn.btn-outline-secondary.btn-sm{
   float: right;
 }*/
+
+
+.label-choices h2{
+  padding-bottom: 3px;
+  text-transform: uppercase;
+}
+
+div._created{
+  margin-top: 4px
+}
+
+.contentMessageChat{
+  padding: 0px
+}
+
+.contentMessageChat .contentUser{
+  padding: 8px
+}
+
+.contentMessageChat .contentMsg .message{
+  font-size: 0.9rem;
+  color: #220b44;
+  padding: 8px
+}
+
+.contentResponse .contentMessageChat > div{
+  padding: 0px
+}

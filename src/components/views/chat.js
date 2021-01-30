@@ -48,7 +48,7 @@ export default class Login extends Component {
     console.log(this.state.messagesEnd.current);
 
     if(this.state.messagesEnd.current != null){
-      this.state.messagesEnd.current.scrollIntoView({ behavior: "smooth"});
+      this.state.messagesEnd.current.scrollIntoView({"behavior": "smooth", 'block': "center", 'scrollMode': 'if-needed'});
     }
 
   }
@@ -101,10 +101,10 @@ export default class Login extends Component {
       const init = this.props.location.query.init;
       this.getSettings(client_id, init);
       this.initSettings();
-      this.loadMessages();
+      //this.loadMessages();
+
 
       this.scrollToBottom();
-
   }
 
   componentWillUnmount(){
@@ -112,17 +112,11 @@ export default class Login extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    /*console.log(this.state.listMessages.length, '1');
     if(typeof this.state.listMessages != "undefined" && typeof prevState.listMessages != "undefined"){
-      console.log(this.state.listMessages.length, 'listMessages');
-      console.log(prevState, 'prevState');
-      //console.log(prevProps, 'prevProps');
-
       if(this.state.listMessages.length > prevState.listMessages.length){
-        console.log('aqui');
         this.scrollToBottom();
       }
-    }*/
+    }
   } 
 
   //useEffect(() => {    document.title = 'You clicked 1 times';  });
@@ -135,8 +129,8 @@ export default class Login extends Component {
           this.setState({showContHello : false});
           this.setState({showContChat : true});
           //this.getMessages();
-          //var items = JSON.parse(new VarStorage().getMessages()) || [];
-          //this.setState({'listMessages' : items});
+          var items = JSON.parse(new VarStorage().getMessages()) || [];
+          this.setState({'listMessages' : items});
           
           if(new VarStorage().getManualResponse()){
               this.getMessagesSSE(this);
@@ -164,20 +158,42 @@ export default class Login extends Component {
   }
 
 
-  loadMessages(){
+  /*loadMessages(){
     async function _requestApi(_this){
       const items = await new Helper().loadMessages();
       _this.setState({'listMessages' : items});
     }
     _requestApi(this);
-  }
+  }*/
 
 
   setMessage = (message) =>{
     const _items = this.state.listMessages;
-    _items.push(message);
-    this.setState({'listMessages' : _items});
+    const _newItems = _items;
+
+    if(message.type_resp == 'Form'){
+       _items.forEach(function(el, index){
+         if(el.type_resp == 'Form'){
+             _newItems[index]['status'] = 'Form-Exists';
+         }
+       });
+       message.status = 'Init';
+    }
+
+    _newItems.push(message);
+
+    this.setState({'listMessages' : _newItems});
+    new VarStorage().setMessages(JSON.stringify(_newItems));
+
     this.scrollToBottom();
+  }
+
+  setMessages(messages){
+    if(messages.length > 0){
+      //const _messages = new Helper().setMessages(messages);
+      this.setState({'listMessages' : messages});
+      new VarStorage().setMessages(JSON.stringify(messages));
+    }
   }
 
   syncMessage(message, form = null){
@@ -199,12 +215,7 @@ export default class Login extends Component {
       _requestApi(this, message, form);
   }
 
-  /*setMessages(messages){
-    if(messages.length > 0){
-      //const _messages = new Helper().setMessages(messages);
-      this.setState({'listMessages' : messages});
-    }
-  }*/
+
 
 
   _handleSend = (event)=>{
@@ -479,12 +490,17 @@ export default class Login extends Component {
   }
 
   successSentForm = (indexParent, code) => {
+
     const _items = this.state.listMessages;
     if(code == 200){
       _items[indexParent]['status'] = 'Form-Sent-Success';
     }else if(code == 423){
       _items[indexParent]['status'] = 'Form-Error-Saved';
     }
+
+    console.log(code);
+
+    console.log(_items);
     /**/
     //new VarStorage().setMessages(JSON.stringify(_items));
     //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
@@ -580,7 +596,17 @@ export default class Login extends Component {
                                             this.closeSession
                                           );
                                         }
+
+                                        //console.log(index);
+                                        //console.log((this.state.listMessages.length - 1))
+                                        
+                                        //if(index == (this.state.listMessages.length - 1)){
+                                          //return(<div className="endMessages" ref={this.state.messagesEnd}></div>);
+                                        //}
+        
+
                                       })}
+                                     
 
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>

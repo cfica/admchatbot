@@ -27,7 +27,7 @@ export class GetSlide extends Component {
 			        {this.props.messageData.items.map((item, i) => {
 						  return(
 						  		<Carousel.Item>
-								    <a href={item.link}>
+								    <a href={item.link} target="new">
 									    <img
 									      className="d-block w-100"
 									      src={config.get('baseUrlApi')+'/'+item.file}

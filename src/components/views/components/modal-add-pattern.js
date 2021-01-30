@@ -81,6 +81,7 @@ export default class ModalToLearn extends Component {
 				this.setState({showResponseType : event.target.value});
 			//}else{
 				//this.setState({showResponseType : false});
+				this.setState({selectTypeResponse: event.target.value});
 			//}
 		}
 
@@ -193,14 +194,21 @@ export default class ModalToLearn extends Component {
 		      this.setState({validated : true});
 		    }else{
 		    	this.setState({validated : false});
-	   		    
 
 		    	async function _requestApi(_this, form, _url, _dataPost){
 				    //var _url = config.get('baseUrlApi')+'/api/v1/pattern?id='+_id;
 				    if(_this.props.id.length > 0){
-				    	const res = await new Helper().putRequest(_url+'?id='+_this.props.id, _dataPost, 'back');
+				    	var _header = 'back';
+				    	if(_this.state.showResponseType == 'Slide'){
+				    		_header = 'back-multipart';
+				    	}
+				    	const res = await new Helper().putRequest(_url+'?id='+_this.props.id, _dataPost, _header);
 				    }else{
-				    	const res = await new Helper().postRequest(_url, _dataPost, 'back');
+				    	var _header = 'back';
+				    	if(_this.state.showResponseType == 'Slide'){
+				    		_header = 'back-multipart';
+				    	}
+				    	const res = await new Helper().postRequest(_url, _dataPost, _header);
 				    }
 
 				    _this.setState({errorSaveForm : false});
@@ -319,7 +327,7 @@ export default class ModalToLearn extends Component {
 																	<InputGroup className="mb-3">
 																	  
 
-																	    <Form.Control required as="textarea" size="sm"  value={this.state.valuePattern} onChange={this._handonchangeInputPattern} placeholder="Add Pattern" rows={1} />
+																	    <Form.Control as="textarea" size="sm"  value={this.state.valuePattern} onChange={this._handonchangeInputPattern} placeholder="Add Pattern" rows={1} />
 																	      
 																	    <Form.Label >Add Pattern</Form.Label>
 

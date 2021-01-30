@@ -157,18 +157,22 @@ body {
 	margin-left: 10px;
 	padding: 8px;
 	margin-top: 10px;
-	border-radius: 3px;
+	/*border-radius: 3px;*/
 	border: 1px solid #593096;
 }
 
-.contentResponse .contentMessageChat .contentUser{
-	
+
+.contentResponse .contentMessageClient{
+	 float: left;
+	 clear: both;
+	 width: 100%
 }
 
-.contentResponse > div{
- float: left;
- clear: both;
- width: 100%
+
+.contentResponse .contentMessageChat{
+	 float: left;
+	 clear: both;
+	 width: 100%
 }
 
 
@@ -179,15 +183,16 @@ body {
 .contentResponse .contentMessageClient{
 }
 
-.contentResponse .contentMessageClient > div{
+.contentResponse .contentMessageClient .content{
 	float: right;
 	width: 90%;
 	background: #f0ffef;
 	margin-right: 10px;
 	padding: 8px;
 	margin-top: 10px;
-	border-radius: 5px;
+	/*border-radius: 5px;*/
 	border: solid 1px #3eb233;
+	min-height: 60px
 }
 
 
@@ -207,8 +212,8 @@ body {
 	color: #371866
 }
 
-.contentResponse .contentMessageClient .contentUser span,
-.contentResponse .contentMessageChat .contentUser span
+.contentResponse .contentMessageClient .contentUser ._created,
+.contentResponse .contentMessageChat .contentUser ._created
 {
 	float: right;
 	font-size: 0.6rem !important;
@@ -218,9 +223,6 @@ body {
 }
 
 
-.contentResponse .contentMessageClient .contentMsg{
-
-}
 
 .contHello{
 	padding: 50px
@@ -382,7 +384,7 @@ body {
 }
 
 .contChat .contentMessageChat .list-group-item{
- margin-bottom: 3px
+ /*margin-bottom: 3px*/
 }
 
 .contChat .options{
@@ -395,6 +397,34 @@ body {
 	border: solid 1px #220b44;
 	border-bottom: 0px;
 	border-radius: 0px;
-	padding: 0px
+	padding: 0px;
+	font-size: 0.8rem
 }
 
+
+
+.endMessages{
+	height: 2px;
+	clear: both;
+}
+
+.contentUser{
+	position: relative;
+}
+
+.contentResponse .contentMessageChat .contentUser ._created{
+	position: absolute;
+	right: 60px;
+}
+
+
+.contentResponse .contentMessageChat .contentUser .options-response{
+	font-size: 40px !important;
+	position: absolute;
+	top: 0px;
+	right: 5px;
+	padding: 0px;
+	margin: 0px;
+	line-height: 12px;
+	cursor: pointer;
+}
