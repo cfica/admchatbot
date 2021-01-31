@@ -538,6 +538,8 @@ export class CalendarSchedule extends Component{
 		        	 handleConfirm={this.handleModalConfirmDelete}
 		        	/>
 		        }
+
+		        {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.collect)}</div>*/}
 	        </div>
 	    );
 	}
@@ -1056,142 +1058,195 @@ export class InputsTypeForm extends Component {
 				}
 
 				return (
-					<div className="contentInputsResponseForm">
-					    {this.props.inputList.map((x, i) => {
-					    	if(x.type == 'Text'){
-								return (
-									<div key={i}>
-										<Form.Row>
-											<Col xs={12}><strong >Input Text</strong></Col>
-										</Form.Row>
-										<Form.Row key={i} className="inputText">
-											<Col xs={4}>
-											    	<Form.Group controlId="formBasicText">
-													    <Form.Control size="sm" name="label" type="text" value={x.label} onChange={e => this.handleInputChange(e, i)}  placeholder="Enter Label" />
-													    <Form.Label>Enter Label</Form.Label>
-													</Form.Group>
-											</Col>
-											<Col xs={4}>
-										    	<Form.Control placeholder="Choose Validation" size="sm" name="validation" as="select" value={x.label} onChange={e => this.handleInputChange(e, i)}>
-											        <option value="">Choose Validation...</option>
-											        <option value="RUT">RUT</option>
-											        <option value="String">String</option>
-											        <option value="Email">Email</option>
-											        <option value="Telephone">Telephone</option>
-											        <option value="Number">Number</option>
-											    </Form.Control>
-											    <Form.Label>Choose Validation</Form.Label>
-											</Col>
-											<Col xs={1}>
-										    	<Button size="sm" onClick={() => this.deleteInput(i)} variant="secondary">X</Button>
-											</Col>
-										</Form.Row>
-									</div>
-								);
-							}else if(x.type == 'TextArea'){
-								return (
-									<div key={i}>
-										<Form.Row>
-											<Col xs={12}><strong>TextArea</strong></Col>
-										</Form.Row>
-										<Form.Row key={i} className="inputTextArea">
-											<Col xs={4}>
-											    	<Form.Group controlId="formBasicTextArea">
-													    <Form.Control size="sm" type="text" name="label" value={x.label}  onChange={e => this.handleInputChange(e, i)} placeholder="Enter Label" />
-													    <Form.Label>Enter Label</Form.Label>
-													</Form.Group>
-											</Col>
-											<Col xs={1}>
-										    	<Button size="sm" onClick={(event) => this.deleteInput(i)}  variant="secondary">X</Button>
-											</Col>
-										</Form.Row>
-									</div>
-								);
-							}else if(x.type == 'Multi-Choices' || x.type == 'Single-Option-Choice'){
-								return (
-									<div key={i}>
-									    
-									    <Form.Row>
-											<Col xs={12}><strong>{x.type.replace('-',' ')}</strong></Col>
-										</Form.Row>
-
-										<Form.Row>
-											<Col xs={5}>
-												<Form.Group controlId="formBasicTextArea">
-												    <Form.Control size="sm" type="text" name="label_list" value={x.label_list}  onChange={e => this.handleInputChange(e, i)} placeholder="Enter Label" />
-												    <Form.Label>Enter Label</Form.Label>
-												</Form.Group>
-												<br/>
-											</Col>
-										</Form.Row>
-
-										<Form.Row className="inputMultiChoise">
-									        <Col xs={5}>
-									                <Form.Group  controlId="formAddOption">
-														<InputGroup className="mb-3">
-														    <FormControl value={x.label} name="label" onChange={(e)=>{ this.handleInputChange(e, i); this.setState({valueItemMultiChoice: e.target.value});}} size="sm"
-														      placeholder="Add Option"
-														      aria-label="Add Option"
-														      aria-describedby="basic-addon2"
-														    />
-
-														    <InputGroup.Append>
-														      <Button size="sm" onClick={() => {this.addItemMultiChoice(x.label, i); x.label = '';}} variant="outline-secondary">Add</Button>
-														    </InputGroup.Append>
-														</InputGroup>
-									                 </Form.Group>
-									        </Col>
-
-									        <Col xs={1}>
-										    	<Button size="sm" onClick={() => this.deleteInput(i)}  variant="secondary">X</Button>
-											</Col>
-									    </Form.Row>
-
-									    <Form.Row className="inputMultiChoiseItems">
-									        <Col xs={5} className="items">
-									            <div>
-									            	{this.props.inputList[i].items.map((x, i1) => {
-										            	return (
-										            		<p key={i1}>{x.label}</p>
-										            	);
-										            })} 
-									            </div> 
-									        </Col>
-									    </Form.Row>
-									</div>
-								);
-							}else if(x.type == 'Schedule'){
-								return (
-									<div key={i}>
+					    <div className="contentInputsResponseForm">
+							
+						    {this.props.inputList.map((x, i) => {
+						    	if(x.type == 'Text'){
+									return (
+										<div key={i}>
 											<Form.Row>
-												<Col xs={12}><strong>Schedule</strong></Col>
-												<Col xs={4}>
-											    	<Form.Control placeholder="Choose type Schedule" value={x.value} size="sm" name="value" as="select" onChange={e => this.handleInputChange(e, i)}>
-												        <option value="">Choose type Schedule...</option>
-												        {/*<option value="CSV">CSV</option>
-												        <option value="Integration">Integration</option>*/}
-												        <option value="Manually">Manually</option>
-												    </Form.Control>
-												    <Form.Label>Source</Form.Label>
+												<Col xs={12}><h5 className="title">{i+1}) Input Text</h5></Col>
+											</Form.Row>
+											
+											<Form.Row key={i} className="inputText content">
+												<Col xs={8}>
+
+														{new Helper().getInput(
+															'label',
+													        e => this.handleInputChange(e, i),
+													        'Name Input',
+													        true,
+													        x.label,
+													        'Name Input'
+														)}
+
+												</Col>
+
+												<Col xs={3}>
+
+												    {new Helper().getInputSelect(
+			   											'validation',
+												        e => this.handleInputChange(e, i),
+												        'Choose Validation',
+												        false,
+												        x.validation,
+												        null,
+												        [
+												         {value: 'RUT', label: 'RUT'},
+												         {value: 'String', label: 'String'},
+												         {value: 'Email', label: 'Email'},
+												         {value: 'Telephone', label: 'Telephone'},
+												         {value: 'Number', label: 'Number'}
+												        ]
+			   										)}
+
+
+												</Col>
+												
+												<Col xs={1}>
+											    	<Button size="sm" onClick={() => this.deleteInput(i)} variant="secondary">X</Button>
+												</Col>
+											</Form.Row>
+										</div>
+									);
+								}else if(x.type == 'TextArea'){
+									return (
+										<div key={i}>
+											<Form.Row>
+												<Col xs={12}><h5 className="title">{i+1}) TextArea</h5></Col>
+											</Form.Row>
+											
+											<Form.Row key={i} className="inputTextArea content">
+												<Col xs={11}>
+
+														{new Helper().getTextarea(
+															'inputtextarea',
+													        e => this.handleInputChange(e, i),
+													        'Name Input',
+													        true,
+													        x.label,
+													        'Name Input'
+														)}
+
 												</Col>
 
 												<Col xs={1}>
-											    	<Button size="sm" onClick={() => this.deleteInput(i)}  variant="secondary">X</Button>
+											    	<Button size="sm" onClick={(event) => this.deleteInput(i)}  variant="secondary">X</Button>
 												</Col>
 											</Form.Row>
 
-											
-											{x.value == 'Manually' &&
-												<div>
-													<ScheduleManually index={i} collect={this.setEventsSchedule} items={x.items}/>
-													{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.eventsSchedule)}</div>*/}
-												</div>
-										    }
-									</div>
-								);
-							}
-						})}
-				    </div>
+										</div>
+									);
+
+								}else if(x.type == 'Multi-Choices' || x.type == 'Single-Option-Choice'){
+									return (
+										<div key={i}>
+										    
+										    <Form.Row>
+												<Col xs={12}><h5 className="title">{i+1})  {x.type.replace('-',' ')}</h5></Col>
+											</Form.Row>
+
+											<Form.Row className="content">
+												<Col xs={11}>
+													
+													{new Helper().getInput(
+														'label_list',
+												        e => this.handleInputChange(e, i),
+												        'Name List',
+												        true,
+												        x.label_list,
+												        'Name List'
+													)}
+
+												</Col>
+											</Form.Row>
+
+											<Form.Row className="inputMultiChoise content">
+										        <Col xs={11}>
+										                <Form.Group  controlId="formAddOption">
+															<InputGroup className="mb-3">
+															    <FormControl value={x.label} name="label" onChange={(e)=>{ this.handleInputChange(e, i); this.setState({valueItemMultiChoice: e.target.value});}}
+															      placeholder="Add Option"
+															      aria-label="Add Option"
+															      aria-describedby="basic-addon2"
+															    />
+															    <Form.Label>Add Option</Form.Label>
+
+															    <InputGroup.Append>
+															      <Button size="sm" onClick={() => {this.addItemMultiChoice(x.label, i); x.label = '';}} variant="outline-secondary">Add</Button>
+															    </InputGroup.Append>
+															</InputGroup>
+										                 </Form.Group>
+										        </Col>
+
+										        <Col xs={1}>
+											    	<Button size="sm" onClick={() => this.deleteInput(i)}  variant="secondary">X</Button>
+												</Col>
+										    </Form.Row>
+
+										    <Form.Row className="inputMultiChoiseItems content">
+										        <Col xs={10} className="items">
+										            <div>
+										            	{this.props.inputList[i].items.map((x, i1) => {
+											            	return (
+											            		<p key={i1}>{i1+1}) {x.label}</p>
+											            	);
+											            })} 
+										            </div> 
+										        </Col>
+										    </Form.Row>
+										</div>
+									);
+								
+								}else if(x.type == 'Schedule'){
+									return (
+										<div key={i}>
+												<Form.Row>
+													<Col xs={12}><h5 className="title">{i+1}) Schedule</h5></Col>
+												</Form.Row>	
+
+												<Form.Row className="content">
+													
+													
+													<Col xs={11}>
+												    	
+
+													    {new Helper().getInputSelect(
+				   											'value',
+													        e => this.handleInputChange(e, i),
+													        'Source',
+													        true,
+													        x.value,
+													        null,
+													        [
+													         {value: 'Manually', label: 'Manually'},
+													         {value: 'CSV', label: 'CSV'},
+													         {value: 'Integration', label: 'Integration'}
+													        ]
+				   										)}
+
+													</Col>
+
+													<Col xs={1}>
+												    	<Button size="sm" onClick={() => this.deleteInput(i)}  variant="secondary">X</Button>
+													</Col>
+												</Form.Row>
+
+												
+												{x.value == 'Manually' &&
+												    <Form.Row className="content">
+														<Col xs={11}>
+														    <div className="divide"></div>
+															<ScheduleManually index={i} collect={this.setEventsSchedule} items={x.items}/>
+															{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.eventsSchedule)}</div>*/}
+														</Col>
+													</Form.Row>
+											    }
+										</div>
+									);
+								}
+							})}
+						</div>
 				);
   		}
 }
@@ -1214,13 +1269,7 @@ export class ScheduleManually extends Component{
 
 	render(){
        return(
-       		<Form.Row>
-			  <Col xs={12}>
-			  		<div className="divide"></div>
-			  		<CalendarSchedule collect={this.setCollect} items={this.props.items}/>
-					{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.collect)}</div>*/}
-			  </Col>
-			</Form.Row>
+	  		<CalendarSchedule collect={this.setCollect} items={this.props.items}/>
        );
 	}
 }

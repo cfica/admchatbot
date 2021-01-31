@@ -16,16 +16,18 @@ export default class Preview extends Component {
 								  		<div className="contChat">
 											<div className="contentResponse">
 											    <div className="contentMessageClient">
-													<div>
+													<div className="content">
 														<div className="contentUser"><h5>You</h5></div>
-														<div className="contentMsg"><span>Hello, I need information about ...</span></div>
+														<div className="contentMsg"><span>{this.props.messageClient}</span></div>
 													</div>
 												</div>
+												
+
 												<div className="contentMessageChat">
 													<div>
 														<div className="contentUser"><h5>Belisa</h5></div>
 														<div className="contentMsg">
-														    <span>{this.props.textDescription}</span>
+														    <p className="message">{this.props.textDescription}</p>
 														    {this.props.listOptions.map(item => (
 													             <Form.Check 
 															        type="checkbox"

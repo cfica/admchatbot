@@ -247,6 +247,11 @@ export default class Settings extends Component {
 				          <Nav.Link eventKey="topics">Topics</Nav.Link>
 				        </Nav.Item>
 
+
+				        <Nav.Item>
+				          <Nav.Link eventKey="payments">Payments</Nav.Link>
+				        </Nav.Item>
+
 				      </Nav>
 				    </Col>
 				    <Col sm={10}>

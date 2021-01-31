@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {Modal,Button,Table,Carousel,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
 import axios from 'axios';
 import config from 'react-global-configuration';
+import {Helper} from './helper';
 
 export class GetSlide extends Component {
 	constructor(props) {
@@ -113,41 +114,44 @@ export class Slide extends Component {
   		render() {
 				return (
 				  	<div>
-				  	    <Row>
-				  	    	<Col xs={4}>
-				  	    		<Form.Group controlId="formMessage">
-								    <Form.Control required type="text" value={this.state.inputMessage} name="response" onChange={this.handleChangeMessage} placeholder="Enter Response" />
-								    <Form.Label>Response Text</Form.Label>
-								</Form.Group>
-				  	    	</Col>
-				  	    </Row>
+				  	   
+			  	    	<div>
+
+							{new Helper().getTextarea(
+								'response',
+						        this.handleChangeMessage,
+						        'Enter Response comment',
+						        true,
+						        this.state.inputMessage,
+						        'Enter Response comment'
+							)}
+
+			  	    	</div>
+				  	    
 
 				  	    {this.state.collect.items.map((x, i) => {
 					  		return(
 					  			<Row key={i}>
-									<Col xs={2}>
-										<Form.File 
-										    id="custom-file-translate-html"
-										    label="To Choose"
-										    data-browse="To Choose"
-										    custom
-										    required
-										    accept="image/x-png,image/jpeg"
-										    onChange={e => this.handleFileChange(e, i)}
-										    name="imageFile"
-										/>
-										<Form.Text className="text-muted">
-									    	*IMPORTANT: Images must be optimized for mobile devices only.
-									    </Form.Text>
+									<Col xs={5}>
+
+										{new Helper().getInputFile(
+   											'imageFile',
+									        e => this.handleFileChange(e, i),
+									        'Choose File',
+									        true,
+									        this.state.collect.items[i]['namefile'],
+									        '*IMPORTANT: Images must be optimized for mobile devices only.'
+   										)}
+
 								    </Col>
 
-								    <Col xs={2}>
+								   	{/*<Col xs={2}>
 										<Form.Group controlId="formDescription">
 										    <Form.Control required type="text" value={x.inputTitle} name="title" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Title" />
 										    <Form.Label>Title</Form.Label>
-										    <Form.Text className="text-muted">
-										    	Well never share your email with anyone else.
-										    </Form.Text>
+										    
+										    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+											<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 										</Form.Group>
 								    </Col>
 
@@ -155,23 +159,24 @@ export class Slide extends Component {
 										<Form.Group controlId="formDescription">
 										    <Form.Control required type="text" value={x.inputDescription} name="description" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Description" />
 										    <Form.Label>Description Text</Form.Label>
-										    <Form.Text className="text-muted">
-										    	Well never share your email with anyone else.
-										    </Form.Text>
+										    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+											<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
 										</Form.Group>
+								    </Col>*/}
+
+
+								    <Col xs={6}>
+   										{new Helper().getInput(
+   											'link',
+									        e => this.handleInputChange(e, i),
+									        'Link Image',
+									        true,
+									        x.inputLink,
+									        'Link'
+   										)}
 								    </Col>
 
-								    <Col xs={3}>
-										<Form.Group controlId="formLink">
-										    <Form.Control required type="text" value={x.inputLink} name="link" onChange={e => this.handleInputChange(e, i)} placeholder="Link" />
-										    <Form.Label>Link</Form.Label>
-										    <Form.Text className="text-muted">
-										    	We'll never share your email with anyone else.
-										    </Form.Text>
-										</Form.Group>
-								    </Col>
-
-								    <Col xs={2}>
+								    <Col xs={1}>
 								    	<Button variant="outline-primary" onClick={this.add} size="lg">+</Button>{' '}
 								    	{i > 0 &&
 								    		<Button variant="outline-secondary" onClick={(event) => this.del(i)} size="lg">-</Button>

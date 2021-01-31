@@ -424,6 +424,17 @@ a[data-toggle="collapse"] {
   max-width: none !important;
 }
 
+
+.modal-70w{
+  width: 70%;
+  max-width: none !important;
+}
+
+.modal-60w{
+  width: 60%;
+  max-width: none !important;
+}
+
 .modal-50w{
   width: 50%;
   max-width: none !important;
@@ -477,11 +488,14 @@ a[data-toggle="collapse"] {
     overflow: hidden;
     overflow-x: hidden;
     box-shadow: 0 6px 9px 0 rgba(0,0,0,.5);
-    max-height: 400px
+    padding: 10px
+}
+
+.contPreview .contChat span{
+  
 }
 
 .contPreview{
-  max-width: 320px
 }
 
 .editorHtml h5{
@@ -629,8 +643,10 @@ a[data-toggle="collapse"] {
 .inputMultiChoiseItems p{
   margin: 0px;
   padding: 0px;
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #000;
   font-size: 0.9rem;
+  color: #000;
+  margin-bottom: 5px
 }
 
 .contentInputsResponseForm .form-group{
@@ -638,17 +654,21 @@ a[data-toggle="collapse"] {
 }
 
 .contentInputsResponseForm{
-  padding: 20px;
-  padding-top: 0px
 }
 
 .contentInputsResponseForm > div{
-  border-left: 3px solid #a37272;
-  padding-left: 5px;
+  border-left: 3px solid #7c7c7c;
+  padding-left: 10px;
   padding-right: 5px;
   padding-top: 10px;
   padding-bottom: 10px;
-  /*background: #f7f7f7*/
+}
+
+.addInputType{
+}
+
+.addInputType > div{
+
 }
 
 .scheduleEvents{
@@ -715,12 +735,13 @@ a[data-toggle="collapse"] {
    position: relative;
    /*padding: 15px 0 0;*/
    width: 100%;
-   margin-bottom: 10px
+   margin-bottom: 20px
 }
 
 .form-control {
-   border: 0;
+   /*border: 0;
    border-bottom: 1px solid #ced4da;
+   */
    border-radius: 0px;
    font-family: inherit;
    /*width: 100%;
@@ -734,6 +755,7 @@ a[data-toggle="collapse"] {
    font-weight: 700;
    padding-left: 10px;
    padding-right: 10px;
+   /*background-color: #f2f2f2*/
 }
 
 .react-datepicker-wrapper .form-control{
@@ -764,8 +786,9 @@ a[data-toggle="collapse"] {
    font-size: 0.7rem;
    /*color: #9b9b9b;*/
    margin-left: 10px;
-   font-weight: normal;
-   z-index: 3
+   font-weight: bold;
+   z-index: 3;
+   background-color: #fff
 }
  .form-control:focus {
    /*padding-bottom: 6px;
@@ -1481,4 +1504,67 @@ div._created{
 
 .contentResponse .contentMessageChat > div{
   padding: 0px
+}
+
+.contentResponse .contentMessageChat .options-response #dropdown-menu-align-right,
+.dropdown-options-3p #dropdown-menu
+{
+  background-color: transparent;
+  background: transparent;
+  color: #371866;
+  padding: 0px;
+  line-height: 1px;
+  font-size: 40px;
+  border:0px;
+} 
+
+.contentResponse .contentMessageChat .options-response #dropdown-menu-align-right::after,
+.dropdown-options-3p #dropdown-menu::after
+{
+  content: inherit !important;
+}
+
+
+.contentResponse .contentMessageChat .options-response #dropdown-menu-align-right:focus,
+.dropdown-options-3p #dropdown-menu:focus  
+{
+  box-shadow: none;
+  border:none;
+}
+
+.contentResponse .contentMessageChat .options-response .dropdown .dropdown-menu.show,
+.dropdown-options-3p .dropdown .dropdown-menu.show
+{
+  margin-top: 5px !important
+}
+
+
+.dropdown-options-3p{
+  
+}
+
+.form-chat-send{
+  display: flex;
+  border-top: solid 1px #593096;
+}
+
+.custom-file-label::after{
+ /*width: 100% !important;
+  border-left: none;
+  border-radius: .25rem;*/
+}
+
+.contentInputsResponseForm .title{
+  font-size: 1rem;
+  margin-bottom: 15px;
+  border-bottom: solid 1px #ccc;
+  padding-bottom: 5px;
+}
+
+.contentInputsResponseForm .form-group{
+  margin-bottom: 10px
+}
+
+.contentInputsResponseForm .content{
+  padding-left: 10px
 }

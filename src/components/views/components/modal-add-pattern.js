@@ -6,7 +6,7 @@ import { browserHistory } from 'react-router';
 import EditorHtml from './editorHtml';
 import SingleOptions from './singleOptions';
 import MultiChoices from './multiChoices';
-import ChatForm from './chatForm';
+import FormResponse from './formResponse';
 import {Slide} from './slide';
 import Preview from './preview';
 import {Helper} from './helper';
@@ -45,7 +45,16 @@ export default class ModalToLearn extends Component {
 		      valuesDataForm: {},
 		      valueDataSlide: {},
 		      clients: [],
-		      selectTypeResponse: ''
+		      selectTypeResponse: '',
+		      optionsTypeResponse: [
+		      	{value: 'Text', label: 'Text'},
+		      	{value: 'Form', label: 'Form'},
+		      	{value: 'Slide', label: 'Slider Image'},
+		      	{value: 'Html', label: 'Html'},
+		      	{value: 'Single-option', label: 'Yes/No'},
+		      	{value: 'Multiple-choices', label: 'Multiple choices'},
+		      	{value: 'Data-Set', label: 'Data Set'}
+		      ]
 		    };
 		}
 
@@ -146,40 +155,6 @@ export default class ModalToLearn extends Component {
 		handleSubmitFormAddPattern = (event) =>{
 			event.preventDefault();
 			const form = event.currentTarget;
-			var _valueResponse = '';
-			var _url = config.get('baseUrlApi')+'/api/v1/pattern';
-			var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
-   		    //console.log(this.state.client);
-   		    var _dataPost = {
-   		    	"client": this.state.client,
-   		    	//"tag" : this.state.searchTerm,
-   		    	"patterns" : this.state.listPatternsAdd,
-   		    	"responses" : {"type" : this.state.showResponseType, "value" : _valueResponse}
-   		    };
-   		    /****/
-   		    if(this.state.showResponseType == 'Text'){
-   		    	_dataPost.responses.value = this.state.listResponseTextAdd;
-   		    	//_dataPost = JSON.stringify(_dataPost);
-   		    }else if(this.state.showResponseType == 'Html'){
-   		    	_dataPost.responses.value = this.state.responseTypeHtml;
-   		    	//_dataPost = JSON.stringify(_dataPost);
-   		    }else if(this.state.showResponseType == 'Form'){
-   		    	_dataPost.responses.value = this.state.valuesDataForm;
-   		    	//_dataPost = JSON.stringify(_dataPost);
-   		    }else if(this.state.showResponseType == 'Slide'){
-   		    	const FormData = require('form-data');
-   		    	_url = config.get('baseUrlApi')+'/api/v1/add-pattern-slide';
-   		    	//_config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization' : 'Bearer ' + this.state.token} };
-   		    	/***/
-   		    	_dataPost = new FormData();
-   		    	_dataPost.append('client', this.state.client);
-   		    	//_dataPost.append('tag', this.state.searchTerm);
-   		    	_dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
-   		    	_dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
-				this.state.valueDataSlide['items'].forEach((file, i) => {
-			      _dataPost.append('file'+i, file.imageFile)
-			    });
-   		    }
 
    		    //console.log(_dataPost);
 
@@ -194,6 +169,42 @@ export default class ModalToLearn extends Component {
 		      this.setState({validated : true});
 		    }else{
 		    	this.setState({validated : false});
+
+		    	var _valueResponse = '';
+				var _url = config.get('baseUrlApi')+'/api/v1/pattern';
+				var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
+	   		    //console.log(this.state.client);
+	   		    var _dataPost = {
+	   		    	"client": this.state.client,
+	   		    	//"tag" : this.state.searchTerm,
+	   		    	"patterns" : this.state.listPatternsAdd,
+	   		    	"responses" : {"type" : this.state.showResponseType, "value" : _valueResponse}
+	   		    };
+	   		    /****/
+	   		    if(this.state.showResponseType == 'Text'){
+	   		    	_dataPost.responses.value = this.state.listResponseTextAdd;
+	   		    	//_dataPost = JSON.stringify(_dataPost);
+	   		    }else if(this.state.showResponseType == 'Html'){
+	   		    	_dataPost.responses.value = this.state.responseTypeHtml;
+	   		    	//_dataPost = JSON.stringify(_dataPost);
+	   		    }else if(this.state.showResponseType == 'Form'){
+	   		    	_dataPost.responses.value = this.state.valuesDataForm;
+	   		    	//_dataPost = JSON.stringify(_dataPost);
+	   		    }else if(this.state.showResponseType == 'Slide'){
+	   		    	const FormData = require('form-data');
+	   		    	_url = config.get('baseUrlApi')+'/api/v1/add-pattern-slide';
+	   		    	//_config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization' : 'Bearer ' + this.state.token} };
+	   		    	/***/
+	   		    	_dataPost = new FormData();
+	   		    	_dataPost.append('client', this.state.client);
+	   		    	//_dataPost.append('tag', this.state.searchTerm);
+	   		    	_dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
+	   		    	_dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
+					this.state.valueDataSlide['items'].forEach((file, i) => {
+				      _dataPost.append('file'+i, file.imageFile)
+				    });
+	   		    }
+
 
 		    	async function _requestApi(_this, form, _url, _dataPost){
 				    //var _url = config.get('baseUrlApi')+'/api/v1/pattern?id='+_id;
@@ -265,7 +276,7 @@ export default class ModalToLearn extends Component {
 				return (
 				  	<div className="content-button">
 				      {/*<Button variant="secondary" onClick={handleShow}>Add Pattern</Button>*/}
-				      <Modal show={this.state.showModal} dialogClassName="modal-90w" onHide={this.handleClose}>
+				      <Modal show={this.state.showModal} dialogClassName="modal-70w" onHide={this.handleClose}>
 				        <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitFormAddPattern}>
 						        <Modal.Header closeButton>
 						          <Modal.Title>Add Pattern</Modal.Title>
@@ -303,10 +314,14 @@ export default class ModalToLearn extends Component {
 										  </Tab>*/}
 
 
-										  <Tab eventKey="pattern" title="1) Message Pattern">
+										  <Tab eventKey="pattern" title={
+										  	<React.Fragment>
+										  		<h4><Badge variant="secondary">1</Badge> Message Pattern</h4>
+								            </React.Fragment>
+										  }>
 										            {this.state.scope &&
 												    	<Form.Row>
-										        	        <Col xs={4}>
+										        	        <Col xs={12}>
 												        		<Form.Group required controlId="exampleForm.ControlSelect1">
 																    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
 																        <option value="">Select</option>
@@ -322,12 +337,12 @@ export default class ModalToLearn extends Component {
 
 										            <div>&nbsp;</div>
 											    	<Form.Row>
-												        <Col xs={6}>
+												        <Col xs={8}>
 												                <Form.Group  controlId="formBasicPatterns">
 																	<InputGroup className="mb-3">
 																	  
 
-																	    <Form.Control as="textarea" size="sm"  value={this.state.valuePattern} onChange={this._handonchangeInputPattern} placeholder="Add Pattern" rows={1} />
+																	    <Form.Control as="textarea"  value={this.state.valuePattern} onChange={this._handonchangeInputPattern} placeholder="Add Pattern" rows={1} />
 																	      
 																	    <Form.Label >Add Pattern</Form.Label>
 
@@ -337,7 +352,7 @@ export default class ModalToLearn extends Component {
 																	</InputGroup>
 
 
-																	<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden} size="sm"/>
+																	<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden}/>
 												                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
 												                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
 
@@ -350,52 +365,54 @@ export default class ModalToLearn extends Component {
 												                    </Form.Text>
 												                 </Form.Group>
 												        </Col>
+
+												        <Col xs={1}></Col>
+												        <Col xs={3}>
+											         		<Preview 
+											         		    messageClient={this.state.listPatternsAdd[(this.state.listPatternsAdd.length - 1)]} 
+											         		    valueCode={this.state.responseTypeHtml}
+											         		    listOptions={this.state.listOptionsMChoices}
+											         		/>
+											         	</Col>
 												    </Form.Row>
 										  </Tab>
-										  <Tab eventKey="response" title="2) Response">
-										                <div>&nbsp;</div>
-											   			<Form.Row>
-													        <Col xs={9}>
-													            <Form.Row>
-													                <Col xs={4}>
-														                <Form.Group  controlId="formBasicResponse">
-														                    <div className="contentListGroupSelect">
-																			    
-																			    <Form.Control required size="sm" as="select" value={this.state.selectTypeResponse} onChange={this._handleonTypeResponse}>
-																				    <option value="">Select</option>
-																				    <option value="Text">Text</option>
-																				    <option value="Form">Form</option>
-																				    <option value="Slide">Slide</option>
-																				    <option value="Html">Html</option>
-																				    <option value="Single-option">Yes/No</option>
-																				    <option value="Multiple-choices">Multiple choices</option>
-																				    <option value="Data-Set">Data Set</option>
-																				</Form.Control>
+										 
 
-																				<Form.Label >Type Response</Form.Label>
-																				<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-																            	<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-														                    </div>
-																            <Form.Text className="text-muted">
-														                      Possible responses that the user will ask through the chat.
-														                    </Form.Text>
-														                </Form.Group>
+										  <Tab eventKey="response" title={
+										  	<React.Fragment>
+								              <h4><Badge variant="secondary">2</Badge> Response</h4>
+								            </React.Fragment>
+								        }>
+										                <div className="divide"></div>
+											   			<Form.Row>
+													        <Col xs={8}>
+													            <Form.Row>
+													                <Col xs={12}>
+
+														                {new Helper().getInputSelect(
+								   											'typeresponse',
+																	        this._handleonTypeResponse,
+																	        'Type Response',
+																	        true,
+																	        this.state.selectTypeResponse,
+																	        null,
+																	        this.state.optionsTypeResponse
+								   										)}
+
 														         	</Col>
 																</Form.Row>
 
 												                {this.state.showResponseType == 'Text' &&
 													                <Form.Row>
-															        	<Col xs={10}>
+															        	<Col xs={12}>
 															                <div className="formTypeResponse">						
 																				<Form.Group  controlId="formBasicResponseText">
 																	                    
 																						<InputGroup className="mb-3">
-
-																						     <Form.Control size="sm" required as="textarea"  value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} placeholder="Add Response" rows={1} />
-
+																						     <Form.Control  required as="textarea"  value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} placeholder="Add Response" rows={1} />
 																						    <Form.Label >Add Response</Form.Label>
 																						    <InputGroup.Append>
-																						      <Button size="sm" onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
+																						      <Button  onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>
 																						    </InputGroup.Append>
 																						</InputGroup>
 
@@ -447,7 +464,7 @@ export default class ModalToLearn extends Component {
 															    {this.state.showResponseType == 'Form' &&
 																    <Form.Row>
 															        	<Col xs={12}>
-															                <ChatForm dataForm={this.dataForm} id={this.props.id} valueForm={this.state.valuesDataForm}/>
+															                <FormResponse dataForm={this.dataForm} id={this.props.id} valueForm={this.state.valuesDataForm}/>
 																	    </Col>
 																    </Form.Row>
 															    }
@@ -461,7 +478,7 @@ export default class ModalToLearn extends Component {
 															    }
 												         	</Col>
 
-
+												         	<Col xs={1}></Col>
 												         	<Col xs={3}>
 												         		<Preview 
 												         		    textDescription={this.state.valueResponseText} 
@@ -469,6 +486,7 @@ export default class ModalToLearn extends Component {
 												         		    listOptions={this.state.listOptionsMChoices}
 												         		/>
 												         	</Col>
+												         	
 													    </Form.Row>
 										  </Tab>
 										</Tabs>

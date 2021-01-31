@@ -4,7 +4,7 @@ import {InputsTypeForm} from './componentsUtils';
 import {Helper} from './helper';
 import config from 'react-global-configuration';
 
-export default class ChatForm extends Component {
+export default class  FormResponse extends Component {
   		constructor(props) {
 		    super(props);
 		    //console.log(this.props.valueForm);
@@ -82,6 +82,7 @@ export default class ChatForm extends Component {
 			_collect['inputs'] = _items; 
 			this.setState({collect: _collect});
 			this.props.dataForm(this.state.collect);
+			this.setState({changeTypeInput: ''});
 		}
 
 		changeActionForm = (event) =>{
@@ -105,31 +106,8 @@ export default class ChatForm extends Component {
 
 
 				return (
-				 <Row>
-				    <Col xs={12}>
-				        <Form.Row>
-							<Col xs={4}>
-							    <Form.Group  controlId="formBasic">
-									<InputGroup className="mb-3">
-									    <Form.Control placeholder="Type Input" value={this.state.selectTypeResponse} as="select" onChange={this.changeTypeInput}>
-									        <option value="">Choose...</option>
-									        <option value="Text">Text</option>
-									        <option value="Multi-Choices">Multi Choices</option>
-									        <option value="Single-Option-Choice">Single Option Choice</option>
-									        <option value="TextArea">TextArea</option>
-									        <option value="Schedule">Schedule</option>
-									    </Form.Control>
-									    <Form.Label >Type Input</Form.Label>
-									    <InputGroup.Append>
-									      <Button size="sm" onClick={this.btnAddInput} variant="outline-secondary">Add</Button>
-									    </InputGroup.Append>
-									</InputGroup>
-				                    <Form.Text className="text-muted">
-				                      Possible questions that the user will ask through the chat.
-				                    </Form.Text>
-				                 </Form.Group>
-							</Col>
-						</Form.Row>
+				 <div>
+				        
 
 						<InputsTypeForm 
 							inputList={this.state.inputs} 
@@ -139,36 +117,66 @@ export default class ChatForm extends Component {
 							id = {this.props.id}
 						/>
 
+						<div className="contentInputsResponseForm addInputType">
+							    <Form.Group  controlId="formBasic">
+									<InputGroup className="mb-3">
+									    {new Helper().getInputSelect(
+											'typeinput',
+									        this.changeTypeInput,
+									        'Type Input',
+									        false,
+									        this.state.changeTypeInput,
+									        null,
+									        [
+									        	{value: 'Text', label: 'Text'},
+									        	{value: 'Multi-Choices', label: 'Multi Choices'},
+									        	{value: 'Single-Option-Choice', label: 'Single Option Choice'},
+									        	{value: 'TextArea', label: 'TextArea'},
+									        	{value: 'Schedule', label: 'Schedule'}
+									        ],
+									        true
+										)}
+
+									    <Form.Label >Select Input</Form.Label>
+									    <InputGroup.Append>
+									      <Button size="sm" onClick={this.btnAddInput} variant="outline-secondary">Add Input</Button>
+									    </InputGroup.Append>
+									</InputGroup>
+				                 </Form.Group>
+						</div>
+
+
 						{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.inputs)}</div>*/}
 
-						<Form.Row>
-							<Col xs={4}>
-								<Form.Group controlId="formBasicEmail">
-								    <Form.Control required as="textarea"  value={this.state.textDescription} onChange={this.changeTextDescription} placeholder="Enter Description" rows={2} />
-								    
-								    <Form.Label>Description Text</Form.Label>
-								    <Form.Text className="text-muted">
-								    	We'll never share your email with anyone else.
-								    </Form.Text>
-								</Form.Group>
-						    </Col>
+						<div>
+							    {new Helper().getTextarea(
+									'description',
+							        this.changeTextDescription,
+							        'Response comment',
+							        true,
+							        this.state.textDescription,
+							        'Response comment'
+								)}
+						</div>
 
 
-
-						    <Col xs={4}>
-								<Form.Group controlId="formBasicEmail">
-								    <Form.Control placeholder="Action Form" value={this.state.actionForm} required as="select" defaultValue="Choose..." onChange={this.changeActionForm}>
-								        <option value="">Choose...</option>
-								        <option value="Save-Form">Save Form</option>
-								        <option value="Send-Email">Send Email</option>
-								        <option value="Integration">Integration</option>
-								    </Form.Control>
-								    <Form.Label>Action Form</Form.Label>
-								</Form.Group>
-						    </Col>
-						</Form.Row>
-				    </Col>
-			     </Row>
+						<div>
+						        {new Helper().getInputSelect(
+									'actionform',
+							        this.changeActionForm,
+							        'Action Form',
+							        true,
+							        this.state.actionForm,
+							        null,
+							        [
+							        	{value: 'Save-Form', label: 'Save Form'},
+							        	{value: 'Send-Email', label: 'Send Email'},
+							        	{value: 'Integration', label: 'Integration'}
+							        ]
+								)}
+						</div>
+				  
+			     </div>
 				);
   		}
 }

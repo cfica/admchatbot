@@ -13,6 +13,7 @@ import {VarStorage} from './components/varsStorage';
 //import {Validation} from './components/componentsUtils';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as moment from 'moment';
+import * as Icon from 'react-bootstrap-icons';
 //events
 
 
@@ -611,28 +612,20 @@ export default class Login extends Component {
                                       {/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.listMessages)}</div>*/}
                                     </div>
 
-                                    
+                                    {/*}
                                       <div className="options">
                                             <ButtonGroup size="sm">
-                                              {/*<Button variant="outline-secondary">1</Button>
-                                              <Button variant="outline-secondary">2</Button>*/}
-
                                               <DropdownButton variant="outline-secondary" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-                                                {new VarStorage().getManualResponse() &&
-                                                  <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
-                                                }
-
-                                                <Dropdown.Item eventKey="2">Menu</Dropdown.Item>
-                                                <Dropdown.Item eventKey="3" onClick={this.closeSession}>Close Sesion</Dropdown.Item>
+                                                
 
                                               </DropdownButton>
 
                                             </ButtonGroup>
-                                      </div>
+                                      </div>*/}
                                     
 
                                     
-                                    <Form noValidate validated={this.state.validated} onSubmit={this._handleSend}>
+                                    <Form className="form-chat-send" noValidate validated={this.state.validated} onSubmit={this._handleSend}>
                                         <div className="contentSend">
                                           <Form.Group  controlId="sendMessage">
                                             <InputGroup>
@@ -643,10 +636,28 @@ export default class Login extends Component {
                                                 <Form.Label >Message</Form.Label>
 
                                                 <InputGroup.Append className="btnSend">
-                                                  <Button size="lg" type="submit" variant="outline-secondary">Send</Button>
+                                                  <Button size="lg" type="submit" variant="outline-secondary"><Icon.ArrowReturnLeft className="ml-4" size={23}/></Button>
                                                 </InputGroup.Append>
                                             </InputGroup>
                                           </Form.Group>
+                                        </div>
+
+                                        <div className="options dropdown-options-3p">
+                                            <DropdownButton
+                                                menuAlign="right"
+                                                title="..."
+                                                id="dropdown-menu"
+                                              >
+
+                                                {new VarStorage().getManualResponse() &&
+                                                  <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
+                                                }
+
+                                                <Dropdown.Item eventKey="2">Menu</Dropdown.Item>
+
+                                                <Dropdown.Divider />
+                                                <Dropdown.Item eventKey="3" onClick={this.closeSession}>Close Sesion</Dropdown.Item>
+                                              </DropdownButton>
                                         </div>
                                     </Form>
                               </div>

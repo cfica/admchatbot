@@ -75,7 +75,7 @@ body {
 	border-bottom: none;
 	border-left: none;
 	border-right: none;
-	border-top: solid 1px #593096;
+	/*border-top: solid 1px #593096;*/
 	height: 50px;
 	padding-top: 20px;
 }
@@ -417,7 +417,6 @@ body {
 	right: 60px;
 }
 
-
 .contentResponse .contentMessageChat .contentUser .options-response{
 	font-size: 40px !important;
 	position: absolute;
@@ -428,3 +427,9 @@ body {
 	line-height: 12px;
 	cursor: pointer;
 }
+
+
+.form-chat-send .btn.btn-outline-secondary.btn-lg{
+	color: #593096;
+}
+

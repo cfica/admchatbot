@@ -450,7 +450,19 @@ export class Helper extends Component{
                               }*/}
 
                               <span className="_created">{moment(this.formatDate(item._created)).fromNow()}</span>
-                              <span className="options-response">...</span>
+                              <span className="options-response">
+                                  <DropdownButton
+                                      menuAlign="right"
+                                      title="..."
+                                      id="dropdown-menu-align-right"
+                                    >
+                                      <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+                                      <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
+                                      <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
+                                      <Dropdown.Divider />
+                                      <Dropdown.Item eventKey="4">Separated link</Dropdown.Item>
+                                    </DropdownButton>
+                              </span>
                          </div>
 
                          <div className="contentMsg">
@@ -522,5 +534,132 @@ export class Helper extends Component{
 
       _validation(_value, _validation){
         return new Validation()._validation(_value, _validation);
+      }
+
+
+
+      getInput(
+        _name,
+        _onchage,
+        _label,
+        _isRequired = null,
+        _value = null,
+        _placeholder = null,
+        _textInfo = null
+      ){
+        return (
+            <Form.Group controlId={"input"+_name}>
+                <Form.Control required = {_isRequired == true ? true : false} size="lg" type="text" value={_value} name={_name} onChange={_onchage} placeholder={_placeholder} />
+                <Form.Label className={_isRequired == true ? 'input-required' : ''}>{_label}</Form.Label>
+                
+                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+
+              {_textInfo &&
+                <Form.Text className="text-muted">
+                  {_textInfo}
+                </Form.Text>
+              }
+            </Form.Group>
+        );
+      }
+
+      getTextarea(
+        _name,
+        _onchage,
+        _label,
+        _isRequired = null,
+        _value = null,
+        _placeholder = null,
+        _textInfo = null,
+        _row = 1
+      ){
+        return(
+          <Form.Group controlId={"inputTextArea"+_name}>
+              <Form.Control size="lg" required = {_isRequired == true ? true : false} as="textarea" name={_name} value={_value} onChange={_onchage} placeholder={_placeholder} rows={_row} />
+              
+              <Form.Label className={_isRequired == true ? 'input-required' : ''}>{_label}</Form.Label>
+
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+
+              {_textInfo &&
+                <Form.Text className="text-muted">
+                  {_textInfo}
+                </Form.Text>
+              }
+          </Form.Group>
+        );
+      }
+
+
+      getInputFile(
+        _name,
+        _onchage,
+        _label,
+        _isRequired = null,
+        _value = null,
+        _textInfo = null
+      ){
+        return (
+          <Form.Group controlId={"inputFile"+_name}>
+            <Form.File custom>
+              <Form.File.Input size="lg" accept="image/x-png,image/jpeg" name={_name} required = {_isRequired == true ? true : false} onChange={_onchage} />
+                <Form.File.Label size="lg" className={_isRequired == true ? 'input-required' : ''}  data-browse={_label}>{_value}</Form.File.Label>
+
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+            </Form.File>
+
+            {_textInfo &&
+              <Form.Text className="text-muted">
+                {_textInfo}
+              </Form.Text>
+            }
+          </Form.Group>
+        );
+      }
+
+
+      getInputSelect(
+        _name,
+        _onchage,
+        _label,
+        _isRequired = null,
+        _value = null,
+        _textInfo = null,
+        list = null,
+        _onlyFormControl = null
+      ){
+        if(_onlyFormControl){
+            return (
+              <Form.Control size="lg" required = {_isRequired == true ? true : false} name={_name} as="select" defaultValue={'Select'} value={_value} onChange={_onchage}>
+                  <option value="">Select</option>
+                  {list.map((item, i) => 
+                    <option key={i} value={item.value}>{item.label}</option>
+                  )}
+              </Form.Control>
+            );
+        }else{
+            return (
+              <Form.Group  controlId="formBasicResponse">
+                  <Form.Control size="lg" required = {_isRequired == true ? true : false} name={_name} as="select" defaultValue={'Select'} value={_value} onChange={_onchage}>
+                      <option value="">Select</option>
+                      {list.map((item, i) => 
+                        <option key={i} value={item.value}>{item.label}</option>
+                      )}
+                  </Form.Control>
+
+                  <Form.Label className={_isRequired == true ? 'input-required' : ''}>{_label}</Form.Label>
+                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+                  {_textInfo &&
+                    <Form.Text className="text-muted">
+                      {_textInfo}
+                    </Form.Text>
+                  }
+              </Form.Group>
+          );
+        }
       }
 }
