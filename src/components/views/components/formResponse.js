@@ -3,6 +3,7 @@ import {Modal,Button,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGrou
 import {InputsTypeForm} from './componentsUtils';
 import {Helper} from './helper';
 import config from 'react-global-configuration';
+import * as Icon from 'react-bootstrap-icons';
 
 export default class  FormResponse extends Component {
   		constructor(props) {
@@ -109,6 +110,31 @@ export default class  FormResponse extends Component {
 				 <div>
 				        
 
+				 		<Form.Row className="titleFragment">
+						    <Col xs={6}><h2>Add inputs to Form</h2></Col>
+						    <Col xs={6} className="buttons options">
+						        {new Helper().getInputSelect(
+									'typeinput',
+							        this.changeTypeInput,
+							        'Type Input',
+							        false,
+							        this.state.changeTypeInput,
+							        null,
+							        [
+							        	{value: 'Text', label: 'Text'},
+							        	{value: 'Multi-Choices', label: 'Multi Choices'},
+							        	{value: 'Single-Option-Choice', label: 'Single Option Choice'},
+							        	{value: 'TextArea', label: 'TextArea'},
+							        	{value: 'Schedule', label: 'Schedule'}
+							        ],
+							        true,
+							        'sm'
+								)}
+						    	<Button variant="Link" onClick={this.btnAddInput} size="lg"><Icon.Plus size={35}/></Button>
+						    </Col>
+						</Form.Row>
+
+
 						<InputsTypeForm 
 							inputList={this.state.inputs} 
 							inputChange={this.inputChange} 
@@ -117,33 +143,7 @@ export default class  FormResponse extends Component {
 							id = {this.props.id}
 						/>
 
-						<div className="contentInputsResponseForm addInputType">
-							    <Form.Group  controlId="formBasic">
-									<InputGroup className="mb-3">
-									    {new Helper().getInputSelect(
-											'typeinput',
-									        this.changeTypeInput,
-									        'Type Input',
-									        false,
-									        this.state.changeTypeInput,
-									        null,
-									        [
-									        	{value: 'Text', label: 'Text'},
-									        	{value: 'Multi-Choices', label: 'Multi Choices'},
-									        	{value: 'Single-Option-Choice', label: 'Single Option Choice'},
-									        	{value: 'TextArea', label: 'TextArea'},
-									        	{value: 'Schedule', label: 'Schedule'}
-									        ],
-									        true
-										)}
 
-									    <Form.Label >Select Input</Form.Label>
-									    <InputGroup.Append>
-									      <Button size="sm" onClick={this.btnAddInput} variant="outline-secondary">Add Input</Button>
-									    </InputGroup.Append>
-									</InputGroup>
-				                 </Form.Group>
-						</div>
 
 
 						{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.state.inputs)}</div>*/}

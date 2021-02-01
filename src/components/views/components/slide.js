@@ -3,6 +3,7 @@ import {Modal,Button,Table,Carousel,ToggleButtonGroup,ListGroup,ToggleButton,For
 import axios from 'axios';
 import config from 'react-global-configuration';
 import {Helper} from './helper';
+import * as Icon from 'react-bootstrap-icons';
 
 export class GetSlide extends Component {
 	constructor(props) {
@@ -115,74 +116,82 @@ export class Slide extends Component {
 				return (
 				  	<div>
 				  	   
-			  	    	<div>
+			  	    	<Form.Row>
+			  	    		<Col xs={12}>
+								{new Helper().getTextarea(
+									'response',
+							        this.handleChangeMessage,
+							        'Enter Response comment',
+							        true,
+							        this.state.inputMessage,
+							        'Enter Response comment'
+								)}
+							</Col>
+			  	    	</Form.Row>
 
-							{new Helper().getTextarea(
-								'response',
-						        this.handleChangeMessage,
-						        'Enter Response comment',
-						        true,
-						        this.state.inputMessage,
-						        'Enter Response comment'
-							)}
-
-			  	    	</div>
+			  	    	<Form.Row className="titleFragment">
+						    <Col xs={6}><h2>Add Slider</h2></Col>
+						    <Col xs={6} className="buttons">
+						    	<Button variant="Link"  onClick={this.add} size="lg"><Icon.Plus size={30}/></Button>
+						    </Col>
+						</Form.Row>
 				  	    
 
 				  	    {this.state.collect.items.map((x, i) => {
 					  		return(
-					  			<Row key={i}>
-									<Col xs={5}>
+						  			<Form.Row key={i}>
+										<Col xs={6}>
 
-										{new Helper().getInputFile(
-   											'imageFile',
-									        e => this.handleFileChange(e, i),
-									        'Choose File',
-									        true,
-									        this.state.collect.items[i]['namefile'],
-									        '*IMPORTANT: Images must be optimized for mobile devices only.'
-   										)}
+											{new Helper().getInputFile(
+	   											'imageFile',
+										        e => this.handleFileChange(e, i),
+										        'Choose File',
+										        true,
+										        this.state.collect.items[i]['namefile'],
+										        '*IMPORTANT: Images must be optimized for mobile devices only.'
+	   										)}
 
-								    </Col>
+									    </Col>
 
-								   	{/*<Col xs={2}>
-										<Form.Group controlId="formDescription">
-										    <Form.Control required type="text" value={x.inputTitle} name="title" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Title" />
-										    <Form.Label>Title</Form.Label>
-										    
-										    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-											<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-										</Form.Group>
-								    </Col>
+									   	{/*<Col xs={2}>
+											<Form.Group controlId="formDescription">
+											    <Form.Control required type="text" value={x.inputTitle} name="title" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Title" />
+											    <Form.Label>Title</Form.Label>
+											    
+											    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+												<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+											</Form.Group>
+									    </Col>
 
-								    <Col xs={3}>
-										<Form.Group controlId="formDescription">
-										    <Form.Control required type="text" value={x.inputDescription} name="description" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Description" />
-										    <Form.Label>Description Text</Form.Label>
-										    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-											<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-										</Form.Group>
-								    </Col>*/}
+									    <Col xs={3}>
+											<Form.Group controlId="formDescription">
+											    <Form.Control required type="text" value={x.inputDescription} name="description" onChange={e => this.handleInputChange(e, i)} placeholder="Enter Description" />
+											    <Form.Label>Description Text</Form.Label>
+											    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+												<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
+											</Form.Group>
+									    </Col>*/}
 
 
-								    <Col xs={6}>
-   										{new Helper().getInput(
-   											'link',
-									        e => this.handleInputChange(e, i),
-									        'Link Image',
-									        true,
-									        x.inputLink,
-									        'Link'
-   										)}
-								    </Col>
+									    <Col xs={5}>
+	   										{new Helper().getInput(
+	   											'link',
+										        e => this.handleInputChange(e, i),
+										        'Link Image',
+										        true,
+										        x.inputLink,
+										        'Link'
+	   										)}
+									    </Col>
 
-								    <Col xs={1}>
-								    	<Button variant="outline-primary" onClick={this.add} size="lg">+</Button>{' '}
-								    	{i > 0 &&
-								    		<Button variant="outline-secondary" onClick={(event) => this.del(i)} size="lg">-</Button>
-								    	}
-								    </Col>
-								</Row>
+									    <Col xs={1}>
+									    	
+									    	{i > 0 &&
+									    		<Button variant="outline-secondary" onClick={(event) => this.del(i)} size="lg">-</Button>
+									    	}
+
+									    </Col>
+									</Form.Row>
 					  		);
 						})}
 						<div className="line"></div>

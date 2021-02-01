@@ -629,11 +629,12 @@ export class Helper extends Component{
         _value = null,
         _textInfo = null,
         list = null,
-        _onlyFormControl = null
+        _onlyFormControl = null,
+        _size = 'lg'
       ){
         if(_onlyFormControl){
             return (
-              <Form.Control size="lg" required = {_isRequired == true ? true : false} name={_name} as="select" defaultValue={'Select'} value={_value} onChange={_onchage}>
+              <Form.Control size={_size} required = {_isRequired == true ? true : false} name={_name} as="select" defaultValue={'Select'} value={_value} onChange={_onchage}>
                   <option value="">Select</option>
                   {list.map((item, i) => 
                     <option key={i} value={item.value}>{item.label}</option>
@@ -643,7 +644,7 @@ export class Helper extends Component{
         }else{
             return (
               <Form.Group  controlId="formBasicResponse">
-                  <Form.Control size="lg" required = {_isRequired == true ? true : false} name={_name} as="select" defaultValue={'Select'} value={_value} onChange={_onchage}>
+                  <Form.Control size={_size} required = {_isRequired == true ? true : false} name={_name} as="select" defaultValue={'Select'} value={_value} onChange={_onchage}>
                       <option value="">Select</option>
                       {list.map((item, i) => 
                         <option key={i} value={item.value}>{item.label}</option>

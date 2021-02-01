@@ -10,6 +10,7 @@ import FormResponse from './formResponse';
 import {Slide} from './slide';
 import Preview from './preview';
 import {Helper} from './helper';
+import * as moment from 'moment';
 
 export default class ModalToLearn extends Component {
   		constructor(props) {
@@ -28,7 +29,7 @@ export default class ModalToLearn extends Component {
 		      showModal : true,
 		      //searchTerm : "",
 		      resultFiler: [],
-		      searchResults : [],
+		      //searchResults : [],
 		      showFilterInput: false,
 		      valuePattern : _valueInputAddPattern,
 		      valuePatternHidden: '',
@@ -54,7 +55,8 @@ export default class ModalToLearn extends Component {
 		      	{value: 'Single-option', label: 'Yes/No'},
 		      	{value: 'Multiple-choices', label: 'Multiple choices'},
 		      	{value: 'Data-Set', label: 'Data Set'}
-		      ]
+		      ],
+		      listMessages: []
 		    };
 		}
 
@@ -80,6 +82,8 @@ export default class ModalToLearn extends Component {
 		    	this.setState({valuePattern : ''});
 				this.setState({listPatternsAdd : _items});
 				this.setState({valuePatternHidden : _items});
+				/*##*/
+				this.setMessagePreview(this.state.listPatternsAdd[(this.state.listPatternsAdd.length - 1)], '_req', 'Text');
 			}
 		}
 		
@@ -148,7 +152,52 @@ export default class ModalToLearn extends Component {
 		    	this.setState({valueResponseText: ''});
 				this.setState({listResponseTextAdd : _items});
 				this.setState({valueResponseTextHidden : _items});
+
+				this.setMessagePreview(this.state.valueResponseText, '_res', 'Text');
+
 			}
+		}
+
+
+		setMessagePreview(_value, _type, _type_resp, status = null){
+			/*##*/
+			var _item = {
+	         	_id: '',
+		        type : _type,
+		        msg : _value, 
+		        type_resp: _type_resp, 
+		        status: status,
+		        'user_name': _type == '_req' ? 'You' : 'Belisa',
+		        _created: moment().format('YYYY-MM-DD H:mm:ss')
+	        };
+			var __items = this.state.listMessages;
+			var _items1 = __items;
+			var _create = true;
+	
+			__items.forEach(function(el, index){
+				//console.log(el);
+				if(el.type_resp == 'Html' && _type_resp == 'Html'){
+					_items1[index] = _item;
+					_create = false;
+				}
+
+				if(el.type_resp == 'Form' && _type_resp == 'Form'){
+					_items1[index] = _item;
+					_create = false;
+				}
+
+				if(el.type_resp == 'Slide' && _type_resp == 'Slide'){
+					_items1[index] = _item;
+					_create = false;
+				}
+			});
+
+			if(_create){
+				_items1.push(_item);
+			}
+
+			this.setState({listMessages: _items1});
+			console.log(this.state.listMessages);
 		}
 
 		/*SUBMIT FORM*/
@@ -227,7 +276,7 @@ export default class ModalToLearn extends Component {
 			    	_this.setState({valuePatternHidden : ''});
 			    	_this.setState({listResponseTextAdd : []});
 			    	_this.setState({listPatternsAdd : []});
-			    	_this.setState({searchResults : []});
+			    	//_this.setState({searchResults : []});
 			    	_this.setState({showResponseType : ''});
 			    	_this.setState({valueResponseTextHidden : ''});
 			    	form.reset();
@@ -239,20 +288,26 @@ export default class ModalToLearn extends Component {
 		    }
 		}
 
-		handleChangeValueHtmlCode = (code) => {
+		dataHtml = (code) => {
 			this.setState({responseTypeHtml: code});
+			if(code.length > 0){
+				this.setMessagePreview(code, '_res', 'Html');
+			}
 		}
 
 		dataForm = (data) =>{
 			this.setState({valuesDataForm: data});
+			
+			if(data.actionForm.length > 0 && data.textDescription.length > 0 && data.inputs.length > 0){
+				this.setMessagePreview(data, '_res', 'Form', 'Init');
+			}	
 		}
-
-		//getDataForm(){
-		//	return this.state.valuesDataForm;
-		//}
 
 		dataSlide = (data) =>{
 			this.setState({valueDataSlide: data});
+			if(data.textResponse.length > 0 && data.items.length > 0){
+				//this.setMessagePreview(data, '_res', 'Slide');
+			}
 		}
 
 		_handleSelectClient = (event) =>{
@@ -285,34 +340,6 @@ export default class ModalToLearn extends Component {
 						        <Modal.Body>
 
 						                <Tabs defaultActiveKey="pattern" transition={false} id="noanim-tab-example">
-										  {/*<Tab eventKey="tag" title="1) Tag">
-											    	<div>&nbsp;</div>
-											    	
-											    	<Form.Row>
-								                        <Col xs={4}>
-										                    <Form.Group  controlId="formBasicTag">
-													            <Form.Control required size="sm" type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search Tag" />
-													            <Form.Label >Tag Name</Form.Label>
-													            {this.state.showFilterInput &&
-													                <div className="contFilterList">
-													                	<ListGroup variant="flush">
-													                    	{this.state.searchResults.map(item => (
-																	          <ListGroup.Item action href="#link1">{item}</ListGroup.Item>
-																	        ))}
-																		</ListGroup>
-													                </div>
-													            }
-
-													            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-													            <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
-													            <Form.Text className="text-muted">
-													              This tag must be unique. Example, hello_how_are_you
-													            </Form.Text>
-													        </Form.Group>
-													    </Col>
-												    </Form.Row>
-										  </Tab>*/}
-
 
 										  <Tab eventKey="pattern" title={
 										  	<React.Fragment>
@@ -356,9 +383,16 @@ export default class ModalToLearn extends Component {
 												                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
 												                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
 
-												                    <ul className="listItemsSelected">
-																        {this.state.listPatternsAdd.map((li, i) => <li key={i}><h4><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></h4></li>)}
-												                    </ul>
+									
+
+												                    <ListGroup className="listgroup-m">
+															              {this.state.listPatternsAdd.map((li, i) => {
+																				  return(
+																				  		<ListGroup.Item key={i}>{li} <a href="#" className="close" itemID = {i}><span>x</span></a></ListGroup.Item>
+																				  );
+																		  })} 
+																	</ListGroup>
+
 
 												                    <Form.Text className="text-muted">
 												                      Possible questions that the user will ask through the chat.
@@ -366,14 +400,15 @@ export default class ModalToLearn extends Component {
 												                 </Form.Group>
 												        </Col>
 
-												        <Col xs={1}></Col>
-												        <Col xs={3}>
-											         		<Preview 
-											         		    messageClient={this.state.listPatternsAdd[(this.state.listPatternsAdd.length - 1)]} 
-											         		    valueCode={this.state.responseTypeHtml}
-											         		    listOptions={this.state.listOptionsMChoices}
-											         		/>
-											         	</Col>
+												       
+												        {this.state.listMessages.length > 0 &&
+												         	<Col xs={4}>
+												         		<Preview listMessages = {this.state.listMessages} />
+												         	</Col>
+												        }
+
+
+
 												    </Form.Row>
 										  </Tab>
 										 
@@ -420,9 +455,15 @@ export default class ModalToLearn extends Component {
 																						{this.state.valueResponseTextHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
 															                    		{this.state.valueResponseTextHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
 
-																	                    <ul className="listItemsSelected">
-																					        {this.state.listResponseTextAdd.map((li, i) => <li key={i}><h4><Badge variant="secondary">{li} <a href="#" itemID = {i}>x</a></Badge></h4></li>)}
-																	                    </ul>
+
+																	                    <ListGroup className="listgroup-m">
+																				              {this.state.listResponseTextAdd.map((li, i) => {
+																									  return(
+																									  		<ListGroup.Item key={i}>{li} <a href="#" className="close" itemID = {i}><span>x</span></a></ListGroup.Item>
+																									  );
+																							  })} 
+																						</ListGroup>
+
 																                </Form.Group>
 																			</div>
 																	    </Col>
@@ -436,7 +477,7 @@ export default class ModalToLearn extends Component {
 															        	<Col xs={12}>
 															                <div className="formTypeResponse">						
 																				<EditorHtml 
-																				   onChangeValue={this.handleChangeValueHtmlCode} 
+																				   onChangeValue={this.dataHtml} 
 																				   valueCode={this.state.responseTypeHtml}
 																				/>
 																			</div>
@@ -478,14 +519,12 @@ export default class ModalToLearn extends Component {
 															    }
 												         	</Col>
 
-												         	<Col xs={1}></Col>
-												         	<Col xs={3}>
-												         		<Preview 
-												         		    textDescription={this.state.valueResponseText} 
-												         		    valueCode={this.state.responseTypeHtml}
-												         		    listOptions={this.state.listOptionsMChoices}
-												         		/>
-												         	</Col>
+												         	
+												         	{this.state.listMessages.length > 0 &&
+													         	<Col xs={4}>
+													         		<Preview listMessages = {this.state.listMessages} />
+													         	</Col>
+													        }
 												         	
 													    </Form.Row>
 										  </Tab>
@@ -503,7 +542,7 @@ export default class ModalToLearn extends Component {
 						            Close
 						          </Button>
 						          <Button variant="primary" type="submit">
-						            Save Changes
+						            Save Pattern
 						          </Button>
 						        </Modal.Footer>
 				        </Form>

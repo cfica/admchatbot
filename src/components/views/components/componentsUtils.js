@@ -913,6 +913,7 @@ export class ResponseForm extends Component {
 			<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitForm}>
 		    	<p className="message">{this.props.messageData.textDescription}</p>
 		    	<div className="divide"></div>
+		    	
 		    	<div className="contentForm">
 		    		{this.props.messageData.inputs.map((x, i) => {
 		    			if(x.type == 'Text'){
@@ -926,8 +927,7 @@ export class ResponseForm extends Component {
 											    			   validation={x.validation} 
 											    			   value={x.value} onChange={e => this.handleInputChange(e, i)}/>
 											    <Form.Label >{x.label}</Form.Label>
-											    {/*<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-												<Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>*/}
+											   
 											</Form.Group>
 									</Col>
 								</Form.Row>
@@ -1003,11 +1003,12 @@ export class ResponseForm extends Component {
 		    				);
 		    			}
 		    		})}
-		    		{/*<div style={{ marginTop: 20 }}>{JSON.stringify(this.props.messageData)}</div>*/}
+		    		
 		    		<div className="contentFormButton">
 			    		<Button size="sm" variant="outline-secondary" type="submit">Save</Button>
 			    	</div>
 		    	</div>
+		    	
 		    </Form>
 		);
 	}
@@ -1065,7 +1066,7 @@ export class InputsTypeForm extends Component {
 									return (
 										<div key={i}>
 											<Form.Row>
-												<Col xs={12}><h5 className="title">{i+1}) Input Text</h5></Col>
+												<Col xs={12}><h5 className="title"><Badge variant="secondary">{i+1}</Badge> Input Text</h5></Col>
 											</Form.Row>
 											
 											<Form.Row key={i} className="inputText content">
@@ -1074,10 +1075,10 @@ export class InputsTypeForm extends Component {
 														{new Helper().getInput(
 															'label',
 													        e => this.handleInputChange(e, i),
-													        'Name Input',
+													        'Input tag name',
 													        true,
 													        x.label,
-													        'Name Input'
+													        'Input tag name'
 														)}
 
 												</Col>
@@ -1113,14 +1114,14 @@ export class InputsTypeForm extends Component {
 									return (
 										<div key={i}>
 											<Form.Row>
-												<Col xs={12}><h5 className="title">{i+1}) TextArea</h5></Col>
+												<Col xs={12}><h5 className="title"><Badge variant="secondary">{i+1}</Badge> TextArea</h5></Col>
 											</Form.Row>
 											
 											<Form.Row key={i} className="inputTextArea content">
 												<Col xs={11}>
 
 														{new Helper().getTextarea(
-															'inputtextarea',
+															'label',
 													        e => this.handleInputChange(e, i),
 													        'Name Input',
 													        true,
@@ -1143,7 +1144,7 @@ export class InputsTypeForm extends Component {
 										<div key={i}>
 										    
 										    <Form.Row>
-												<Col xs={12}><h5 className="title">{i+1})  {x.type.replace('-',' ')}</h5></Col>
+												<Col xs={12}><h5 className="title"><Badge variant="secondary">{i+1}</Badge>  {x.type.replace('-',' ')}</h5></Col>
 											</Form.Row>
 
 											<Form.Row className="content">
@@ -1186,13 +1187,15 @@ export class InputsTypeForm extends Component {
 
 										    <Form.Row className="inputMultiChoiseItems content">
 										        <Col xs={10} className="items">
-										            <div>
-										            	{this.props.inputList[i].items.map((x, i1) => {
-											            	return (
-											            		<p key={i1}>{i1+1}) {x.label}</p>
-											            	);
-											            })} 
-										            </div> 
+
+										            <ListGroup className="listgroup-sm">
+											              {this.props.inputList[i].items.map((x, i1) => {
+																  return(
+																  		<ListGroup.Item key={i1}>{x.label} <a href="#" className="close" itemID = {i1}><span>x</span></a></ListGroup.Item>
+																  );
+														  })} 
+													</ListGroup>
+
 										        </Col>
 										    </Form.Row>
 										</div>
@@ -1202,7 +1205,7 @@ export class InputsTypeForm extends Component {
 									return (
 										<div key={i}>
 												<Form.Row>
-													<Col xs={12}><h5 className="title">{i+1}) Schedule</h5></Col>
+													<Col xs={12}><h5 className="title"><Badge variant="secondary">{i+1}</Badge> Schedule</h5></Col>
 												</Form.Row>	
 
 												<Form.Row className="content">
@@ -1220,8 +1223,8 @@ export class InputsTypeForm extends Component {
 													        null,
 													        [
 													         {value: 'Manually', label: 'Manually'},
-													         {value: 'CSV', label: 'CSV'},
-													         {value: 'Integration', label: 'Integration'}
+													         /*{value: 'CSV', label: 'CSV'},
+													         {value: 'Integration', label: 'Integration'}*/
 													        ]
 				   										)}
 
