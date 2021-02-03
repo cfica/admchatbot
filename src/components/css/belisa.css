@@ -1,10 +1,9 @@
-body {
+body, div, span, p, h1, h2, h3, h4, h5 {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 0.9rem;
 }
 
 #chat{
@@ -177,7 +176,7 @@ body {
 
 
 .contentResponse .contentMessageChat .contentMsg{
-
+	padding: 10px
 }
 
 .contentResponse .contentMessageClient{
@@ -365,7 +364,7 @@ body {
 
 .btn.btn-secondary.is-invalid{
 	border: solid 1px #dc3545;
-	color: #dc3545
+	color: #dc3545;
 }
 
 .inputGroup.is-invalid{
@@ -375,7 +374,8 @@ body {
 
 .is-invalid{
 	color: #dc3545 !important;
-	font-size: 0.8rem !important
+	font-size: 0.8rem !important;
+	padding: 10px
 }
 
 .contentResponse .contentMessageChat .list-group .list-group-item{

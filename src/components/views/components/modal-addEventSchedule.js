@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import {Modal,Button,Table,Badge,ToggleButtonGroup,ListGroup,ToggleButton,Form,Col,InputGroup,FormControl,Row} from 'react-bootstrap';
-import {BlockHours} from './componentsUtils';
 import * as moment from 'moment';
+import {Helper} from './helper';
 
 export default class ModalAddEventSchedule extends Component {
   		constructor(props) {
@@ -81,30 +81,38 @@ export default class ModalAddEventSchedule extends Component {
 
 							  		<Form.Row>
 							  			<Col xs={12}>
-										   <Form.Group  controlId="formAddOption">
-											    <FormControl required value={this.state.nameEvent}
-											      onChange={(e) => this.setState({nameEvent: e.target.value})} 
-											      name="description"  size="sm"
-											      placeholder="Add Event"
-											      aria-label="Add Event"
-											      aria-describedby="basic-addon2"
-											    />
-											    <Form.Label>Event</Form.Label>
-							                 </Form.Group>
+										  
+
+							                {new Helper().getInput(
+												'nameEvent',
+										        (e) => this.setState({nameEvent: e.target.value}),
+										        'Event Name',
+										        true,
+										        this.state.nameEvent,
+										        'Event Name'
+											)}
+
 										</Col>
 							  		</Form.Row>
 
 
 							  		<Form.Row>
 							  			<Col xs={12} >
-									   		<Form.Control required placeholder="Repeat event" onChange={this.changeRepeatEvent} size="sm" name="value" as="select">
-										        <option value="">Repeat event...</option>
-										        <option value="Only-chosen-day">Only chosen day</option>
-										        <option value="Everyday">Everyday</option>
-										        <option value="Monday-to-Friday">Monday to Friday</option>
-										        <option value="Monday-to-Saturday">Monday to Saturday</option>
-										    </Form.Control>
-										    <Form.Label>Repeat event...</Form.Label>
+
+							  			    {new Helper().getInputSelect(
+	   											'repeatEvent',
+										        this.changeRepeatEvent,
+										        'Repeat event',
+										        true,
+										        this.state.repeatEvent,
+										        null,
+										        [
+										         {value: 'Only-chosen-day', label: 'Only chosen day'},
+										         {value: 'Everyday', label: 'Everyday'},
+										         {value: 'Monday-to-Friday', label: 'Monday to Friday'},
+										         {value: 'Monday-to-Saturday', label: 'Monday to Saturday'}
+										        ]
+	   										)}
 									   </Col>
 							  		</Form.Row>
 
@@ -113,9 +121,20 @@ export default class ModalAddEventSchedule extends Component {
 							  			<Col xs={12} >
 							  			   <div className="divide"></div>
 									  	   <div className="blockHourTo">
-										  	   <BlockHours returnHour={this.returnHourFrom}/>
+										  	    {new Helper().getInputHour(
+										  	   		'hourFrom',
+										  	   		(e) => this.setState({hourFrom: e.target.value}),
+										  	   		true,
+										  	   		this.state.hourFrom
+										  	   	)}
 										  	   <h3 className="to">to</h3>
-										  	   <BlockHours returnHour={this.returnHourTo}/>
+										  	   {new Helper().getInputHour(
+										  	   		'hourTo',
+										  	   		(e) => this.setState({hourTo: e.target.value}),
+										  	   		true,
+										  	   		this.state.hourTo
+										  	   	)}
+
 									  	   </div>
 										</Col>
 							  		</Form.Row>

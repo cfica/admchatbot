@@ -799,7 +799,7 @@ a[data-toggle="collapse"] {
    font-weight: 700;
    padding-left: 10px;
    padding-right: 10px;
-   /*background-color: #f2f2f2*/
+   background-color: #f4f2f2
 }
 
 .react-datepicker-wrapper .form-control{
@@ -892,7 +892,7 @@ a[data-toggle="collapse"] {
 }
 
 .hoursBlock #formHour{
-  width: 45px;
+  width: 65px;
   border: none;
 }
 
@@ -1690,4 +1690,8 @@ div._created{
   border:none;
   margin-bottom: 4px;
   background-color: #f4f2f2
+}
+
+.input-required span{
+  color: red
 }

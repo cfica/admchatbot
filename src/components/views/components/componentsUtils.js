@@ -270,67 +270,6 @@ export class CarouselSchedule extends Component{
 
 
 
-export class BlockHours extends Component{
-	constructor(props) {
-	    super(props);
-	    this.state = {
-	    	hour: '06',
-	    	min: '00'
-	    };
-	}
-
-	selectHour = (event) =>{
-		this.setState({hour: event.target.value});
-		this.props.returnHour(event.target.value+':'+this.state.min);
-	}
-
-	selectMin = (event) =>{
-		this.setState({min: event.target.value});
-		this.props.returnHour(this.state.hour+':'+event.target.value);
-	}
-
-	render(){
-       return(
-       	  <div className="hoursBlock">
-       	    <Form.Group controlId="formHour">
-	       	  	<Form.Control required placeholder="Choose Hour" onChange={this.selectHour} size="sm" name="hour" as="select">
-			        <option value="">--</option>
-			        <option value="06">06</option>
-			        <option value="07">07</option>
-			        <option value="08">08</option>
-			        <option value="09">09</option>
-			        <option value="10">10</option>
-			        <option value="11">11</option>
-			        <option value="12">12</option>
-			        <option value="13">13</option>
-			        <option value="14">14</option>
-			        <option value="15">15</option>
-			        <option value="16">16</option>
-			        <option value="17">17</option>
-			        <option value="18">18</option>
-			        <option value="19">19</option>
-			        <option value="20">20</option>
-			        <option value="21">21</option>
-			        <option value="22">22</option>
-			        <option value="23">23</option>
-			    </Form.Control>
-			     <Form.Label>H</Form.Label>
-			</Form.Group>
-			    <h2>:</h2>
-			<Form.Group controlId="formMin">
-			    <Form.Control required placeholder="Choose Min" onChange={this.selectMin} size="sm" name="min" as="select">
-			        <option value="">--</option>
-			        <option value="00">00</option>
-			        <option value="15">15</option>
-			        <option value="30">30</option>
-			        <option value="45">45</option>
-			    </Form.Control>
-			    <Form.Label>M</Form.Label>
-		    </Form.Group>
-       	  </div>
-       );
-	}
-}
 
 
 export class CalendarSchedule extends Component{
@@ -881,7 +820,7 @@ export class ResponseForm extends Component {
 				}
 			});*/
 			
-			var _dataPost = {"form" : _dataPost1, '_id': this.props.messageId};
+			var _dataPost = {"form" : _dataPost1, '_id': this.props.messageId.$oid};
 		    async function _requestApi(_this, _dataPost, _form){
 			    var _url = config.get('baseUrlApi')+'/api/v1/message-save-form';
 		        const res = await new Helper().postRequest(_url, _dataPost, 'front');

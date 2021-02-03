@@ -550,7 +550,12 @@ export class Helper extends Component{
         return (
             <Form.Group controlId={"input"+_name}>
                 <Form.Control required = {_isRequired == true ? true : false} size="lg" type="text" value={_value} name={_name} onChange={_onchage} placeholder={_placeholder} />
-                <Form.Label className={_isRequired == true ? 'input-required' : ''}>{_label}</Form.Label>
+                <Form.Label className={_isRequired == true ? 'input-required' : ''}>
+                  {_isRequired &&
+                    <span>*</span>
+                  }{' '}
+                  {_label}
+                </Form.Label>
                 
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
@@ -561,6 +566,34 @@ export class Helper extends Component{
                 </Form.Text>
               }
             </Form.Group>
+        );
+      }
+
+
+      getInputHour(
+        _name,
+        _onchage,
+        _isRequired = null,
+        _value = null
+      ){
+        return (
+            
+             <Form.Group className="hoursBlock" controlId={"formHour"+_name}>
+                <FormControl required = {_isRequired == true ? true : false} 
+                  value={_value}
+                  onChange={_onchage}
+                  name={_name}
+                  size="lg"
+                  placeholder="00:00"
+                  aria-label="00:00"
+                />
+                <Form.Label className={_isRequired == true ? 'input-required' : ''}>
+                  {_isRequired &&
+                    <span>*</span>
+                  }{' '}
+                  00:00
+                </Form.Label>
+             </Form.Group>
         );
       }
 
@@ -578,7 +611,12 @@ export class Helper extends Component{
           <Form.Group controlId={"inputTextArea"+_name}>
               <Form.Control size="lg" required = {_isRequired == true ? true : false} as="textarea" name={_name} value={_value} onChange={_onchage} placeholder={_placeholder} rows={_row} />
               
-              <Form.Label className={_isRequired == true ? 'input-required' : ''}>{_label}</Form.Label>
+              <Form.Label className={_isRequired == true ? 'input-required' : ''}>
+                {_isRequired &&
+                    <span>*</span>
+                }{' '}
+                {_label}
+              </Form.Label>
 
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
@@ -605,7 +643,12 @@ export class Helper extends Component{
           <Form.Group controlId={"inputFile"+_name}>
             <Form.File custom>
               <Form.File.Input size="lg" accept="image/x-png,image/jpeg" name={_name} required = {_isRequired == true ? true : false} onChange={_onchage} />
-                <Form.File.Label size="lg" className={_isRequired == true ? 'input-required' : ''}  data-browse={_label}>{_value}</Form.File.Label>
+                <Form.File.Label size="lg" className={_isRequired == true ? 'input-required' : ''}  data-browse={_label}>
+                    {_isRequired &&
+                      <span>*</span>
+                    }{' '}
+                    {_value}
+                </Form.File.Label>
 
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
@@ -651,7 +694,12 @@ export class Helper extends Component{
                       )}
                   </Form.Control>
 
-                  <Form.Label className={_isRequired == true ? 'input-required' : ''}>{_label}</Form.Label>
+                  <Form.Label className={_isRequired == true ? 'input-required' : ''}>
+                    {_isRequired &&
+                      <span>*</span>
+                    }{' '}
+                    {_label}
+                  </Form.Label>
                   <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   <Form.Control.Feedback type="invalid">Please enter a valid data.</Form.Control.Feedback>
                   {_textInfo &&
