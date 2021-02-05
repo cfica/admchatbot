@@ -1,4 +1,11 @@
-body, div, span, p, h1, h2, h3, h4, h5 {
+#fhgt45a4fgsl-block-chat div, 
+#fhgt45a4fgsl-block-chat span, 
+#fhgt45a4fgsl-block-chat p, 
+#fhgt45a4fgsl-block-chat h1, 
+#fhgt45a4fgsl-block-chat h2, 
+#fhgt45a4fgsl-block-chat h3, 
+#fhgt45a4fgsl-block-chat h4, 
+#fhgt45a4fgsl-block-chat h5 {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -129,10 +136,17 @@ body, div, span, p, h1, h2, h3, h4, h5 {
 	border: none;
 }
 
+
+/*
+parent content desktop height:600px
+contentResponse: 540px + 10px = 600px;
+*/
 .contentResponse{
 	overflow-y: auto;
 	background: #ffffff;
 	margin-bottom: 10px;
+	min-height: 540px;
+	height: 540px
 }
 
 .contentSend .btn-group-lg > .btn, .btn-lg{
@@ -235,42 +249,28 @@ body, div, span, p, h1, h2, h3, h4, h5 {
 
 @media only screen and (min-width: 768px) {
 	.contentResponse{
-		/* Firefox */
-		height: -moz-calc(100% - 107px);
-		/* WebKit */
+		/*height: -moz-calc(100% - 107px);
 		height: -webkit-calc(100% - 107px);
-		/* Opera */
 		height: -o-calc(100% - 107px);
-		/* Standard */
-		height: calc(100% - 107px);
+		height: calc(100% - 107px);*/
 	}
 }
 
 @media only screen and (max-width: 414px) {
-	.contentResponse{
-		/* Firefox */
+	/*.contentResponse{
 		height: -moz-calc(100% - 107px);
-		/* WebKit */
 		height: -webkit-calc(100% - 107px);
-		/* Opera */
 		height: -o-calc(100% - 107px);
-		/* Standard */
 		height: calc(100% - 107px);
-		/*padding-top: 40px*/
-	}
+	}*/
 }
 
 @media only screen and (max-width: 320px) {
 	.contentResponse{
-		/* Firefox */
-		height: -moz-calc(100% - 107px);
-		/* WebKit */
+		/*height: -moz-calc(100% - 107px);
 		height: -webkit-calc(100% - 107px);
-		/* Opera */
 		height: -o-calc(100% - 107px);
-		/* Standard */
-		height: calc(100% - 107px);
-		/*padding-top: 40px*/
+		height: calc(100% - 107px);*/
 	}
 }
 
@@ -431,5 +431,9 @@ body, div, span, p, h1, h2, h3, h4, h5 {
 
 .form-chat-send .btn.btn-outline-secondary.btn-lg{
 	color: #593096;
+}
+
+.form-chat-send{
+	height: 50px
 }
 

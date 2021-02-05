@@ -104,7 +104,7 @@ export class TopicForm extends Component {
    		    	_this.setState({textResponse: ''});
 		    	form.reset();
 		    	_this.hiddenModal();
-		    	_this.props.successTopic();
+		    	//_this.props.successTopic();
 		    })(this, _url, _dataPost, {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}, form);	
         }
 	}
@@ -280,7 +280,7 @@ export class TopicForm extends Component {
 																	    <Form.Control placeholder="Select Pattern" value={item.value} required as="select" onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}>
 																	        <option value="">Select Pattern</option>
 																	        {this.state.listTags.map((item, index) => 
-																	        	<option value={item._id}>{item.tag}</option>
+																	        	<option value={item._id}>{item._id}</option>
 																	        )}
 																	    </Form.Control>
 																	    <Form.Label>Select Pattern</Form.Label>

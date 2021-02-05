@@ -169,6 +169,7 @@ export default class Login extends Component {
 
 
   setMessage = (message) =>{
+    console.log(message);
     const _items = this.state.listMessages;
     const _newItems = _items;
 
@@ -274,6 +275,7 @@ export default class Login extends Component {
       const res = await new Helper().sendMessage(x.title, x.action, {id: x.value});
       if(typeof res.messages != "undefined"){
         //_this.setMessages(res.messages.items);
+        _this.setMessage(res.response);
       }
 
       if(x.action == "Contact" && new VarStorage().getManualResponse()){

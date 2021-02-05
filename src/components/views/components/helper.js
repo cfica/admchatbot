@@ -6,6 +6,7 @@ import {InputsTypeForm,ResponseForm,ResponseTopic,Validation} from './components
 import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, InputGroup, Collapse, ButtonGroup,ListGroup, Form,NavDropdown,FormControl,Container, Row, Col,Media,Jumbotron, Button, Breadcrumbs, Table} from 'react-bootstrap';
 import {GetSlide} from './slide';
 import {VarStorage} from './varsStorage';
+import Cleave from 'cleave.js/react';
 
 export class Helper extends Component{
     	constructor(props){
@@ -578,22 +579,34 @@ export class Helper extends Component{
       ){
         return (
             
-             <Form.Group className="hoursBlock" controlId={"formHour"+_name}>
-                <FormControl required = {_isRequired == true ? true : false} 
-                  value={_value}
-                  onChange={_onchage}
-                  name={_name}
-                  size="lg"
-                  placeholder="00:00"
-                  aria-label="00:00"
-                />
-                <Form.Label className={_isRequired == true ? 'input-required' : ''}>
-                  {_isRequired &&
-                    <span>*</span>
-                  }{' '}
-                  00:00
-                </Form.Label>
-             </Form.Group>
+               <div className="form-group hoursBlock" controlId={"formHour"+_name}>
+                  {/*<FormControl required = {_isRequired == true ? true : false} 
+                    value={_value}
+                    onKeyPress={_onchage}
+                    name={_name}
+                    size="lg"
+                    placeholder="00:00"
+                    aria-label="00:00"
+                  />*/}
+
+                  <Cleave 
+                    placeholder="00:00"
+                    required = {_isRequired == true ? true : false}
+                    name={_name}
+                    id={"formHour"+_name}
+                    aria-label="00:00"
+                    className="form-control form-control-lg"
+                    options={{time: true, timePattern: ['h', 'm']}}
+                    onChange={_onchage} 
+                  />
+
+                  <Form.Label  for={"formHour"+_name} className={_isRequired == true ? 'input-required' : ''}>
+                    {_isRequired &&
+                      <span>*</span>
+                    }{' '}
+                    00:00
+                  </Form.Label>
+               </div>
         );
       }
 

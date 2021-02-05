@@ -62,6 +62,14 @@ export default class ModalAddEventSchedule extends Component {
 			this.setState({hourTo: hour});
 		}
 
+		handleHourFrom = (event) =>{
+			this.setState({hourFrom: event.target.value});
+		}
+
+		handleHourTo =(event) =>{
+			this.setState({hourTo: event.target.value});
+		}
+
   		render() {
 				return (
 				  	<div className="modal-confirm">
@@ -123,14 +131,15 @@ export default class ModalAddEventSchedule extends Component {
 									  	   <div className="blockHourTo">
 										  	    {new Helper().getInputHour(
 										  	   		'hourFrom',
-										  	   		(e) => this.setState({hourFrom: e.target.value}),
+										  	   		this.handleHourFrom,
 										  	   		true,
 										  	   		this.state.hourFrom
 										  	   	)}
+
 										  	   <h3 className="to">to</h3>
 										  	   {new Helper().getInputHour(
 										  	   		'hourTo',
-										  	   		(e) => this.setState({hourTo: e.target.value}),
+										  	   		this.handleHourTo,
 										  	   		true,
 										  	   		this.state.hourTo
 										  	   	)}

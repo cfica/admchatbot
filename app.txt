@@ -1,0 +1,26 @@
+==============pendiente========================
+1.- Calificación de la respuesta
+2.- despliegue de formularios - admin
+3.- enviar respaldo de la conversación al email
+4.- Carga masiva de patrones(texto)
+5.- Revisión seguridad de API, login y seguridad de llaves (client_id, secret_id)
+6.- menú (topics) chat
+7.- Reportería miníma
+8.- Integración con API para enviar formulario
+9.- Plantillas de emails (validar cuales)
+10.- Asignación de chat a ejecutivos
+11.- reporteria de atención por ejecutivos, chat
+11.- Bloqueo/agregar patrón desde chat
+12.- Agrupar cuentas (clientes chat) por usuario
+13.- Medio de pago por plan(transferencia y activación manual)
+.- Dashboard
+
+
+
+
+
+- Integración a magento
+- Integración whatsap
+- aprendisaje automático IA
+- 
+

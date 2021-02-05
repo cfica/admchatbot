@@ -327,11 +327,11 @@ export default class RealTime extends Component {
 												    </Card.Header>
 
 												    <Accordion.Collapse eventKey={index}>
-												      <Card.Body>Hello! I'm the body
-												      	{/*<td>{item.name}</td>
-										                  	<td>{item.email}</td>
-										                  	<td>{item.telephone}</td>
-										                  	<td>{item._created}</td>*/}
+												      <Card.Body>
+												      		<p>{item.name}</p>
+										                  	<p>{item.email}</p>
+										                  	<p>{item.telephone}</p>
+										                  	<p>{item._created}</p>
 												      </Card.Body>
 												    </Accordion.Collapse>
 												</Card>

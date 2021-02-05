@@ -783,9 +783,9 @@ a[data-toggle="collapse"] {
 }
 
 .form-control {
-   /*border: 0;
+   border: 0;
    border-bottom: 1px solid #ced4da;
-   */
+   
    border-radius: 0px;
    font-family: inherit;
    /*width: 100%;
@@ -800,6 +800,10 @@ a[data-toggle="collapse"] {
    padding-left: 10px;
    padding-right: 10px;
    background-color: #f4f2f2
+}
+
+.form-control:focus{
+  border-color: #593096;
 }
 
 .react-datepicker-wrapper .form-control{
@@ -819,7 +823,8 @@ a[data-toggle="collapse"] {
    cursor: text;
    top: 9px;
    margin-left: 10px;
-   z-index: 3
+   z-index: 3;
+   background-color: transparent;
 }
 
 .form-label {
@@ -850,7 +855,8 @@ a[data-toggle="collapse"] {
    font-size: 0.7rem;
    /*color: #11998e;
    font-weight: 700;*/
-   margin-left: 10px
+   margin-left: 10px;
+   background-color: #fff
 }
 
 /* reset input */
@@ -1625,7 +1631,7 @@ div._created{
   /*height: 45px*/
   padding-bottom: 10px;
   padding-top: 10px;
-  padding-left: 10px
+  padding-left: 10px;
 }
 
 .fhgt45a4fgsl-cont-top-title{

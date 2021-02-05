@@ -105,8 +105,10 @@ export default class ModalToLearn extends Component {
 				this.setState({client: this.state.client});
 			}
 
-			if(this.props.id.length > 0){
-				this.getPattern(this.props.id);
+			if(typeof this.props.id != "undefined"){
+				if(this.props.id.length > 0){
+					this.getPattern(this.props.id);
+				}
 			}
 		}
 
