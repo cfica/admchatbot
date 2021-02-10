@@ -29,7 +29,8 @@
 
 #chat .form-control{
 	color: #220b44 !important;
-	font-weight: 500
+	font-weight: 500;
+	background-color: #fff
 }
 
 #chat .btn-outline-primary:hover{
@@ -188,13 +189,6 @@ contentResponse: 540px + 10px = 600px;
 	 width: 100%
 }
 
-
-.contentResponse .contentMessageChat .contentMsg{
-	padding: 10px
-}
-
-.contentResponse .contentMessageClient{
-}
 
 .contentResponse .contentMessageClient .content{
 	float: right;

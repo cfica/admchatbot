@@ -14,6 +14,7 @@
 12.- Agrupar cuentas (clientes chat) por usuario
 13.- Medio de pago por plan(transferencia y activación manual)
 .- Dashboard
+.- Carga base de patrones para todas las aplicaciones
 
 
 

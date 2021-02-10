@@ -46,8 +46,6 @@ export default class Login extends Component {
   }
 
   scrollToBottom() {
-    console.log(this.state.messagesEnd.current);
-
     if(this.state.messagesEnd.current != null){
       this.state.messagesEnd.current.scrollIntoView({"behavior": "smooth", 'block': "center", 'scrollMode': 'if-needed'});
     }
@@ -102,9 +100,6 @@ export default class Login extends Component {
       const init = this.props.location.query.init;
       this.getSettings(client_id, init);
       this.initSettings();
-      //this.loadMessages();
-
-
       this.scrollToBottom();
   }
 
@@ -114,7 +109,9 @@ export default class Login extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(typeof this.state.listMessages != "undefined" && typeof prevState.listMessages != "undefined"){
-      if(this.state.listMessages.length > prevState.listMessages.length){
+      //console.log(this.state.listMessages.length, '1');
+      //console.log(prevState.listMessages.length, '2');
+      if(this.state.listMessages.length == prevState.listMessages.length){
         this.scrollToBottom();
       }
     }

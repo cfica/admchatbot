@@ -5,6 +5,7 @@ import { Alert, Navbar, Nav, Tab, Modal, Accordion, Card, Badge, DropdownButton,
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import ModalToLearn from './components/modal-add-pattern';
+import ModalImportPatterns from './components/modalImportPatterns';
 import ModalToConfirm from './components/confirm';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
@@ -36,7 +37,8 @@ export default class BaseWords extends Component {
 	      logTraining: [],
 	      clients: [],
 	      validated: false,
-	      clientSelected: null
+	      clientSelected: null,
+	      showModalImportPattern: false
 	    };
 	}
 
@@ -172,6 +174,15 @@ export default class BaseWords extends Component {
 	    var connect = new ConnectionSSE().connectionSSEV2(this, _url, {});
 	}
 
+	handleShowModalImport = (event) =>{
+		this.setState({showModalImportPattern: true});
+	}
+
+	handleHiddenModalImport = (event) =>{
+		this.setState({showModalImportPattern: false});
+		this.loadPatterns();
+    }
+
 	/*handleTrain = (event) =>{
 		//alert('training chat..');
 		axios.get(config.get('baseUrlApi')+'/api/v1/train', 
@@ -219,7 +230,7 @@ export default class BaseWords extends Component {
 					</Form>
 
 
-					<Button variant="primary">Import Patterns</Button>{'  '}
+					<Button variant="primary" onClick={this.handleShowModalImport}>Import Patterns</Button>{'  '}
 
 					<Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
 					
@@ -227,6 +238,14 @@ export default class BaseWords extends Component {
 		            {this.state.showModalAddPattern && 
 		            	<ModalToLearn
 			        	 hiddenModal = {this.handleHiddenModalAddPattern} 
+			        	 patternSelected = {[]}
+			        	 id = {this.state.idPattern}
+			        	/>
+		            }
+
+		            {this.state.showModalImportPattern && 
+		            	<ModalImportPatterns
+			        	 hiddenModal = {this.handleHiddenModalImport} 
 			        	 patternSelected = {[]}
 			        	 id = {this.state.idPattern}
 			        	/>
