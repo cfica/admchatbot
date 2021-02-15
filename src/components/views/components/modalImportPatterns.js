@@ -60,7 +60,7 @@ export default class ModalImportPatterns extends Component {
 	    var _items = [];
 	    data.forEach(function(el, index){
 	    	//console.log(el);
-	    	if(el.data.length == 3){
+	    	if(el.data.length == 3 && !isNaN(el.data[0])){
 	    		_items.push({group: el.data[0], message: el.data[1], response: el.data[2]});
 	    	}
 	    });
@@ -109,7 +109,7 @@ export default class ModalImportPatterns extends Component {
         	);
         });
 
-        console.log(_finalItems);
+        //console.log(_finalItems);
         this.setState({patterns: _finalItems});
 	}
 
@@ -140,19 +140,21 @@ export default class ModalImportPatterns extends Component {
 	    }else{
 	    	this.setState({validated : false});
 
-	    	async function _requestApi(_this, form, _url){
-			    const res = await new Helper().postRequest(_url, {
-			    	client: _this.state.client,
-			    	items: _this.state.patterns,
-			    	import: 'patterns'
-			    }, 'back');
+	    	if(this.state.patterns.length > 0){
+		    	async function _requestApi(_this, form, _url){
+				    const res = await new Helper().postRequest(_url, {
+				    	client: _this.state.client,
+				    	items: _this.state.patterns,
+				    	import: 'patterns'
+				    }, 'back');
 
-		    	form.reset();
-		    	_this.closeModal();
+			    	form.reset();
+			    	_this.setState({patterns: []});
+			    	_this.closeModal();
+				}
+
+				_requestApi(this,form, config.get('baseUrlApi')+'/api/v1/import');
 			}
-
-			_requestApi(this,form, config.get('baseUrlApi')+'/api/v1/import');
-
 	    }
 	}
 

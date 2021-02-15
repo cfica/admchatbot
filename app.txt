@@ -1,10 +1,9 @@
-==============pendiente========================
+==============PENDIENTE========================
 1.- Calificación de la respuesta
 2.- despliegue de formularios - admin
 3.- enviar respaldo de la conversación al email
-4.- Carga masiva de patrones(texto)
-5.- Revisión seguridad de API, login y seguridad de llaves (client_id, secret_id)
-6.- menú (topics) chat
+5.- Revisión seguridad de API, login y seguridad de llaves (client_id, secret_id) (encritar en front)
+ 
 7.- Reportería miníma
 8.- Integración con API para enviar formulario
 9.- Plantillas de emails (validar cuales)
@@ -14,14 +13,20 @@
 12.- Agrupar cuentas (clientes chat) por usuario
 13.- Medio de pago por plan(transferencia y activación manual)
 .- Dashboard
-.- Carga base de patrones para todas las aplicaciones
+.- Carga base de patrones para todas las aplicaciones (general)
+- refresh token session
 
 
-
-
-
+==============FUTURO========================
 - Integración a magento
 - Integración whatsap
 - aprendisaje automático IA
 - 
 
+
+EN PROCESO:::
+6.- menú (topics) chat front (RESUELTO), FALTA VALIDACIÓN DE DATOS Y DESPLIEGUE DE PATRONES (NOMBRES / Tag)
+
+
+LISTO:::
+4.- Carga masiva de patrones(texto) -> *****OK******

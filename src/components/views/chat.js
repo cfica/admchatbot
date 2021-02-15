@@ -217,7 +217,7 @@ export default class Login extends Component {
 
 
 
-  _handleSend = (event)=>{
+  sendMessage = (event)=>{
     event.preventDefault();
     if(!new VarStorage().getToken()){
       this.setState({showContHello : true});
@@ -245,47 +245,44 @@ export default class Login extends Component {
     }  
   }
 
-
-  
-
-  sendAction = (x, index, indexParent) =>{
-    const _items = this.state.listMessages;
-    _items[indexParent]['msg'] = x.title;
-    _items[indexParent]['type_resp'] = 'Text';
-    //new VarStorage().setMessages(JSON.stringify(_items));
-
-    //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
-    this.setState({'listMessages' : _items});
-
-    const msg = {
-         _id: '',
-         type : '_req',
-         msg : x.title, 
-         type_resp: 'Text', 
-         status: '',
-         _created: moment().format('YYYY-MM-DD H:mm:ss')
-    };
-    this.setMessage(msg); //request
-
-    /**/
-    async function _requestApi(_this, x){
-      const res = await new Helper().sendMessage(x.title, x.action, {id: x.value});
+  menu = (event)=>{
+    async function _requestApi(_this){
+      const res = await new Helper().sendMessage('Topics', 'Topics');
       if(typeof res.messages != "undefined"){
-        //_this.setMessages(res.messages.items);
         _this.setMessage(res.response);
       }
+    }
+    _requestApi(this);
+  }
 
-      if(x.action == "Contact" && new VarStorage().getManualResponse()){
-        if(typeof res.options._id != "undefined"){
-          new VarStorage().setManualResponse(res.options._id);
+  sendAction = (x, index, indexParent) =>{
+      const msg = {
+           _id: '',
+           type : '_req',
+           msg : x.title, 
+           type_resp: 'Text', 
+           status: '',
+           _created: moment().format('YYYY-MM-DD H:mm:ss')
+      };
+      this.setMessage(msg); //request
+
+      async function _requestApi(_this, x){
+        const res = await new Helper().sendMessage(x.title, x.action, {id: x.value});
+        if(typeof res.messages != "undefined"){
+          _this.setMessage(res.response);
+        }
+
+        if(x.action == "Contact" && new VarStorage().getManualResponse()){
+          if(typeof res.options._id != "undefined"){
+            new VarStorage().setManualResponse(res.options._id);
+          }
+        }
+
+        if(new VarStorage().getManualResponse()){
+           _this.getMessagesSSE(_this, null, res.options._id);
         }
       }
-
-      if(new VarStorage().getManualResponse()){
-         _this.getMessagesSSE(_this, null, res.options._id);
-      }
-    }
-    _requestApi(this, x);
+      _requestApi(this, x);
   }
 
   sendRequestMessage(_message, _type = null, _options = null){
@@ -397,7 +394,6 @@ export default class Login extends Component {
                new VarStorage().delManualResponse();
 
                const _init = _this.state.confChatInit;
-               //_this.setMessage('_res', {type: 'Text', response: _init.welcome_message});
                 const msg = {
                      _id: '',
                      type : '_res',
@@ -408,26 +404,11 @@ export default class Login extends Component {
                 };
                 _this.setMessage(msg); //request
                 _this.syncMessage(_init.welcome_message);
-
-
-               //console.log(new VarStorage().getToken(), 'token 0');
             }
-
-            //console.log(new VarStorage().getToken(), 'token 1');
-
-            /*if(error.response){
-              if(error.response.status == 401){
-                this.setState({errorInit: true});
-              }
-            }*/
-
         }
         _requestApi(this);
       }
   }
-
-  
-
 
   /*#########EVENTS CHANGES###########*/
   inputChange = (e, index, indexParent) =>{
@@ -490,17 +471,14 @@ export default class Login extends Component {
   }
 
   successSentForm = (indexParent, code) => {
-
     const _items = this.state.listMessages;
     if(code == 200){
       _items[indexParent]['status'] = 'Form-Sent-Success';
     }else if(code == 423){
       _items[indexParent]['status'] = 'Form-Error-Saved';
     }
-
-    console.log(code);
-
-    console.log(_items);
+    //console.log(code);
+    //console.log(_items);
     /**/
     //new VarStorage().setMessages(JSON.stringify(_items));
     //this.setState({'listMessages' : JSON.parse(new VarStorage().getMessages())});
@@ -521,6 +499,14 @@ export default class Login extends Component {
       this.setState({showContChat : false});
   }
 
+  /*minimizeIframe = (event) =>{
+    //console.log(window.parent);
+    window.parent.document.body.getElementById('fhgt45a4fgsl-open-button').style.display = "none";
+    window.parent.document.body.getElementById('fhgt45a4fgsl-form-chat').style.display = "none";
+  }*/
+
+
+
   render() {
     //add recaptcha..
     if(this._vldParamasGet() == false){
@@ -533,6 +519,18 @@ export default class Login extends Component {
     }else if(this.state.errorInit == false){
         return (
               <div id="chat" >
+                      
+                      {/*<div class="fhgt45a4fgsl-cont-top">            
+                        <div class="fhgt45a4fgsl-cont-top-title"><h1>Asistente Virtual</h1></div>            
+                        <div class="fhgt45a4fgsl-cont-top-action"> 
+                          <ul>                
+                            <li><a href="#" class="minimize" onClick={this.minimizeIframe} title="Minimize"><span>-</span></a>
+                            </li>              
+                          </ul>            
+                        </div>          
+                      </div>*/}
+
+
                       {this.state.showContHello && 
                           <div className="contHello">
                                   <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
@@ -624,7 +622,7 @@ export default class Login extends Component {
                                     
 
                                     
-                                    <Form className="form-chat-send" noValidate validated={this.state.validated} onSubmit={this._handleSend}>
+                                    <Form className="form-chat-send" noValidate validated={this.state.validated} onSubmit={this.sendMessage}>
                                         <div className="contentSend">
                                           <Form.Group  controlId="sendMessage">
                                             <InputGroup>
@@ -652,7 +650,7 @@ export default class Login extends Component {
                                                   <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
                                                 }
 
-                                                <Dropdown.Item eventKey="2">Menu</Dropdown.Item>
+                                                <Dropdown.Item eventKey="2" onClick={this.menu}>Menu</Dropdown.Item>
 
                                                 <Dropdown.Divider />
                                                 <Dropdown.Item eventKey="3" onClick={this.closeSession}>Close Sesion</Dropdown.Item>

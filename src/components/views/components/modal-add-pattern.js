@@ -27,7 +27,7 @@ export default class ModalToLearn extends Component {
 	          user_id: localStorage.getItem('_id'),
 	          client: localStorage.getItem('client'),
 		      showModal : true,
-		      //searchTerm : "",
+		      searchTerm : "",
 		      resultFiler: [],
 		      //searchResults : [],
 		      showFilterInput: false,
@@ -117,11 +117,12 @@ export default class ModalToLearn extends Component {
 	    	async function _requestApi(_this,_id){
 			    var _url = config.get('baseUrlApi')+'/api/v1/pattern?id='+_id;
 			    const res = await new Helper().getRequest(_url,'back');
-			    console.log(res);
+			    //console.log(res);
 			    //_this.setState({clients: res.items});
 			    _this.setState({listPatternsAdd : res.data.sentence});
 			    _this.setState({selectTypeResponse: res.data.response.type});
 			    _this.setState({showResponseType : res.data.response.type});
+			    _this.setState({searchTerm : res.data.tag});
 
 			    if(_this.state.selectTypeResponse == 'Text'){
 			    	_this.setState({listResponseTextAdd : res.data.response.value});
@@ -227,7 +228,7 @@ export default class ModalToLearn extends Component {
 	   		    //console.log(this.state.client);
 	   		    var _dataPost = {
 	   		    	"client": this.state.client,
-	   		    	//"tag" : this.state.searchTerm,
+	   		    	"tag" : this.state.searchTerm,
 	   		    	"patterns" : this.state.listPatternsAdd,
 	   		    	"responses" : {"type" : this.state.showResponseType, "value" : _valueResponse}
 	   		    };
@@ -248,7 +249,7 @@ export default class ModalToLearn extends Component {
 	   		    	/***/
 	   		    	_dataPost = new FormData();
 	   		    	_dataPost.append('client', this.state.client);
-	   		    	//_dataPost.append('tag', this.state.searchTerm);
+	   		    	_dataPost.append('tag', this.state.searchTerm);
 	   		    	_dataPost.append('patterns', JSON.stringify(this.state.listPatternsAdd));
 	   		    	_dataPost.append('responses', JSON.stringify({"type" : this.state.showResponseType, "value" : this.state.valueDataSlide}));
 					this.state.valueDataSlide['items'].forEach((file, i) => {
@@ -274,7 +275,7 @@ export default class ModalToLearn extends Component {
 				    }
 
 				    _this.setState({errorSaveForm : false});
-			    	//_this.setState({searchTerm : ''});
+			    	_this.setState({searchTerm : ''});
 			    	_this.setState({valuePatternHidden : ''});
 			    	_this.setState({listResponseTextAdd : []});
 			    	_this.setState({listPatternsAdd : []});
@@ -332,7 +333,6 @@ export default class ModalToLearn extends Component {
   		render() {
 				return (
 				  	<div className="content-button">
-				      {/*<Button variant="secondary" onClick={handleShow}>Add Pattern</Button>*/}
 				      <Modal show={this.state.showModal} dialogClassName="modal-70w" onHide={this.handleClose}>
 				        <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitFormAddPattern}>
 						        <Modal.Header closeButton>
@@ -364,17 +364,28 @@ export default class ModalToLearn extends Component {
 													    </Form.Row>
 													}
 
-										            <div>&nbsp;</div>
+													<div>&nbsp;</div>
+													<Form.Row>
+												        <Col xs={8}>
+												        		{new Helper().getInput(
+																	'searchTerm',
+															        e => this.setState({'searchTerm': e.target.value}),
+															        'Pattern Name',
+															        true,
+															        this.state.searchTerm,
+															        'Pattern Name'
+																)}
+												        </Col>
+													</Form.Row>
+										            
+
+										           
 											    	<Form.Row>
 												        <Col xs={8}>
 												                <Form.Group  controlId="formBasicPatterns">
 																	<InputGroup className="mb-3">
-																	  
-
 																	    <Form.Control as="textarea"  value={this.state.valuePattern} onChange={this._handonchangeInputPattern} placeholder="Add Pattern" rows={1} />
-																	      
 																	    <Form.Label >Add Pattern</Form.Label>
-
 																	    <InputGroup.Append>
 																	      <Button size="sm" onClick={this._handleonAddPattern} variant="outline-secondary">Add</Button>
 																	    </InputGroup.Append>
@@ -384,9 +395,7 @@ export default class ModalToLearn extends Component {
 																	<FormControl required type="hidden" name="valuePattern" value={this.state.valuePatternHidden}/>
 												                    {this.state.valuePatternHidden.length > 0 && <div className="valid-feedback-custom">Looks good!</div>}
 												                    {this.state.valuePatternHidden === false && <div className="invalid-feedback-custom">*You must enter the least 1 item.</div>}
-
 									
-
 												                    <ListGroup className="listgroup-m">
 															              {this.state.listPatternsAdd.map((li, i) => {
 																				  return(
@@ -394,7 +403,6 @@ export default class ModalToLearn extends Component {
 																				  );
 																		  })} 
 																	</ListGroup>
-
 
 												                    <Form.Text className="text-muted">
 												                      Possible questions that the user will ask through the chat.

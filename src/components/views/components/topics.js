@@ -33,7 +33,8 @@ export class TopicForm extends Component {
 	    		{value: 'Pattern', title: 'Pattern'},
 	    		{value: 'Custom', title: 'Custom'},
 	    		{value: 'Contact', title: 'Contact'},
-	    	]
+	    	],
+	    	valueUseDefault: false
 	    };
 	}
 
@@ -67,7 +68,8 @@ export class TopicForm extends Component {
 	      _this.setState({name: res.name});
 	      _this.setState({textResponse: res.text_response});
 	      _this.setState({topics: res.topics});
-	      console.log(res);
+	      _this.setState({valueUseDefault: res.use_default});
+	      //console.log(res);
 	    })(this, _id);
 	}
 
@@ -84,7 +86,8 @@ export class TopicForm extends Component {
         		client: this.state.client,
         		name : this.state.name,
         		topics: this.state.topics,
-        		text_response : this.state.textResponse
+        		text_response : this.state.textResponse,
+        		use_default: this.state.valueUseDefault
             };
    		    
    		    if(this.props.idTopic){
@@ -153,6 +156,14 @@ export class TopicForm extends Component {
 		const items = this.state.topics;
 		items[index]['title'] = value;
 		this.setState({topics: items});
+	}
+
+	useDefault = () =>{
+		if(!this.state.valueUseDefault){
+			this.setState({valueUseDefault: true});
+		}else{
+			this.setState({valueUseDefault: false});
+		}
 	}
 
 	_handleSelectAction = (value, index)=>{
@@ -294,6 +305,26 @@ export class TopicForm extends Component {
 									            </Form.Row>
 								        )}
 							        </section>
+
+							        <Form.Group controlId="useDefault"
+							        style={
+							        	{
+							        		textAlign: 'right'
+							        	}
+							        }
+							        >
+									    <Form.Check 
+										    type="switch"
+										    custom
+										    id="useDefault"
+										    label="Use as default answer"
+										    onClick={this.useDefault}
+										    checked={this.state.valueUseDefault}
+										/>
+
+										{/*`Value is ${this.state.valueUseDefault}`*/}
+									</Form.Group>
+
 					    		</Col>
 						    </Form.Row>
 			        </Modal.Body>
