@@ -515,6 +515,10 @@ a[data-toggle="collapse"] {
   border: #ccc 1px solid;
 }
 
+.contentEditor.container_editor_area{
+  margin-top: 10px
+}
+
 
 /* App */
 .container__content {
@@ -1066,6 +1070,14 @@ a[data-toggle="collapse"] {
   font-size: 1.1rem;
   margin: 0px;
   color: #ccc
+}
+
+
+.titleFragment.lg h2{
+  font-size: 1.5rem;
+  margin: 0px;
+  color: #ccc;
+  padding-bottom: 5px
 }
 
 .titleFragment button{

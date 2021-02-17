@@ -13,6 +13,8 @@ import ModalToConfirm from './components/confirm';
 import {Users} from './components/users';
 import MessageResult from './components/message-result';
 import Topics from './components/topics';
+import Templates from './components/templates';
+import Integrations from './components/integrations';
 import config from 'react-global-configuration';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
@@ -239,17 +241,29 @@ export default class Settings extends Component {
 				          <Nav.Link eventKey="users">Users</Nav.Link>
 				        </Nav.Item>
 
-				        <Nav.Item>
-				          <Nav.Link eventKey="config">Configuration Chat</Nav.Link>
-				        </Nav.Item>
+				        
 
 				        <Nav.Item>
-				          <Nav.Link eventKey="topics">Topics</Nav.Link>
+				          <Nav.Link eventKey="topics">Topics Menu</Nav.Link>
+				        </Nav.Item>
+
+
+				        <Nav.Item>
+				          <Nav.Link eventKey="templates">Templates Email</Nav.Link>
+				        </Nav.Item>
+
+
+				        <Nav.Item>
+				          <Nav.Link eventKey="integrations">Integrations</Nav.Link>
 				        </Nav.Item>
 
 
 				        <Nav.Item>
 				          <Nav.Link eventKey="payments">Payments</Nav.Link>
+				        </Nav.Item>
+
+				        <Nav.Item>
+				          <Nav.Link eventKey="config">Configuration Chat</Nav.Link>
 				        </Nav.Item>
 
 				      </Nav>
@@ -336,7 +350,17 @@ export default class Settings extends Component {
 						        </section>
 					        </Tab.Pane>
 					    }
-				        
+
+
+					    <Tab.Pane eventKey="templates">
+					    	<Templates/>
+				        </Tab.Pane>
+
+				        <Tab.Pane eventKey="integrations">
+				           <Integrations/>
+				        </Tab.Pane>
+
+
 				        <Tab.Pane eventKey="users">
 				        	<Users/>
 				        </Tab.Pane>

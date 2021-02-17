@@ -63,10 +63,10 @@ export default class SidebarMenu extends Component {
 		            	<a href="/base-words"><Icon.FileText size={20}/> Words Base</a>
 		            </li>
 
-
+		            {/*
 		            <li>
 		            	<a href="/integrations"><Icon.Gear size={20}/> Integrations</a>
-		            </li>
+		            </li>*/}
 
 		            <li>
 		            	<a href="/reports"><Icon.GraphUp size={20}/> Report</a>

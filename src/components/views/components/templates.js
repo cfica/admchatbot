@@ -7,9 +7,12 @@ import {Validation, Status, RequestAsync} from './componentsUtils';
 import ModalToConfirm from './confirm';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
+//import { Editor } from 'react-draft-wysiwyg';
+//import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+//https://jpuri.github.io/react-draft-wysiwyg/#/docs?_k=jjqinp
+import EditorHtml from './editorHtml';
 
-
-export class TopicForm extends Component {
+export class TemplateForm extends Component {
 	constructor(props) {
 	    super(props);
 	    this.state = {
@@ -34,7 +37,9 @@ export class TopicForm extends Component {
 	    		{value: 'Custom', title: 'Custom'},
 	    		{value: 'Contact', title: 'Contact'},
 	    	],
-	    	valueUseDefault: false
+	    	valueUseDefault: false,
+	    	editorState: '',
+	    	responseTypeHtml: ''
 	    };
 	}
 
@@ -194,12 +199,27 @@ export class TopicForm extends Component {
 		this.setState({topics: items});
 	}
 
+
+	onEditorStateChange: Function = (editorState) => {
+	    this.setState({
+	      editorState,
+	    });
+	}
+
+
+	dataHtml = (code) => {
+		this.setState({responseTypeHtml: code});
+		if(code.length > 0){
+			//this.setMessagePreview(code, '_res', 'Html');
+		}
+	}
+
 	render(){
 		return(
 			<Modal show={this.state.showModal} onHide={this.handleClose} dialogClassName="modal-50w">
 		        <Form noValidate validated={this.state.validated} onSubmit={this.handleSave}>
 			        <Modal.Header closeButton>
-			          <Modal.Title>{this.props.idTopic ? 'Edit Topic' : 'Add Topic'}</Modal.Title>
+			          <Modal.Title>{this.props.idTopic ? 'Edit Template' : 'Add Template'}</Modal.Title>
 			        </Modal.Header>
 			        
 			        <Modal.Body>
@@ -220,111 +240,26 @@ export class TopicForm extends Component {
 
 					        		<Form.Group controlId="name">
 									    <FormControl required value={this.state.name} onChange={e => this.setState({name: e.target.value})} size="sm" placeholder="Fullname"/>
-									    <Form.Label>Name Topic</Form.Label>
+									    <Form.Label>Name Template</Form.Label>
 									</Form.Group>
 
 									<Form.Group controlId="text_response">
-									    <Form.Control 
-									                required 
-									                size="sm"
-									                name={'text_response'} 
-									    			placeholder="Text Reponse" 
-									    			value={this.state.textResponse} 
-									    			onChange={e => this.setState({textResponse: e.target.value})} 
-									    			as="textarea" rows="2"/>
-									    <Form.Label>Text Response</Form.Label>
-									</Form.Group>
+						               					
+											
+											{/*<Editor
+											  editorState={this.state.editorState}
+											  toolbarClassName="toolbarClassName"
+											  wrapperClassName="wrapperClassName"
+											  editorClassName="editorClassName"
+											  onEditorStateChange={this.onEditorStateChange}
+											/>*/}
 
-									<div className="divide"></div>
-
-									<Form.Row className="titleFragment">
-									    <Col xs={11}><h2>Topics</h2></Col>
-									    <Col xs={1} className="buttons">
-									    	<Button variant="Link" onClick={this.btnAddNewTopic} size="sm"><Icon.Plus size={25}/></Button>
-									    </Col>
-									</Form.Row>
-
-									<section className="contentFragment">
-									    {this.state.topics.map((item, index) => 
-												<Form.Row key={index}>
-												        <Col xs={4}>
-												        		<Form.Group controlId="formTitle">
-																    <Form.Control size="sm" 
-																    			  type="text" 
-																    			  value={item.title}
-																    			  required 
-																    			  onChange={e => this.onchageTitle(e.target.value, index)}
-																    			  placeholder="Enter Title" />
-																    <Form.Label>Title</Form.Label>
-																</Form.Group>
-												        </Col>
-
-												        <Col xs={3}>
-												        		<Form.Group required controlId="action" key={0}>
-																    <Form.Control placeholder="Type Topic" value={item.action} required as="select" onChange={e => this._handleSelectAction(e.target.value, index)}>
-																        <option value="">Select Action</option>
-																	    
-																	    {this.state.actionsTopic.map((item1, index1) => 
-																	    	<option key={index1} value={item1.value}>{item1.title}</option>
-																	    )}
-																    
-																    </Form.Control>
-																    <Form.Label>Select Action</Form.Label>
-																</Form.Group>
-												        </Col>
-
-
-												        <Col xs={4}>
-									            				{item.action == 'Link' && 
-											                		    <Form.Group controlId="formLink">
-																		    <Form.Control size="sm" 
-																		                  type="text" 
-																		                  value={item.value} 
-																    			  		  onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}
-																		                  placeholder="Enter Link" />
-																		    <Form.Label>Link (Url)</Form.Label>
-																		</Form.Group>
-											                	}
-
-											                	{item.action == 'Pattern' &&
-										                			<Form.Group required controlId="clients" key={0}>
-																	    <Form.Control placeholder="Select Pattern" value={item.value} required as="select" onChange={e => this.onchageValueTopic(e.target.value, index, item.action)}>
-																	        <option value="">Select Pattern</option>
-																	        {this.state.listTags.map((item, index) => 
-																	        	<option value={item._id}>{item.tag}</option>
-																	        )}
-																	    </Form.Control>
-																	    <Form.Label>Select Pattern</Form.Label>
-																	</Form.Group>
-											                	}
-									            		</Col>
-
-									            		<Col xs={1}>
-									            				<Button size="sm" onClick={(e) => this.deleteTopic(index)} variant="outline-secondary">X</Button>
-									            		</Col>
-									            </Form.Row>
-								        )}
-							        </section>
-
-							        <Form.Group controlId="useDefault"
-							        style={
-							        	{
-							        		textAlign: 'right'
-							        	}
-							        }
-							        >
-									    <Form.Check 
-										    type="switch"
-										    custom
-										    id="useDefault"
-										    label="Use as default answer"
-										    onClick={this.useDefault}
-										    checked={this.state.valueUseDefault}
+										<EditorHtml 
+										   onChangeValue={this.dataHtml} 
+										   valueCode={this.state.responseTypeHtml}
 										/>
 
-										{/*`Value is ${this.state.valueUseDefault}`*/}
 									</Form.Group>
-
 					    		</Col>
 						    </Form.Row>
 			        </Modal.Body>
@@ -344,7 +279,7 @@ export class TopicForm extends Component {
 }
 
 
-export default class Topics extends Component {
+export default class Templates extends Component {
   	constructor(props) {
 	    super(props);
 	    if(localStorage.getItem('tokenAdm') == undefined){
@@ -364,7 +299,7 @@ export default class Topics extends Component {
 	      items: [],
 	      pageCount: 10,
 	      offset: 0,
-	      showModalTopic: false,
+	      showModalTemplate: false,
 	      perPage: 10,
 
 	      idTopic: '',
@@ -393,21 +328,21 @@ export default class Topics extends Component {
 	}
 
 	successTopic = ()=>{
-		this.setState({showModalTopic : false});
+		this.setState({showModalTemplate : false});
 		this.loadTopics();
 	}
 
-	addTopic = (event)=>{
-		this.setState({showModalTopic : true});
+	addTemplate = (event)=>{
+		this.setState({showModalTemplate : true});
 		this.setState({idTopic : ''});
 	}
 
 	hiddenEditTopic = data => {
-	    this.setState({showModalTopic : false});
+	    this.setState({showModalTemplate : false});
 	};
 
 	edit(item){
-		this.setState({showModalTopic : true});
+		this.setState({showModalTemplate : true});
 		this.setState({idTopic : item._id.$oid});
 	}
 
@@ -435,77 +370,76 @@ export default class Topics extends Component {
 	}
   	
   	render() {
-		return (
-				<section>
-					<Form.Row className="titleFragment lg">
-					    <Col xs={6}><h2>Topics Menu</h2></Col>
-					    <Col xs={6} className="buttons options">
-					    	<Button variant="link" onClick={this.addTopic}>Add Topic <Icon.Plus size={25}/></Button>
-					    </Col>
-					</Form.Row>
+				return (
+							<section>
+								<Form.Row className="titleFragment lg">
+								    <Col xs={6}><h2>Templates Emails</h2></Col>
+								    <Col xs={6} className="buttons options">
+								    	<Button variant="link" onClick={this.addTemplate}>Add Template<Icon.Plus size={25}/></Button>
+								    </Col>
+								</Form.Row>
 
-					{this.state.showModalTopic && 
-			        	<TopicForm 
-			        		hiddenModal = {this.hiddenEditTopic} 
-			        		idTopic={this.state.idTopic}
-			        		success={this.successTopic}
-			        	/>
-			        }
+								{this.state.showModalTemplate && 
+						        	<TemplateForm 
+						        		hiddenModal = {this.hiddenEditTopic} 
+						        		idTopic={this.state.idTopic}
+						        		success={this.successTopic}
+						        	/>
+						        }
 
-					{this.state.showDeleteConfirm && 
-				        <ModalToConfirm
-		                   handleConfirm={this.deleteConfirm}
-		                   hiddenModal={this.deleteModalClose}
-		                   message="Are you sure to delete this item?"
-		                />
-		            }
+						        {this.state.showDeleteConfirm && 
+							        <ModalToConfirm
+					                   handleConfirm={this.deleteConfirm}
+					                   hiddenModal={this.deleteModalClose}
+					                   message="Are you sure to delete this item?"
+					                />
+					            }
 
 
+					            <Table id="itemTable" striped bordered hover size="sm">
+					              <thead>
+					                <tr>
+					                  <th>Name</th>
+					                  <th>Status</th>
+					                  <th>Created</th>
+					                  <th></th>
+					                </tr>
+					              </thead>
+					              <tbody>
+					                {this.state.items.map((item) => 
+					                  <tr key={item._id.$oid}>
+					                    <td>{item.name}</td>
+					                    <td>
+					                      <Status status={item.status}/>
+					                    </td>
+					                    <td>{item._created}</td>
+					                    <td>
+					                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
+												<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
+												{/*<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>*/}
+											</DropdownButton>
+					                    </td>
+					                 </tr>
+					                )}
+					              </tbody>
+					            </Table>
 
-		            <Table id="itemTable" striped bordered hover size="sm">
-		              <thead>
-		                <tr>
-		                  <th>Name</th>
-		                  <th>Status</th>
-		                  <th>Created</th>
-		                  <th></th>
-		                </tr>
-		              </thead>
-		              <tbody>
-		                {this.state.items.map((item) => 
-		                  <tr key={item._id.$oid}>
-		                    <td>{item.name}</td>
-		                    <td>
-		                      <Status status={item.status}/>
-		                    </td>
-		                    <td>{item._created}</td>
-		                    <td>
-		                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-									<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
-									<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>
-								</DropdownButton>
-		                    </td>
-		                 </tr>
-		                )}
-		              </tbody>
-		            </Table>
-
-		            <div id="react-paginate">
-			            <ReactPaginate
-				          previousLabel={'Anterior'}
-				          nextLabel={'Siguiente'}
-				          breakLabel={'...'}
-				          breakClassName={'break-me'}
-				          pageCount={this.state.pageCount}
-				          marginPagesDisplayed={2}
-				          pageRangeDisplayed={5}
-				          onPageChange={this.handlePageClick}
-				          containerClassName={'pagination'}
-				          subContainerClassName={'pages pagination'}
-				          activeClassName={'active'}
-				        />
-			        </div>
-		        </section>
-		);
+					            <div id="react-paginate">
+						            <ReactPaginate
+							          previousLabel={'Anterior'}
+							          nextLabel={'Siguiente'}
+							          breakLabel={'...'}
+							          breakClassName={'break-me'}
+							          pageCount={this.state.pageCount}
+							          marginPagesDisplayed={2}
+							          pageRangeDisplayed={5}
+							          onPageChange={this.handlePageClick}
+							          containerClassName={'pagination'}
+							          subContainerClassName={'pages pagination'}
+							          activeClassName={'active'}
+							        />
+						        </div>
+					        </section>
+		  );
   	}
 }

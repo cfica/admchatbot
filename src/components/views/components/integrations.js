@@ -344,7 +344,7 @@ export class TopicForm extends Component {
 }
 
 
-export default class Topics extends Component {
+export default class Integrations extends Component {
   	constructor(props) {
 	    super(props);
 	    if(localStorage.getItem('tokenAdm') == undefined){
@@ -435,77 +435,83 @@ export default class Topics extends Component {
 	}
   	
   	render() {
-		return (
-				<section>
-					<Form.Row className="titleFragment lg">
-					    <Col xs={6}><h2>Topics Menu</h2></Col>
-					    <Col xs={6} className="buttons options">
-					    	<Button variant="link" onClick={this.addTopic}>Add Topic <Icon.Plus size={25}/></Button>
-					    </Col>
-					</Form.Row>
+				return (
+							<section>
+							   
 
-					{this.state.showModalTopic && 
-			        	<TopicForm 
-			        		hiddenModal = {this.hiddenEditTopic} 
-			        		idTopic={this.state.idTopic}
-			        		success={this.successTopic}
-			        	/>
-			        }
+							    {/*<Jumbotron className="content-form jumbotron-sm jumbotron-right">
+						            
+						            {this.state.showModalTopic && 
+							        	<TopicForm 
+							        		hiddenModal = {this.hiddenEditTopic} 
+							        		idTopic={this.state.idTopic}
+							        		success={this.successTopic}
+							        	/>
+							        }
 
-					{this.state.showDeleteConfirm && 
-				        <ModalToConfirm
-		                   handleConfirm={this.deleteConfirm}
-		                   hiddenModal={this.deleteModalClose}
-		                   message="Are you sure to delete this item?"
-		                />
-		            }
+							        {this.state.showDeleteConfirm && 
+								        <ModalToConfirm
+						                   handleConfirm={this.deleteConfirm}
+						                   hiddenModal={this.deleteModalClose}
+						                   message="Are you sure to delete this item?"
+						                />
+						            }
+								</Jumbotron>*/}
 
 
+								<Form.Row className="titleFragment lg">
+								    <Col xs={6}><h2>Integrations</h2></Col>
+								    <Col xs={6} className="buttons options">
+								    	<Button variant="link" onClick={this.addTopic}>Add Topic <Icon.Plus size={25}/></Button>
+								    </Col>
+								</Form.Row>
 
-		            <Table id="itemTable" striped bordered hover size="sm">
-		              <thead>
-		                <tr>
-		                  <th>Name</th>
-		                  <th>Status</th>
-		                  <th>Created</th>
-		                  <th></th>
-		                </tr>
-		              </thead>
-		              <tbody>
-		                {this.state.items.map((item) => 
-		                  <tr key={item._id.$oid}>
-		                    <td>{item.name}</td>
-		                    <td>
-		                      <Status status={item.status}/>
-		                    </td>
-		                    <td>{item._created}</td>
-		                    <td>
-		                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-									<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
-									<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>
-								</DropdownButton>
-		                    </td>
-		                 </tr>
-		                )}
-		              </tbody>
-		            </Table>
 
-		            <div id="react-paginate">
-			            <ReactPaginate
-				          previousLabel={'Anterior'}
-				          nextLabel={'Siguiente'}
-				          breakLabel={'...'}
-				          breakClassName={'break-me'}
-				          pageCount={this.state.pageCount}
-				          marginPagesDisplayed={2}
-				          pageRangeDisplayed={5}
-				          onPageChange={this.handlePageClick}
-				          containerClassName={'pagination'}
-				          subContainerClassName={'pages pagination'}
-				          activeClassName={'active'}
-				        />
-			        </div>
-		        </section>
-		);
+
+					            <Table id="itemTable" striped bordered hover size="sm">
+					              <thead>
+					                <tr>
+					                  <th>Name</th>
+					                  <th>Status</th>
+					                  <th>Created</th>
+					                  <th></th>
+					                </tr>
+					              </thead>
+					              <tbody>
+					                {this.state.items.map((item) => 
+					                  <tr key={item._id.$oid}>
+					                    <td>{item.name}</td>
+					                    <td>
+					                      <Status status={item.status}/>
+					                    </td>
+					                    <td>{item._created}</td>
+					                    <td>
+					                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
+												<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
+												{/*<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>*/}
+											</DropdownButton>
+					                    </td>
+					                 </tr>
+					                )}
+					              </tbody>
+					            </Table>
+
+					            <div id="react-paginate">
+						            <ReactPaginate
+							          previousLabel={'Anterior'}
+							          nextLabel={'Siguiente'}
+							          breakLabel={'...'}
+							          breakClassName={'break-me'}
+							          pageCount={this.state.pageCount}
+							          marginPagesDisplayed={2}
+							          pageRangeDisplayed={5}
+							          onPageChange={this.handlePageClick}
+							          containerClassName={'pagination'}
+							          subContainerClassName={'pages pagination'}
+							          activeClassName={'active'}
+							        />
+						        </div>
+					        </section>
+		  );
   	}
 }
