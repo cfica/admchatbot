@@ -13,6 +13,7 @@ import {Helper} from './components/helper';
 import {VarStorage} from './components/varsStorage';
 import {ConnectionSSE} from './components/connectionSSE';
 import * as moment from 'moment';
+import * as Icon from 'react-bootstrap-icons';
 
 export default class BaseWords extends Component {
 	constructor(props) {
@@ -234,6 +235,10 @@ export default class BaseWords extends Component {
 
 					<Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
 					
+
+					
+
+
 		            
 		            {this.state.showModalAddPattern && 
 		            	<ModalToLearn

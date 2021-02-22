@@ -20,6 +20,7 @@ import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
 import {Validation, Status} from './components/componentsUtils';
 import {Helper} from './components/helper';
+import {SettingsChat} from './components/settingsChat';
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -41,20 +42,13 @@ export default class Settings extends Component {
 	      showModalClient: false,
 	      idPattern: 0,
 	      logTraining: [],
-	      showModalConfigChatbot : false,
 	      idClient: '',
 	      errorSaveForm: '',
 	      validated: false,
 	      clientSelected:'',
-	      welcomeMessage: '',
-	      welcomeMessageInit: '',
 	      headerMessage:'',
 	      checksSelected:[],
 	      client_id: '',
-	      settingChat: {
-	      	client_id: '',
-	      	config: ''
-	      },
 	      statusClient: {},
 	      deactivateClient: false
 	    };
@@ -82,11 +76,7 @@ export default class Settings extends Component {
 
 	componentDidMount(){
 	    this.loadClients();
-	    this.selectedCheckSettingChat = new Set();
-	    //console.log(this.state.client);
-        if(!this.state.scope){
-			this.loadSettingChat(this.state.client);
-		}
+	    
 	}
 
 	handleShowModalClient = (event)=>{
@@ -108,79 +98,6 @@ export default class Settings extends Component {
 
 	}
 
-	handleGenConfigChat(id){
-		//console.log(id);
-		this.setState({showModalConfigChatbot : true});	
-		this.setState({idClient : id});	
-	}
-
-	hiddenModalConfigChatbot = data =>{
-		this.setState({showModalConfigChatbot : false});
-	}
-
-	toggleCheckbox = event => {
-		var _value = event.target.value;
-		if (this.selectedCheckSettingChat.has(_value)) {
-		    this.selectedCheckSettingChat.delete(_value);
-		} else {
-		    this.selectedCheckSettingChat.add(_value);
-		}
-		//console.log(this.selectedCheckSettingChat);
-		this.setState({checksSelected: Array.from(this.selectedCheckSettingChat)});
-	}
-
-	handleSubmitSaveSettingsChat = (event)=>{
-		event.preventDefault();
-		const form = event.currentTarget;
-	    if (form.checkValidity() === false) {
-	      event.stopPropagation();
-	      this.setState({errorSaveForm : ''});
-	      this.setState({validated : true});
-	    }else{
-	    	this.setState({validated : false});
-   		    var _dataPost = {
-   		    	"client" : this.state.clientSelected,
-   		    	"welcome_message" : this.state.welcomeMessage,
-   		    	"header_message" : this.state.headerMessage,
-   		    	"start_conversation": this.state.checksSelected, 
-   		    	"welcome_message_init": this.state.welcomeMessageInit 
-   		    };
-   		    axios.post(
-   		    	config.get('baseUrlApi')+'/api/v1/add-setting-chat', 
-   		    	JSON.stringify(_dataPost), 
-   		    	{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
-   		    ).then(res => {
-		    	this.setState({errorSaveForm : false});
-		    	//form.reset();
-		    }).catch(function (error) {}).then(function () {});
-	    }
-	}
-
-	_handleSelectClient = (event) =>{
-		this.loadSettingChat(event.target.value);
-	}
-
-	loadSettingChat(_value){
-		axios.post(
-			config.get('baseUrlApi')+'/api/v1/chat-settings',
-			JSON.stringify({'client' : _value}), 
-			{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-	    .then(res => {
-	    	this.setState({welcomeMessage:''});
-	    	this.setState({headerMessage:''});
-	    	this.setState({checksSelected: []});
-	    	this.setState({client_id: ''});
-	        /**/
-	        this.setState({client_id: res.data.data.client_id});
-	    	this.setState({clientSelected: _value});
-	    	if(typeof res.data.data.config[0] != 'undefined'){ 
-	    		this.setState({welcomeMessage: res.data.data.config[0].welcome_message});
-	    		this.setState({headerMessage: res.data.data.config[0].header_message});
-	    		this.setState({checksSelected: res.data.data.config[0].start_conversation});
-	    		this.setState({welcomeMessageInit: res.data.data.config[0].welcome_message_init});
-	    	}
-	    });
-	}
 
 	changeStatusClient(id, status,event){
 		this.setState({deactivateClient: true});
@@ -370,140 +287,7 @@ export default class Settings extends Component {
 				        </Tab.Pane>
 
 				        <Tab.Pane eventKey="config">
-				            <h2>Chat settings</h2>
-	            			<p>Configure the chat display for your clients</p>
-	            			<hr className="divide"></hr>
-				        	<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitSaveSettingsChat}>
-				        	    <MessageResult status ={this.state.errorSaveForm}/>
-				        	    
-				        	    {this.state.scope && 
-					        	    <Form.Row>
-					        	        <Col xs={4}>
-							        		<Form.Group required controlId="exampleForm.ControlSelect1">
-											    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
-											        <option value="">Select</option>
-												    {this.state.items.map((item) => 
-												      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
-									                )}
-											    </Form.Control>
-											    <Form.Label>Client</Form.Label>
-											  </Form.Group>
-							    		</Col>
-								    </Form.Row>
-								}
-
-								{!this.state.scope &&
-									<Form.Row>
-					        	        <Col xs={4}>
-										     <Button variant="primary" onClick={(e) => this.handleGenConfigChat(this.state.client, e)}>Get code HEAD site</Button>
-									         <hr className="divide"></hr>
-									         {this.state.showModalConfigChatbot && 
-										        	<ModalConfChat
-										        	 hiddenModal = {this.hiddenModalConfigChatbot} 
-										        	 idSelected = {this.state.idClient}
-										        	/>
-										     }
-							         	</Col>
-								    </Form.Row>
-							    }
-
-							    
-
-				        	    <Form.Row>
-				        	        <Col xs={4}>
-				        				<Form.Group  controlId="formClientId">
-								            <Form.Control size="sm" required  readOnly type="text" value={this.state.client_id}  placeholder="Client Id" />
-								            <Form.Label  size="sm">Client ID</Form.Label>
-								        </Form.Group>
-							        </Col>
-							    </Form.Row>
-
-							    <hr className="divide"></hr>
-
-							    <Form.Row>
-				        	        <Col xs={4}>
-				        				<Form.Group  controlId="formWelcomeMessage">
-								            <Form.Control required size="sm" type="text" 
-								            			  value={this.state.welcomeMessage}  
-								            			  onChange={this.changeName = (event) => {this.setState({welcomeMessage: event.target.value})}}
-								            			  placeholder="Welcome message" />
-								            <Form.Label  size="sm">Welcome message start conversation</Form.Label>
-								        </Form.Group>
-							        </Col>
-							    </Form.Row>
-
-
-							    <hr className="divide"></hr>
-
-							    <Form.Row>
-				        	        <Col xs={4}>
-				        				<Form.Group  controlId="formWelcomeMessage">
-								            <Form.Control required size="sm" type="text" 
-								                          value={this.state.headerMessage}
-								                          onChange={this.changeName1 = (event) => {this.setState({headerMessage: event.target.value})}} 
-								                          placeholder="Header Message" />
-								            <Form.Label  size="sm">Header Message</Form.Label>
-								        </Form.Group>
-							        </Col>
-							    </Form.Row>
-
-
-							    <hr className="divide"></hr>
-
-							    <Form.Row>
-				        	        <Col xs={4}>
-				        				<Form.Group controlId="welcomeMessage">
-										    <Form.Control placeholder="Welcome Message" required as="textarea" value={this.state.welcomeMessageInit} 
-										     onChange={this.changeName1 = (event) => {this.setState({welcomeMessageInit: event.target.value})}} rows="3" />
-										    <Form.Label>Welcome Message</Form.Label>
-										</Form.Group>
-							        </Col>
-							    </Form.Row>
-
-
-							    <hr className="divide"></hr>
-
-
-							    <Form.Row>
-							    	<Form.Group  controlId="formClientId">
-									        <strong  size="sm">Request to start conversation</strong>
-									</Form.Group>
-								</Form.Row>
-							    <Form.Row>
-				        	        
-				        	        <Col xs={2}>
-				        				<Form.Check type="checkbox" disabled checked className="mb-2" label="Request Name"/>
-							        </Col>
-
-				        	        <Col xs={2}>
-				        				<Form.Check
-									        type="checkbox"
-									        className="mb-2"
-									        onChange={this.toggleCheckbox}
-									        label="Request Email"
-									        checked={this.state.checksSelected.includes('Email')}
-									        value="Email"
-									    />
-							        </Col>
-
-							        <Col xs={2}>
-				        				<Form.Check
-									        type="checkbox"
-									        className="mb-2"
-									        onChange={ this.toggleCheckbox}
-									        value="Telephone"
-									        checked={this.state.checksSelected.includes('Telephone')}
-									        label="Request Telephone"
-									    />
-							        </Col>
-							    </Form.Row>
-
-							    <hr className="divide"></hr>
-
-							    <Button variant="primary" type="submit">
-								    Save Settings
-								</Button>
-				        	</Form>
+				        	<SettingsChat/>
 				        </Tab.Pane>
 				      </Tab.Content>
 				    </Col>		    

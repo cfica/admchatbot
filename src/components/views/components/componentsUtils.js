@@ -20,11 +20,11 @@ export class Status extends Component{
 
 	render(){
        if(this.props.status == 'Active'){
-       		return (<h5><Badge variant="success">Active</Badge></h5>);
+       		return (<h5 className="status"><Badge variant="success">Active</Badge></h5>);
        }else if(this.props.status == 'Inactive'){
-       		return (<h5><Badge variant="secondary">Inactive</Badge></h5>);
+       		return (<h5 className="status"><Badge variant="secondary">Inactive</Badge></h5>);
        }else{
-       	   return (<h5><Badge variant="secondary">Inactive</Badge></h5>);
+       	   return (<h5 className="status"><Badge variant="secondary">Inactive</Badge></h5>);
        }
 	}
 }

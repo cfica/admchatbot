@@ -7,6 +7,8 @@ import {Validation, Status, RequestAsync} from './componentsUtils';
 import ModalToConfirm from './confirm';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
+import {Helper} from './helper';
+import * as moment from 'moment';
 
 
 export class TopicForm extends Component {
@@ -462,28 +464,28 @@ export default class Topics extends Component {
 
 
 
-		            <Table id="itemTable" striped bordered hover size="sm">
+		            <Table id="itemTable" striped bordered hover variant="dark" size="sm">
 		              <thead>
 		                <tr>
-		                  <th>Name</th>
-		                  <th>Status</th>
-		                  <th>Created</th>
-		                  <th></th>
+		                  <th>Topics</th>
 		                </tr>
 		              </thead>
 		              <tbody>
 		                {this.state.items.map((item) => 
 		                  <tr key={item._id.$oid}>
-		                    <td>{item.name}</td>
 		                    <td>
-		                      <Status status={item.status}/>
-		                    </td>
-		                    <td>{item._created}</td>
-		                    <td>
-		                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-									<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
-									<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>
-								</DropdownButton>
+		                      {item.name}{' '}<Status status={item.status}/>{' '}
+		                
+
+								<div className="table-options">
+		                    		<span className="_created">{moment(new Helper().formatDate(item._created)).fromNow()}</span>
+			                    	
+			                    	<DropdownButton className="btn-3p" as={ButtonGroup} title="...">
+										<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
+										<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>
+									</DropdownButton>
+			                    	
+		                    	</div>
 		                    </td>
 		                 </tr>
 		                )}

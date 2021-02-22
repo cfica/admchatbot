@@ -7,6 +7,8 @@ import {Validation, Status} from './componentsUtils';
 import ModalToConfirm from './confirm';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
+import {Helper} from './helper';
+import * as moment from 'moment';
 
 export class FormUser extends Component {
 	constructor(props) {
@@ -234,51 +236,51 @@ export class Users extends Component {
 	render() {
 		return (
 			<section>
-			    <Jumbotron className="content-form jumbotron-sm jumbotron-right">
-		            <Button variant="secondary" onClick={this.addUser}>Add User <Icon.Plus size={25}/></Button>
-		            {this.state.showAddUser && 
-			        	<FormUser 
-			        		hiddenModal = {this.hiddenAddUser} 
-			        		idUser={this.state.idUser}
-			        		success={this.successUser}
-			        	/>
-			        }
 
-			        {this.state.deactivateUser && 
-				        <ModalToConfirm
-		                   handleConfirm={this.deactivateUserConfirm}
-		                   hiddenModal={this.deactivateUserClose}
-		                   message="Are you sure to deactivate this item?"
-		                />
-		            }
-				</Jumbotron>
-	            <Table id="itemTable" striped bordered hover size="sm">
+				<Form.Row className="titleFragment lg">
+				    <Col xs={6}><h2>Users</h2></Col>
+				    <Col xs={6} className="buttons options">
+				    	<Button variant="link" onClick={this.addUser}>Add User <Icon.Plus size={25}/></Button>
+				    </Col>
+				</Form.Row>
+
+
+				{this.state.showAddUser && 
+		        	<FormUser 
+		        		hiddenModal = {this.hiddenAddUser} 
+		        		idUser={this.state.idUser}
+		        		success={this.successUser}
+		        	/>
+		        }
+
+		        {this.state.deactivateUser && 
+			        <ModalToConfirm
+	                   handleConfirm={this.deactivateUserConfirm}
+	                   hiddenModal={this.deactivateUserClose}
+	                   message="Are you sure to deactivate this item?"
+	                />
+	            }
+
+
+	            <Table id="itemTable" striped bordered variant="dark" hover size="sm">
 	              <thead>
 	                <tr>
-	                  <th>Fullname</th>
 	                  <th>Email</th>
-	                  <th>Status</th>
-	                  <th>Created</th>
-	                  <th></th>
 	                </tr>
 	              </thead>
 	              <tbody>
 	                {this.state.items.map((item) => 
 	                  <tr key={item._id.$oid}>
-	                    <td>{item.fullname}</td>
-	                    <td>{item.email}</td>
-	                    <td>
-	                      <Status status={item.status}/>
-	                    </td>
-	                    <td>{item._created}</td>
-	                    <td>
-	                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-								    <Dropdown.Item eventKey="1" onClick={(e) => this.editUser(item)}>Edit</Dropdown.Item>
+	                    <td>{item.email}{' '}<Status status={item.status}/>
+	                        <div className="table-options">
+	                    		<span className="_created">{moment(new Helper().formatDate(item._created)).fromNow()}</span>
+		                    	<DropdownButton className="btn-3p" as={ButtonGroup} title="...">
+									<Dropdown.Item eventKey="1" onClick={(e) => this.editUser(item)}>Edit</Dropdown.Item>
 								    {this.state.user_id != item._id.$oid && 
 								    	<Dropdown.Item eventKey="2" onClick={(e) => this.deactivateUser(item)}>Deactivate</Dropdown.Item>
 								    }
-
-							</DropdownButton>
+								</DropdownButton>
+	                    	</div>
 	                    </td>
 	                 </tr>
 	                )}

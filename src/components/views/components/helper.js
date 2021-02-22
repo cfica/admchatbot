@@ -384,11 +384,13 @@ export class Helper extends Component{
       }*/
 
 
-      messageClient(index, item, listMessages, messagesEndReq){
+      messageClient(index, item, listMessages, messagesEndReq, options = null){
         return (
           <div key={index} className={'contentMessageClient cont'+index} ref={index == (listMessages.length - 1)  ? messagesEndReq : ''}>
-              <div className="content">
+              
+              <div className="content"  style = {options != null ? options.style : {}}>
 
+              
                  <div className="contentUser">
                         <h5>{this.getName(item)}</h5>
 

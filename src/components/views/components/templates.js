@@ -7,10 +7,12 @@ import {Validation, Status, RequestAsync} from './componentsUtils';
 import ModalToConfirm from './confirm';
 import { browserHistory } from 'react-router';
 import * as Icon from 'react-bootstrap-icons';
+import {Helper} from './helper';
 //import { Editor } from 'react-draft-wysiwyg';
 //import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 //https://jpuri.github.io/react-draft-wysiwyg/#/docs?_k=jjqinp
 import EditorHtml from './editorHtml';
+import * as moment from 'moment';
 
 export class TemplateForm extends Component {
 	constructor(props) {
@@ -26,7 +28,7 @@ export class TemplateForm extends Component {
 	    	name: '',
 	    	clients: [],
 	    	typeUser: this.props.typeUser,
-	    	topicSelected: '',
+	    	itemSelected: '',
 	    	header: {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + localStorage.getItem('tokenAdm')}},
 	    	topics: [],
 	    	listTags: [],
@@ -39,8 +41,14 @@ export class TemplateForm extends Component {
 	    	],
 	    	valueUseDefault: false,
 	    	editorState: '',
-	    	responseTypeHtml: ''
+	    	responseTypeHtml: '',
+	    	subject: '',
+	    	showModalConfigChatbot : false,
 	    };
+	}
+
+	hiddenModalConfigChatbot = data =>{
+		this.setState({showModalConfigChatbot : false});
 	}
 
 	handleClose = () => {
@@ -57,23 +65,23 @@ export class TemplateForm extends Component {
 		 	this.loadClients();
 		}
 		
-		if(this.props.idTopic){
-	        this.loadTopic(this.props.idTopic);
-	        this.loadListTags();
+		if(this.props.idTemplate){
+	        this.loadTemplate(this.props.idTemplate);
+	        //this.loadListTags();
 		}
 	}
 
-	loadTopic(_id){
+	loadTemplate(_id){
 		(async function(_this, _id){
-	      var _url = '/api/v1/topic?_id='+_id;
-	      const res = await new RequestAsync().get(
+	      var _url = config.get('baseUrlApi')+'/api/v1/template?_id='+_id;
+	      const res = await new Helper().getRequest(
 	      	_url,
-	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      	'back'
 	      );
 	      _this.setState({name: res.name});
-	      _this.setState({textResponse: res.text_response});
-	      _this.setState({topics: res.topics});
+	      _this.setState({responseTypeHtml: res.template});
 	      _this.setState({valueUseDefault: res.use_default});
+	      _this.setState({subject: res.subject});
 	      //console.log(res);
 	    })(this, _id);
 	}
@@ -86,54 +94,66 @@ export class TemplateForm extends Component {
           this.setState({validated : true});
         }else{
         	this.setState({validated : false});
-        	var _url = '/api/v1/add-topic';
+        	var _url = config.get('baseUrlApi')+'/api/v1/template';
         	var _dataPost = {
         		client: this.state.client,
         		name : this.state.name,
-        		topics: this.state.topics,
-        		text_response : this.state.textResponse,
-        		use_default: this.state.valueUseDefault
+        		template : this.state.responseTypeHtml,
+        		use_default: this.state.valueUseDefault,
+        		subject: this.state.subject,
             };
    		    
-   		    if(this.props.idTopic){
-   		    	_url = '/api/v1/update/topic';
-   		    	_dataPost._id = this.props.idTopic;
+   		    if(this.props.idTemplate){
+   		    	_url = config.get('baseUrlApi')+'/api/v1/template';
+   		    	_dataPost._id = this.props.idTemplate;
    		    }
 
 
-   		    (async function(_this, _url, _dataPost, _header, form){
-			    const res = await new RequestAsync().post(
-			      	_url,
-			      	_dataPost,
-			      	_header
-			    );
-		        _this.setState({topics: []});
-   		    	_this.setState({name: ''});
-   		    	_this.setState({textResponse: ''});
-		    	form.reset();
+   		    (async function(_this, _url, _dataPost, form){
+			    if(typeof _dataPost._id != "undefined"){
+			    	const res = await new Helper().putRequest(
+				      	_url,
+				      	_dataPost,
+				      	'back'
+				    );
+			    }else{
+			    	const res = await new Helper().postRequest(
+				      	_url,
+				      	_dataPost,
+				      	'back'
+				    );
+			    }
+
+			    
+
+
+		        //_this.setState({topics: []});
+   		    	//_this.setState({name: ''});
+   		    	//_this.setState({textResponse: ''});
+		    	//form.reset();
 		    	_this.hiddenModal();
-		    	//_this.props.successTopic();
-		    })(this, _url, _dataPost, {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}, form);	
+		    	//_this.props.successTemplate();
+		    })(this, _url, _dataPost, form);	
         }
 	}
 
 	loadClients() {
 		(async function(_this){
 	      var _url = config.get('baseUrlApi')+'/api/v1/clients?limit=50&offset=0';
-	      const res = await new RequestAsync().get(
+	      const res = await new Helper().getRequest(
 	      	_url,
-	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      	'back'
 	      );
 	      _this.setState({clients: res.items});
 	    })(this);
 	}
 
-	loadListTags() {
+	/*loadListTags() {
 	    axios.get(config.get('baseUrlApi')+'/api/v1/list-tags', this.state.header)
 	    .then(res => {
 	    	this.setState({listTags: res.data.data.items});
 	    });
-	}
+	}*/
 
 	_handleSelectClient = (event) =>{
 		this.setState({client: event.target.value});
@@ -142,8 +162,8 @@ export class TemplateForm extends Component {
 		//}
 	}
 
-	_handleSelectTopic = (event) =>{
-		this.setState({topicSelected: event.target.value});
+	_handleSelectTemplate = (event) =>{
+		this.setState({itemSelected: event.target.value});
 	}
 
 	btnAddNewTopic = (event) =>{
@@ -216,10 +236,10 @@ export class TemplateForm extends Component {
 
 	render(){
 		return(
-			<Modal show={this.state.showModal} onHide={this.handleClose} dialogClassName="modal-50w">
+			<Modal show={this.state.showModal} onHide={this.handleClose} dialogClassName="modal-90w">
 		        <Form noValidate validated={this.state.validated} onSubmit={this.handleSave}>
 			        <Modal.Header closeButton>
-			          <Modal.Title>{this.props.idTopic ? 'Edit Template' : 'Add Template'}</Modal.Title>
+			          <Modal.Title>{this.props.idTemplate ? 'Edit Template' : 'Add Template'}</Modal.Title>
 			        </Modal.Header>
 			        
 			        <Modal.Body>
@@ -243,6 +263,11 @@ export class TemplateForm extends Component {
 									    <Form.Label>Name Template</Form.Label>
 									</Form.Group>
 
+									<Form.Group controlId="subject">
+									    <FormControl required value={this.state.subject} onChange={e => this.setState({subject: e.target.value})} size="sm" placeholder="Subject"/>
+									    <Form.Label>Subject</Form.Label>
+									</Form.Group>
+
 									<Form.Group controlId="text_response">
 						               					
 											
@@ -260,6 +285,26 @@ export class TemplateForm extends Component {
 										/>
 
 									</Form.Group>
+
+									<Form.Group controlId="useDefault"
+							        style={
+							        	{
+							        		textAlign: 'right'
+							        	}
+							        }
+							        >
+									    <Form.Check 
+										    type="switch"
+										    custom
+										    id="useDefault"
+										    label="Use as default answer"
+										    onClick={this.useDefault}
+										    checked={this.state.valueUseDefault}
+										/>
+
+										{/*`Value is ${this.state.valueUseDefault}`*/}
+									</Form.Group>
+
 					    		</Col>
 						    </Form.Row>
 			        </Modal.Body>
@@ -302,39 +347,39 @@ export default class Templates extends Component {
 	      showModalTemplate: false,
 	      perPage: 10,
 
-	      idTopic: '',
+	      idTemplate: '',
 	      showDeleteConfirm: false,
 	      detailTopic: {}
 	    };
 	}
 
 	componentDidMount(){
-		this.loadTopics();
+		this.loadTemplates();
 	}
 
 	handlePageClick = (e)=>{
 
 	}
 
-	loadTopics() {
+	loadTemplates() {
 		(async function(_this){
-	      var _url = '/api/v1/topics?limit='+_this.state.perPage+'&offset='+_this.state.offset;
-	      const res = await new RequestAsync().get(
+	      var _url = config.get('baseUrlApi')+'/api/v1/templates?limit='+_this.state.perPage+'&offset='+_this.state.offset;
+	      const res = await new Helper().getRequest(
 	      	_url,
-	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
+	      	'back'
 	      );
 	      _this.setState({items: res.items,pageCount: Math.ceil(res.total_count / res.limit)});
 	    })(this);
 	}
 
-	successTopic = ()=>{
+	successTemplate = ()=>{
 		this.setState({showModalTemplate : false});
-		this.loadTopics();
+		this.loadTemplates();
 	}
 
 	addTemplate = (event)=>{
 		this.setState({showModalTemplate : true});
-		this.setState({idTopic : ''});
+		this.setState({idTemplate : ''});
 	}
 
 	hiddenEditTopic = data => {
@@ -343,11 +388,12 @@ export default class Templates extends Component {
 
 	edit(item){
 		this.setState({showModalTemplate : true});
-		this.setState({idTopic : item._id.$oid});
+		this.setState({idTemplate : item._id.$oid});
 	}
 
+	/*
 	delete(item){
-		this.setState({idTopic : item._id.$oid});
+		this.setState({idTemplate : item._id.$oid});
 		this.setState({showDeleteConfirm : true});
 	}
 
@@ -355,11 +401,11 @@ export default class Templates extends Component {
 	    async function _requestApi(_this, x){
 	      const res = await new RequestAsync().post(
 	      	'/api/v1/delete/topic',
-	      	{_id: _this.state.idTopic},
+	      	{_id: _this.state.idTemplate},
 	      	{'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + _this.state.token}
 	      );
 	      if(typeof res.code != 'undefined'){
-	        if(res.code == 200) _this.loadTopics();
+	        if(res.code == 200) _this.loadTemplates();
 	      }
 	    }
 	    _requestApi(this);
@@ -367,7 +413,7 @@ export default class Templates extends Component {
 
 	deleteModalClose = ()=>{
 		this.setState({showDeleteConfirm : false});
-	}
+	}*/
   	
   	render() {
 				return (
@@ -382,8 +428,8 @@ export default class Templates extends Component {
 								{this.state.showModalTemplate && 
 						        	<TemplateForm 
 						        		hiddenModal = {this.hiddenEditTopic} 
-						        		idTopic={this.state.idTopic}
-						        		success={this.successTopic}
+						        		idTemplate={this.state.idTemplate}
+						        		success={this.successTemplate}
 						        	/>
 						        }
 
@@ -396,29 +442,36 @@ export default class Templates extends Component {
 					            }
 
 
-					            <Table id="itemTable" striped bordered hover size="sm">
+					            <Table id="itemTable" striped bordered hover variant="dark" size="sm">
 					              <thead>
-					                <tr>
-					                  <th>Name</th>
-					                  <th>Status</th>
-					                  <th>Created</th>
-					                  <th></th>
+					                <tr>					                 
+					                  <th>Template</th>
 					                </tr>
 					              </thead>
 					              <tbody>
 					                {this.state.items.map((item) => 
 					                  <tr key={item._id.$oid}>
-					                    <td>{item.name}</td>
-					                    <td>
-					                      <Status status={item.status}/>
+					                    
+					                   
+
+					                    <td
+					                     style = {
+					                     	{Display: 'flex'}
+					                     }
+					                    >{item.name}{' '}<Status status={item.status}/>{' '}
+
+
+					                    	<div className="table-options">
+					                    		<span className="_created">{moment(new Helper().formatDate(item._created)).fromNow()}</span>
+						                    	<DropdownButton className="btn-3p" as={ButtonGroup} title="...">
+													<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
+													{/*<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>*/}
+												</DropdownButton>
+					                    	</div>
+
 					                    </td>
-					                    <td>{item._created}</td>
-					                    <td>
-					                    	<DropdownButton as={ButtonGroup} title="Options" id="bg-vertical-dropdown-1">
-												<Dropdown.Item eventKey="1" onClick={(e) => this.edit(item)}>Edit</Dropdown.Item>
-												{/*<Dropdown.Item eventKey="2" onClick={(e) => this.delete(item)}>Delete</Dropdown.Item>*/}
-											</DropdownButton>
-					                    </td>
+					                    
+					                    
 					                 </tr>
 					                )}
 					              </tbody>

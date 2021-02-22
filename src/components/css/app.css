@@ -1558,11 +1558,7 @@ div._created{
   padding: 8px
 }
 
-.contentMessageChat .contentMsg .message{
-  font-size: 0.9rem;
-  color: #220b44;
-  padding: 8px
-}
+
 
 .contentResponse .contentMessageChat > div{
   padding: 0px
@@ -1712,4 +1708,80 @@ div._created{
 
 .input-required span{
   color: red
+}
+
+.table-options{
+  display: flex;
+  float: right; 
+}
+
+.table-options ._created{
+  font-size: 0.8rem
+}
+
+.status{
+  display: inline-flex;
+}
+
+
+.btn-3p .dropdown-toggle.btn.btn-primary{
+  width: auto;
+  padding: 0px;
+  margin: 0px;
+  background: transparent;
+  border: transparent;
+  line-height: 0px;
+  height: 1px;
+  font-size: 35px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.btn-3p .dropdown-toggle::after{
+  display: none;
+}
+
+
+.btn-3p > .btn-primary.dropdown-toggle:focus{
+   box-shadow: none !important;
+}
+
+.btn-3p .dropdown-menu.show{
+  top: 15px !important;
+}
+
+.previewSettings .contentResponse{
+    height: auto;
+    min-height: auto;
+}
+
+
+.fhgt45a4fgsl-chat-popup {
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 6px 9px 0 rgba(0,0,0,.5);
+}
+
+.popover-colors .items-color{
+  display: inline-flex;
+}
+
+
+.popover-colors .items-color .color{
+  width: 30px;
+  height: 20px;
+}
+
+.popover-colors .items-color .btn.btn-link{
+  padding:0px;
+}
+
+.popover-colors .items-color .btn.btn-link:focus{
+  box-shadow: none;
+}
+
+
+.popover{
+  width: auto;
+  max-width: initial;
 }

@@ -15,6 +15,7 @@
 .- Dashboard
 .- Carga base de patrones para todas las aplicaciones (general)
 - refresh token session
+.- validacion de formularios
 
 
 ==============FUTURO========================
@@ -30,3 +31,4 @@ EN PROCESO:::
 
 LISTO:::
 4.- Carga masiva de patrones(texto) -> *****OK******
+
