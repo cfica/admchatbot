@@ -146,7 +146,7 @@ export default class Login extends Component {
     async function _requestApi(_this){
         var _url = config.get('baseUrlApi')+'/api/v1/setting-init';
         const res = await new Helper().getRequest(_url,'init',{client_id: client_id, init: init});
-        //console.log(res);
+        console.log(res);
         if(res){
           _this.setState({confChatInit: res.config[0]});
         }
@@ -517,6 +517,56 @@ export default class Login extends Component {
           </div>
       );
     }else if(this.state.errorInit == false){
+
+
+        const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+          <a
+            href=""
+            ref={ref}
+            style = {
+              {color: this.state.confChatInit.color_main}
+            }
+            onClick={(e) => {
+              e.preventDefault();
+              onClick(e);
+            }}
+          >
+            {children}
+            {/*&#x25bc;*/}
+          </a>
+        ));
+
+        const CustomMenu = React.forwardRef(({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
+            const [value, setValue] = useState('');
+
+            return (
+              <div
+                ref={ref}
+                style={style}
+                className={className}
+                aria-labelledby={labeledBy}
+              >
+              {/* 
+                <FormControl
+                  autoFocus
+                  className="mx-3 my-2 w-auto"
+                  placeholder="Type to filter..."
+                  onChange={(e) => setValue(e.target.value)}
+                  value={value}
+                />
+              */}
+                <ul className="list-unstyled">
+                  {React.Children.toArray(children).filter(
+                    (child) =>
+                      !value || child.props.children.toLowerCase().startsWith(value),
+                  )}
+                </ul>
+              </div>
+            );
+          }
+        );
+
+
         return (
               <div id="chat" >
                       
@@ -535,6 +585,8 @@ export default class Login extends Component {
                           <div className="contHello">
                                   <Form noValidate validated={this.state.validated} onSubmit={this._handleStarChat}>
                                     <div dangerouslySetInnerHTML={{__html: this.state.confChatInit.welcome_message_init}}></div>
+                                    <div className="divide"></div>
+
                                     <Form.Group controlId="formName">
                                       <Form.Control autocomplete="off" required value={this.state.inputName} onChange={this.inp = (e) => {this.setState({inputName: e.target.value})}} type="text" placeholder="Enter Name" />
                                       <Form.Label >Enter Name</Form.Label>
@@ -577,7 +629,13 @@ export default class Login extends Component {
                                     <div className="contentResponse" >
                                       {(this.state.listMessages || []).map((item, index) => {
                                         if(item.type == '_req'){
-                                          return new Helper().messageClient(index, item, this.state.listMessages, this.state.messagesEnd);
+                                          return new Helper().messageClient(
+                                              index, 
+                                              item, 
+                                              this.state.listMessages, 
+                                              this.state.messagesEnd,
+                                              this.state.confChatInit.style_conversation
+                                          );
                                         }else if(item.type == '_res'){
                                           return new Helper().messageResponse(
                                             index, 
@@ -622,7 +680,11 @@ export default class Login extends Component {
                                     
 
                                     
-                                    <Form className="form-chat-send" noValidate validated={this.state.validated} onSubmit={this.sendMessage}>
+                                    <Form className="form-chat-send" noValidate validated={this.state.validated} onSubmit={this.sendMessage} 
+                                     style={
+                                       {borderTop: 'solid 1px '+this.state.confChatInit.color_main}
+                                     }
+                                    >
                                         <div className="contentSend">
                                           <Form.Group  controlId="sendMessage">
                                             <InputGroup>
@@ -633,17 +695,50 @@ export default class Login extends Component {
                                                 <Form.Label >Message</Form.Label>
 
                                                 <InputGroup.Append className="btnSend">
-                                                  <Button size="lg" type="submit" variant="outline-secondary"><Icon.ArrowReturnLeft className="ml-4" size={23}/></Button>
+                                                  <Button size="lg" type="submit" variant="outline-secondary">
+                                                     <Icon.ArrowReturnLeft 
+                                                          style = {
+                                                            {color: this.state.confChatInit.color_main}
+                                                          } 
+                                                          className="ml-4" size={23}/>
+                                                  </Button>
                                                 </InputGroup.Append>
+
                                             </InputGroup>
                                           </Form.Group>
                                         </div>
 
                                         <div className="options dropdown-options-3p">
+                                            
+                                            <Dropdown>
+                                              <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
+                                                ...
+                                              </Dropdown.Toggle>
+
+                                              <Dropdown.Menu as={CustomMenu}>
+                                                
+                                                {new VarStorage().getManualResponse() &&
+                                                  <Dropdown.Item eventKey="1" onClick={this.endConversationManual}>End conversation</Dropdown.Item>
+                                                }
+
+                                                <Dropdown.Item eventKey="2" onClick={this.menu}>Menu</Dropdown.Item>
+
+                                                <Dropdown.Divider />
+                                                <Dropdown.Item eventKey="3" onClick={this.closeSession}>Close Sesion</Dropdown.Item>
+
+                                              </Dropdown.Menu>
+                                            </Dropdown>
+
+
+                                            {/*}
                                             <DropdownButton
                                                 menuAlign="right"
                                                 title="..."
                                                 id="dropdown-menu"
+                                                style = {
+                                                  {color: this.state.confChatInit.color_main}
+                                                }
+
                                               >
 
                                                 {new VarStorage().getManualResponse() &&
@@ -654,7 +749,8 @@ export default class Login extends Component {
 
                                                 <Dropdown.Divider />
                                                 <Dropdown.Item eventKey="3" onClick={this.closeSession}>Close Sesion</Dropdown.Item>
-                                              </DropdownButton>
+                                            </DropdownButton> */}
+
                                         </div>
                                     </Form>
                               </div>

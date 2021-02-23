@@ -22,7 +22,8 @@ export default class ModalConfChat extends Component {
 		      token: localStorage.getItem('tokenAdm'),
 		      inputDomain : '',
 		      inputName : '',
-		      codeInitChat: ''
+		      codeInitChat: '',
+		      color_main: ''
 		    };
 		}
 
@@ -33,27 +34,30 @@ export default class ModalConfChat extends Component {
 
 		componentDidMount(){
 			const id_client = this.props.idSelected;
-			axios.post(config.get('baseUrlApi')+'/api/v1/user-api', JSON.stringify({id: id_client}), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
-		    .then(res => {
-		    	const client_id = res.data.data.result[0].client_id;
-		    	const token_init = res.data.data.result[0].token_init;
-		    	const settings = res.data.data.settings;
-		    	
-		    	this.setState({codeInitChat : this.codeInitChat(
-		    		client_id,
-		    		token_init,
-		    		id_client, 
-		    		config.get('staticFrontChat'),
-		    		config.get('baseUrlApp'), 
-		    		'app.min',
-		    		settings.header_message,
-		    		res.data.data.result[0].client_domain
-		    	)});
-		    }).catch(function (error) {
-		    	console.log(error);
-		    	//if(error.response.status == 401){
-		    	//}
-			});
+			if(typeof id_client != "undefined"){
+				axios.post(config.get('baseUrlApi')+'/api/v1/user-api', JSON.stringify({id: id_client}), {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}})
+			    .then(res => {
+			    	const client_id = res.data.data.result[0].client_id;
+			    	const token_init = res.data.data.result[0].token_init;
+			    	const settings = res.data.data.settings;
+			    	
+			    	this.setState({codeInitChat : this.codeInitChat(
+			    		client_id,
+			    		token_init,
+			    		id_client, 
+			    		config.get('staticFrontChat'),
+			    		config.get('baseUrlApp'), 
+			    		'app.min',
+			    		settings.header_message,
+			    		res.data.data.result[0].client_domain,
+			    		settings.color_main
+			    	)});
+			    }).catch(function (error) {
+			    	console.log(error);
+			    	//if(error.response.status == 401){
+			    	//}
+				});
+		    }
 		}
 
 		handleConfirm = () => {
@@ -61,7 +65,7 @@ export default class ModalConfChat extends Component {
 			this.props.handleConfirm();
 		}
 
-		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage, domain){
+		codeInitChat(client_id,tokenToInit,id_client,staticFrontChat,baseUrl, fileName, headerMessage, domain, color_main){
 			var _headerMessage = headerMessage == null ? 'BELISA, Virtual assistant' : headerMessage;
 			const code = `
 <script type="text/javascript">
@@ -73,6 +77,7 @@ export default class ModalConfChat extends Component {
         bElisa.tokenToInit = '`+tokenToInit+`';
         bElisa.baseApp = '`+baseUrl+`';
         bElisa.headerMessage = '`+_headerMessage+`';
+        bElisa.colorMain = '`+color_main+`';
         var ref = d.getElementsByTagName('script')[0];
         var app, appId = 'app-bElisa';
         if (d.getElementById(appId)) return;
@@ -85,6 +90,7 @@ export default class ModalConfChat extends Component {
         ref.parentNode.insertBefore(app, ref);
      }(document));
 </script>`;
+
 			return code;
 		}
 
@@ -93,7 +99,7 @@ export default class ModalConfChat extends Component {
 				<div className="modal-client">
 		  			<Modal 
 		  			       show={this.state.showModal} 
-		  			       dialogClassName="modal-90w"
+		  			       dialogClassName="modal-50w"
 		  			       onHide={this.handleClose}
 		  			>
 					        <Modal.Header closeButton>

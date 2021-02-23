@@ -1576,6 +1576,32 @@ div._created{
   border:0px;
 } 
 
+
+
+.dropdown-options-3p .dropdown > a{
+  font-size: 30px; 
+  line-height: 40px;
+  color: #371866;
+}
+
+
+.dropdown-options-3p .dropdown > a:hover{
+  text-decoration: none;
+}
+
+.dropdown-options-3p .dropdown > a:focus  {
+  box-shadow: none;
+  border:none;
+}
+
+.dropdown-options-3p .dropdown > a:focus-visible  {
+  box-shadow: none;
+  border:none;
+  outline: none;
+}
+
+
+
 .contentResponse .contentMessageChat .options-response #dropdown-menu-align-right::after,
 .dropdown-options-3p #dropdown-menu::after
 {

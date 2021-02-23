@@ -61,7 +61,8 @@ export class SettingsChat extends Component {
 	         {color: 'rgb(118, 118, 118)'},
 	      ],
 	      colorMain: '',
-	      styleConversation: ''
+	      styleConversation: '',
+	      showButtonConfigChatbot: false
 	    };
 	}
 
@@ -94,6 +95,7 @@ export class SettingsChat extends Component {
    		    ).then(res => {
 		    	this.setState({errorSaveForm : false});
 		    	//form.reset();
+		    	this.handleGenConfigChat(this.state.client);
 		    }).catch(function (error) {}).then(function () {});
 	    }
 	}
@@ -117,11 +119,16 @@ export class SettingsChat extends Component {
 	    		this.setState({headerMessage: res.data.data.config[0].header_message});
 	    		this.setState({checksSelected: res.data.data.config[0].start_conversation});
 	    		this.setState({welcomeMessageInit: res.data.data.config[0].welcome_message_init});
+	    		
+	    		this.setState({colorMain: res.data.data.config[0].color_main});
+	    		this.setState({styleConversation: res.data.data.config[0].style_conversation});
+
+	    		console.log(res);
 
 	    		var _itemRes = {
 				     _id: '',
 				     type : '_res',
-				     msg : this.state.welcomeMessageInit, 
+				     msg : this.state.welcomeMessage, 
 				     type_resp: 'Text', 
 				     status: '',
 				     _created: moment().format('YYYY-MM-DD H:mm:ss'),
@@ -143,7 +150,10 @@ export class SettingsChat extends Component {
 				_items.push(_itemRes);
 				_items.push(_itemReq);
 				this.setState({listMessages: _items});	
-
+				this.setState({showButtonConfigChatbot: true});
+	    	}else{
+	    		//hidden button getconfig
+	    		this.setState({showButtonConfigChatbot: false});
 	    	}
 	    });
 	}
@@ -152,6 +162,7 @@ export class SettingsChat extends Component {
 		this.selectedCheckSettingChat = new Set();
 		if(!this.state.scope){
 			this.loadSettingChat(this.state.client);
+			this.setState({idClient : this.state.client});
 		}
 
 		this.setState({popoverColorMain: 
@@ -210,17 +221,17 @@ export class SettingsChat extends Component {
 	handleGenConfigChat(id){
 		//console.log(id);
 		this.setState({showModalConfigChatbot : true});	
-		this.setState({idClient : id});	
+		//this.setState({idClient : id});	
 	}
 
-	changeWelcomeMessageInit = (event) => {
-		this.setState({welcomeMessageInit: event.target.value});
+	changeWelcomeMessage = (event) => {
+		this.setState({welcomeMessage: event.target.value});
 		
 		
 		var _itemRes = {
 		     _id: '',
 		     type : '_res',
-		     msg : this.state.welcomeMessageInit, 
+		     msg : this.state.welcomeMessage, 
 		     type_resp: 'Text', 
 		     status: '',
 		     _created: moment().format('YYYY-MM-DD H:mm:ss'),
@@ -274,10 +285,10 @@ export class SettingsChat extends Component {
 									}
 
 									
-									{!this.state.scope &&
+									{!this.state.scope  && this.state.showButtonConfigChatbot &&
 										<Form.Row>
 						        	        <Col xs={12}>
-											     <Button variant="primary" onClick={(e) => this.handleGenConfigChat(this.state.client, e)}>Get code HEAD site</Button>
+											     <Button variant="primary" onClick={(e) => this.handleGenConfigChat(this.state.idClient)}>Get code HEAD site</Button>
 										         <hr className="divide"></hr>
 										         {this.state.showModalConfigChatbot && 
 											        	<ModalConfChat
@@ -359,8 +370,8 @@ export class SettingsChat extends Component {
 								        	        <Col xs={12}>
 								        				<Form.Group controlId="welcomeMessage">
 														    <Form.Control placeholder="Welcome Message" required as="textarea" 
-														     value={this.state.welcomeMessageInit} 
-														     onChange={this.changeWelcomeMessageInit} rows="3" />
+														     value={this.state.welcomeMessage} 
+														     onChange={this.changeWelcomeMessage} rows="3" />
 														    <Form.Label>Welcome Message</Form.Label>
 														</Form.Group>
 											        </Col>
@@ -397,12 +408,12 @@ export class SettingsChat extends Component {
 												<Form.Row>
 								        	        <Col xs={12}>
 								        				
-												        <Form.Group controlId="welcomeMessage">
+												        <Form.Group controlId="welcomeMessageInit">
 														    <Form.Control 
 														     placeholder="Welcome Message" 
 														     required as="textarea" 
-														     value={this.state.welcomeMessage} 
-														     onChange={this.changeName = (event) => {this.setState({welcomeMessage: event.target.value})}} 
+														     value={this.state.welcomeMessageInit} 
+														     onChange={this.changeName = (event) => {this.setState({welcomeMessageInit: event.target.value})}} 
 														     rows="3" />
 														    <Form.Label>Welcome message start conversation</Form.Label>
 														</Form.Group>
@@ -453,7 +464,7 @@ export class SettingsChat extends Component {
 									       <Form.Row className="previewSettings">
 									            <Col xs={9}>
 									        		<Preview 
-									        			welcomeMessage = {this.state.welcomeMessage}
+									        			welcomeMessage = {this.state.welcomeMessageInit}
 									        			_type = {'login'}
 									        			_inputs = {this.state.checksSelected}
 									        			colorMain={this.state.colorMain}
