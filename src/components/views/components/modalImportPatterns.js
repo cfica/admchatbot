@@ -60,8 +60,13 @@ export default class ModalImportPatterns extends Component {
 	    var _items = [];
 	    data.forEach(function(el, index){
 	    	//console.log(el);
-	    	if(el.data.length == 3 && !isNaN(el.data[0])){
-	    		_items.push({group: el.data[0], message: el.data[1], response: el.data[2]});
+	    	if(el.data.length == 4 && !isNaN(el.data[0])){
+	    		_items.push({
+    				group: el.data[0], 
+    				tag: el.data[1] ,
+    				message: el.data[2], 
+    				response: el.data[3]
+	    		});
 	    	}
 	    });
 		
@@ -85,6 +90,7 @@ export default class ModalImportPatterns extends Component {
         grouped.forEach(function(el, i){
         	var _patterns = [];
         	var _responses = [];
+        	var _tag = [];
         	
         	//console.log(el);
 
@@ -98,6 +104,10 @@ export default class ModalImportPatterns extends Component {
         			if(el1.response != ""){
         				_responses.push(el1.response);
         			}
+
+        			if(el1.tag != ""){
+        				_tag.push(el1.tag);
+        			}
         		});
         	}else{
         		_patterns.push(el.message);
@@ -105,7 +115,7 @@ export default class ModalImportPatterns extends Component {
         	}
 
         	_finalItems.push(
-        		{patterns: _patterns, responses: {type: 'Text', value: _responses}}
+        		{tag: _tag, patterns: _patterns, responses: {type: 'Text', value: _responses}}
         	);
         });
 
@@ -300,6 +310,7 @@ export default class ModalImportPatterns extends Component {
 								  <thead>
 								    <tr>
 								      <th>#</th>
+								      <th>Tag</th>
 								      <th>Message Pattern</th>
 								      <th>Response</th>
 								    </tr>
@@ -310,6 +321,13 @@ export default class ModalImportPatterns extends Component {
 										  return(
 										  	  	<tr key={i}>
 											      <td>{i}</td>
+
+											      <td>
+											      	<ol>
+							                    		{el.tag}
+							                    	</ol>
+											      </td>
+
 											      <td>
 								                    	<ol>
 								                    		{el.patterns.map((item1) => 

@@ -454,7 +454,7 @@ export default class ModalToLearn extends Component {
 																				<Form.Group  controlId="formBasicResponseText">
 																	                    
 																						<InputGroup className="mb-3">
-																						     <Form.Control  required as="textarea"  value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} placeholder="Add Response" rows={1} />
+																						     <Form.Control as="textarea"  value={this.state.valueResponseText} onChange={this._handleChangeInputResponseText} placeholder="Add Response" rows={1} />
 																						    <Form.Label >Add Response</Form.Label>
 																						    <InputGroup.Append>
 																						      <Button  onClick={this._handleAddResponseText} variant="outline-secondary">Add</Button>

@@ -234,10 +234,6 @@ export default class BaseWords extends Component {
 					<Button variant="primary" onClick={this.handleShowModalImport}>Import Patterns</Button>{'  '}
 
 					<Button variant="secondary" onClick={this.handleShowModalAddPattern}>Add Pattern</Button>
-					
-
-					
-
 
 		            
 		            {this.state.showModalAddPattern && 
