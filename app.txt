@@ -13,20 +13,20 @@
 12.- Agrupar cuentas (clientes chat) por usuario
 13.- Medio de pago por plan(transferencia y activación manual)
 .- Dashboard
-.- Carga base de patrones para todas las aplicaciones (general)
+
 - refresh token session
 .- validacion de formularios
 
 
-==============FUTURO========================
+==============FUTURO DESPUES DE PASO A PROD========================
 - Integración a magento
 - Integración whatsap
 - aprendisaje automático IA
-- 
 
 
 EN PROCESO:::
 6.- menú (topics) chat front (RESUELTO), FALTA VALIDACIÓN DE DATOS Y DESPLIEGUE DE PATRONES (NOMBRES / Tag)
+.- Carga base de patrones para todas las aplicaciones (general)
 
 
 LISTO:::
