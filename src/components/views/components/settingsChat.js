@@ -258,7 +258,7 @@ export class SettingsChat extends Component {
 	render() {
 
 		return(
-			 <div>
+			 <div>	
 	 				<h2>Chat settings</h2>
 	    			<p>Configure the chat display for your clients</p>
 	    			<hr className="divide"></hr>
@@ -274,7 +274,7 @@ export class SettingsChat extends Component {
 								        		<Form.Group required controlId="exampleForm.ControlSelect1">
 												    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
 												        <option value="">Select</option>
-													    {this.state.items.map((item) => 
+													    {this.props.clients.map((item) => 
 													      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
 										                )}
 												    </Form.Control>

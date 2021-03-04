@@ -287,7 +287,7 @@ export default class Settings extends Component {
 				        </Tab.Pane>
 
 				        <Tab.Pane eventKey="config">
-				        	<SettingsChat/>
+				        	<SettingsChat clients={this.state.items}/>
 				        </Tab.Pane>
 				      </Tab.Content>
 				    </Col>		    

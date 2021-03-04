@@ -76,11 +76,13 @@ export default class SidebarMenu extends Component {
 		            	<a href="/settings"><Icon.Gear size={20}/> Settings</a>
 		            </li>
 
+		            {/*
 		            {['admin'].includes(localStorage.getItem('scope')) &&
 			            <li>
 			            	<a href="/system"><Icon.Gear size={20}/> Systems</a>
 			            </li>
 			        }
+			        */}
 
 		            {/*<li className="active">
 		                <a href="#realTimeSubmenu" data-toggle="collapse" aria-expanded="false">Real Time</a>
