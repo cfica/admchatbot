@@ -220,11 +220,11 @@ export class TemplateForm extends Component {
 	}
 
 
-	onEditorStateChange: Function = (editorState) => {
+	/*onEditorStateChange: Function = (editorState) => {
 	    this.setState({
 	      editorState,
 	    });
-	}
+	}*/
 
 
 	dataHtml = (code) => {
