@@ -829,6 +829,7 @@ a[data-toggle="collapse"] {
    margin-left: 10px;
    z-index: 3;
    background-color: transparent;
+   color: #545454
 }
 
 .form-label {
@@ -1118,39 +1119,10 @@ a[data-toggle="collapse"] {
   padding-bottom: 5px
 }
 
-.contChat.app > .contentResponse{
-  max-height: 400px
-}
 
 
 
 /*REAL TIME CSS*/
-.parent-cont-real-time{
- background-color: #f2f2f2;
- padding: 20px;
- border: solid 1px #e0e0e0; 
-}
-
-.parent-cont-real-time .cont-real-time{
-  border-radius: 0px;
-  background-color: #fff;
-  margin-bottom: 10px
-}
-
-.parent-cont-real-time .cont-real-time._res{
-  border-radius: 3px;
-  border: 1px solid #593096;
-  background: #f4edff;
-  padding: 8px;
-}
-
-.parent-cont-real-time .cont-real-time._req{
-  border-radius: 5px;
-  border: solid 1px #3eb233;
-  background: #f0ffef;
-  padding: 5px;
-}
-
 .cont-real-time{
   padding: 0.40rem;
   margin-bottom: 0px
@@ -1166,22 +1138,12 @@ a[data-toggle="collapse"] {
 }
 
 
-.parent-cont-real-time .cont-real-time._req .body p{
-  font-size: 0.9rem;
-  color: #220b44;
-}
-
-.parent-cont-real-time .cont-real-time._res .body p{
-  font-size: 0.9rem;
-  color: #220b44;
-}
 
 
 .cont-real-time .header .name_client{
   text-transform: uppercase;
   font-size: 1rem;
   font-weight: 700;
-  color: #371866;
 }
 
 
@@ -1232,7 +1194,6 @@ a[data-toggle="collapse"] {
 .cont-real-time .header .alert-heading.h4{
   font-size: 0.90rem;
   margin-right: 10px;
-  text-decoration: underline;
   margin-bottom: 0px;
 }
 
@@ -1421,9 +1382,11 @@ a[data-toggle="collapse"] {
   border-bottom: #afafaf solid 2px
 }
 
-.grup-filters > form > div{
- width: 200px;
+.grup-filters > form > .input-group,
+.grup-filters > form > .form-group{
+ width: 165px;
  float: left;
+ margin: 0px;
  margin-right: 20px
 }
 
@@ -1810,4 +1773,66 @@ div._created{
 .popover{
   width: auto;
   max-width: initial;
+}
+
+.login-chat,
+.contact-chat{
+  min-height: 450px;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+
+
+
+.contentRealTime .contChat.app{
+  height: auto;
+}
+
+
+
+.contentRealTime .contChat.app .contentResponse{
+   min-height: 450px;
+   max-height: 450px; 
+   margin-bottom: 0px
+}
+
+.contentRealTime  > div{
+  border:solid 1px #afafaf;
+  padding: 0px
+}
+
+.contentRealTime  > div > h2{
+  background-color: #e8e8e8;
+  border-bottom: #afafaf solid 1px;
+  margin: 0px;
+  padding: 8px;
+  font-size: 1.3rem;
+  color: #686868
+}
+
+
+.contentRealTime #react-paginate{
+  margin-top: 10px
+}
+
+.contentRealTime #react-paginate > ul{
+  margin-bottom: 0px;
+  padding: 0px
+}
+
+.contentRealTime .grup-filters{
+  margin-bottom: 0px;
+  border-bottom: none;
+}
+
+.contentRealTime .grup-filters .action{
+   width: 100%;
+   clear: both;
+   padding-top: 5px
+}
+
+.contentRealTime #react-paginate li > a{
+  border:none;
+  font-size: 1rem
 }

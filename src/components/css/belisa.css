@@ -24,11 +24,11 @@
 
 #chat span{
 	font-size: 0.9rem;
-	color: #220b44
+	color: #545454
 }
 
 #chat .form-control{
-	color: #220b44 !important;
+	color: #545454 !important;
 	font-weight: 500;
 	background-color: #fff
 }

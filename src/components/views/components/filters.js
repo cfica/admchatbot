@@ -157,16 +157,17 @@ export class Filters extends Component{
 			            
 
 						
-
-						<Button  size="sm" onClick={this._resetFilter} variant="secondary" type="submit">
-						    Filter
-						</Button>
-
-						{this.state.filters_active.length > 0 &&
-							<Button  size="sm" onClick={this._handleResetFilter} variant="warning" type="button">
-							    Reset
+						<div className="action">
+							<Button  size="sm" onClick={this._resetFilter} variant="secondary" type="submit">
+							    Filter
 							</Button>
-						}
+
+							{this.state.filters_active.length > 0 &&
+								<Button  size="sm" onClick={this._handleResetFilter} variant="warning" type="button">
+								    Reset
+								</Button>
+							}
+						</div>
 				</Form>
 
 				{this.state.filters_active.length > 0 &&

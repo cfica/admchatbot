@@ -31,7 +31,6 @@ export class SettingsChat extends Component {
 	      client: localStorage.getItem('client'),
 	      errorSaveForm: '',
 	      validated: false,
-	      clientSelected:'',
 	      welcomeMessage: '',
 	      welcomeMessageInit: '',
 	      headerMessage:'',
@@ -68,6 +67,7 @@ export class SettingsChat extends Component {
 
 	_handleSelectClient = (event) =>{
 		this.loadSettingChat(event.target.value);
+		this.setState({idClient: event.target.value});
 	}
 
 	handleSubmitSaveSettingsChat = (event)=>{
@@ -80,7 +80,7 @@ export class SettingsChat extends Component {
 	    }else{
 	    	this.setState({validated : false});
    		    var _dataPost = {
-   		    	"client" : this.state.clientSelected,
+   		    	"client" : this.state.idClient,
    		    	"welcome_message" : this.state.welcomeMessage,
    		    	color_main: this.state.colorMain,
    		    	style_conversation: this.state.styleConversation,
@@ -112,7 +112,7 @@ export class SettingsChat extends Component {
 	    	this.setState({client_id: ''});
 	        /**/
 	        this.setState({client_id: res.data.data.client_id});
-	    	this.setState({clientSelected: _value});
+	    	this.setState({idClient: _value});
 	    	
 	    	if(typeof res.data.data.config[0] != 'undefined'){ 
 	    		this.setState({welcomeMessage: res.data.data.config[0].welcome_message});
@@ -123,7 +123,7 @@ export class SettingsChat extends Component {
 	    		this.setState({colorMain: res.data.data.config[0].color_main});
 	    		this.setState({styleConversation: res.data.data.config[0].style_conversation});
 
-	    		console.log(res);
+	    		//console.log(res);
 
 	    		var _itemRes = {
 				     _id: '',
@@ -221,7 +221,7 @@ export class SettingsChat extends Component {
 	handleGenConfigChat(id){
 		//console.log(id);
 		this.setState({showModalConfigChatbot : true});	
-		//this.setState({idClient : id});	
+		this.setState({idClient : id});	
 	}
 
 	changeWelcomeMessage = (event) => {
@@ -268,10 +268,12 @@ export class SettingsChat extends Component {
 					        	<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmitSaveSettingsChat}>
 					        	    <MessageResult status ={this.state.errorSaveForm}/>
 					        	    
+
+
 					        	    {this.state.scope && 
 						        	    <Form.Row>
 						        	        <Col xs={12}>
-								        		<Form.Group required controlId="exampleForm.ControlSelect1">
+								        		<Form.Group required controlId="ControlSelect1">
 												    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
 												        <option value="">Select</option>
 													    {this.props.clients.map((item) => 
@@ -284,201 +286,205 @@ export class SettingsChat extends Component {
 									    </Form.Row>
 									}
 
-									
-									{!this.state.scope  && this.state.showButtonConfigChatbot &&
-										<Form.Row>
-						        	        <Col xs={12}>
-											     <Button variant="primary" onClick={(e) => this.handleGenConfigChat(this.state.idClient)}>Get code HEAD site</Button>
-										         <hr className="divide"></hr>
-										         {this.state.showModalConfigChatbot && 
-											        	<ModalConfChat
-											        	 hiddenModal = {this.hiddenModalConfigChatbot} 
-											        	 idSelected = {this.state.idClient}
-											        	/>
-											     }
-								         	</Col>
-									    </Form.Row>
-								    }
-
-
-								    <Form.Row className="titleFragment lg">
-									    <Col xs={6}><h2>Configuration General</h2></Col>
-									    <Col xs={6} className="buttons options"></Col>
-									</Form.Row>
-
-								    
-
-					        	    <Form.Row>
-					        	        <Col xs={12}>
-					        				<Form.Group  controlId="formClientId">
-									            <Form.Control size="sm" required  readOnly type="text" value={this.state.client_id}  placeholder="Client Id" />
-									            <Form.Label  size="sm">Client ID</Form.Label>
-									        </Form.Group>
-								        </Col>
-								    </Form.Row>
-
-								    <Form.Row>
-					        	        <Col xs={12}>
-					        				<Form.Group  controlId="formWelcomeMessage">
-									            <Form.Control required size="sm" type="text" 
-									                          value={this.state.headerMessage}
-									                          onChange={this.changeName1 = (event) => {this.setState({headerMessage: event.target.value})}} 
-									                          placeholder="Header Message" />
-									            <Form.Label  size="sm">Header Message</Form.Label>
-									        </Form.Group>
-								        </Col>
-								    </Form.Row>
-
-
-								    <Form.Row>
-					        	        <Col xs={12}>
-					        				<Form.Group  controlId="formClientId">
-									            
-									            <OverlayTrigger  rootClose trigger="click" placement="right" overlay={this.state.popoverColorMain}>
-												    <Button variant="outline-dark" size="sm">Main Color</Button>
-												</OverlayTrigger>
-
-									        </Form.Group>
-								        </Col>
-								    </Form.Row>
-
-
-								    
-
-
-								    <Form.Row className="titleFragment lg">
-									    <Col xs={6}><h2>Configuration Chat</h2></Col>
-									    <Col xs={6} className="buttons options"></Col>
-									</Form.Row>
-
-
-									<Form.Row>
-										    <Col xs={6}>
-										    	<Form.Row>
-								        	        <Col xs={12}>
-								        				<Form.Group  controlId="formClientId">
-
-								        				    <OverlayTrigger rootClose trigger="click" placement="right" overlay={this.state.popoverColorConversation}>
-															    <Button variant="outline-dark" size="sm">Conversation color</Button>
-															</OverlayTrigger>
-
-												        </Form.Group>
-											        </Col>
-											    </Form.Row>
-
-										    	<Form.Row>
-								        	        <Col xs={12}>
-								        				<Form.Group controlId="welcomeMessage">
-														    <Form.Control placeholder="Welcome Message" required as="textarea" 
-														     value={this.state.welcomeMessage} 
-														     onChange={this.changeWelcomeMessage} rows="3" />
-														    <Form.Label>Welcome Message</Form.Label>
-														</Form.Group>
-											        </Col>
-											    </Form.Row>
-
-										    </Col>
-
-										    <Col xs={1}></Col>
-
-										    <Col xs={5}>
-										       <Form.Row className="previewSettings">
-										            <Col xs={9}>
-										        		<Preview 
-										        			listMessages = {this.state.listMessages}
-										        			welcomeMessage = {this.state.welcomeMessage}
-										        			headerMessage = {this.state.headerMessage}
-										        			_type = {'chat'}
-										        			colorMain={this.state.colorMain}
-										        			styleConversation={this.state.styleConversation}
-										        		/>
-										        	</Col>
-										       </Form.Row> 
-										    </Col>
-									</Form.Row>
-
-
-								    <Form.Row className="titleFragment lg">
-									    <Col xs={6}><h2>Configuration Login</h2></Col>
-									    <Col xs={6} className="buttons options"></Col>
-									</Form.Row>
-
-									<Form.Row>
-										<Col xs={6}>
+									{this.state.idClient &&
+										<div>	
 												<Form.Row>
 								        	        <Col xs={12}>
-								        				
-												        <Form.Group controlId="welcomeMessageInit">
-														    <Form.Control 
-														     placeholder="Welcome Message" 
-														     required as="textarea" 
-														     value={this.state.welcomeMessageInit} 
-														     onChange={this.changeName = (event) => {this.setState({welcomeMessageInit: event.target.value})}} 
-														     rows="3" />
-														    <Form.Label>Welcome message start conversation</Form.Label>
-														</Form.Group>
-
-
-											        </Col>
+													     <Button variant="primary" onClick={(e) => this.handleGenConfigChat(this.state.idClient)}>Get code HEAD site</Button>
+												         <hr className="divide"></hr>
+												         {this.state.showModalConfigChatbot && 
+													        	<ModalConfChat
+													        	 hiddenModal = {this.hiddenModalConfigChatbot} 
+													        	 idSelected = {this.state.idClient}
+													        	/>
+													     }
+										         	</Col>
 											    </Form.Row>
-
-
-											    <Form.Row>
-											    	<Form.Group  controlId="formClientId">
-													        <strong  size="sm">Request to start conversation</strong>
-													</Form.Group>
-												</Form.Row>
-											    <Form.Row>
-								        	        
-								        	        <Col xs={4}>
-								        				<Form.Check type="checkbox" disabled checked className="mb-2" label="Request Name"/>
-											        </Col>
-
-								        	        <Col xs={4}>
-								        				<Form.Check
-													        type="checkbox"
-													        className="mb-2"
-													        onChange={this.toggleCheckbox}
-													        label="Request Email"
-													        checked={this.state.checksSelected.includes('Email')}
-													        value="Email"
-													    />
-											        </Col>
-
-											        <Col xs={4}>
-								        				<Form.Check
-													        type="checkbox"
-													        className="mb-2"
-													        onChange={ this.toggleCheckbox}
-													        value="Telephone"
-													        checked={this.state.checksSelected.includes('Telephone')}
-													        label="Request Telephone"
-													    />
-											        </Col>
-											    </Form.Row>
-									    </Col>
-
-									    <Col xs={1}> </Col>
-
-									    <Col xs={5}>
-									       <Form.Row className="previewSettings">
-									            <Col xs={9}>
-									        		<Preview 
-									        			welcomeMessage = {this.state.welcomeMessageInit}
-									        			_type = {'login'}
-									        			_inputs = {this.state.checksSelected}
-									        			colorMain={this.state.colorMain}
-									        		/>
-									        	</Col>
-									       </Form.Row> 
-									    </Col>
-									</Form.Row>
+										    
 
 
 
-								    <Button variant="primary" type="submit">
-									    Save Settings
-									</Button>
+
+
+										    <Form.Row className="titleFragment lg">
+											    <Col xs={6}><h2>Configuration General</h2></Col>
+											    <Col xs={6} className="buttons options"></Col>
+											</Form.Row>
+
+										    
+
+							        	    <Form.Row>
+							        	        <Col xs={12}>
+							        				<Form.Group  controlId="formClientId">
+											            <Form.Control size="sm" required  readOnly type="text" value={this.state.client_id}  placeholder="Client Id" />
+											            <Form.Label  size="sm">Client ID</Form.Label>
+											        </Form.Group>
+										        </Col>
+										    </Form.Row>
+
+										    <Form.Row>
+							        	        <Col xs={12}>
+							        				<Form.Group  controlId="formWelcomeMessage">
+											            <Form.Control required size="sm" type="text" 
+											                          value={this.state.headerMessage}
+											                          onChange={this.changeName1 = (event) => {this.setState({headerMessage: event.target.value})}} 
+											                          placeholder="Header Message" />
+											            <Form.Label  size="sm">Header Message</Form.Label>
+											        </Form.Group>
+										        </Col>
+										    </Form.Row>
+
+
+										    <Form.Row>
+							        	        <Col xs={12}>
+							        				<Form.Group  controlId="formClientId">
+											            
+											            <OverlayTrigger  rootClose trigger="click" placement="right" overlay={this.state.popoverColorMain}>
+														    <Button variant="outline-dark" size="sm">Main Color</Button>
+														</OverlayTrigger>
+
+											        </Form.Group>
+										        </Col>
+										    </Form.Row>
+
+
+										    
+
+
+										    <Form.Row className="titleFragment lg">
+											    <Col xs={6}><h2>Configuration Chat</h2></Col>
+											    <Col xs={6} className="buttons options"></Col>
+											</Form.Row>
+
+
+											<Form.Row>
+												    <Col xs={6}>
+												    	<Form.Row>
+										        	        <Col xs={12}>
+										        				<Form.Group  controlId="formClientId">
+
+										        				    <OverlayTrigger rootClose trigger="click" placement="right" overlay={this.state.popoverColorConversation}>
+																	    <Button variant="outline-dark" size="sm">Conversation color</Button>
+																	</OverlayTrigger>
+
+														        </Form.Group>
+													        </Col>
+													    </Form.Row>
+
+												    	<Form.Row>
+										        	        <Col xs={12}>
+										        				<Form.Group controlId="welcomeMessage">
+																    <Form.Control placeholder="Welcome Message" required as="textarea" 
+																     value={this.state.welcomeMessage} 
+																     onChange={this.changeWelcomeMessage} rows="3" />
+																    <Form.Label>Welcome Message</Form.Label>
+																</Form.Group>
+													        </Col>
+													    </Form.Row>
+
+												    </Col>
+
+												    <Col xs={1}></Col>
+
+												    <Col xs={5}>
+												       <Form.Row className="previewSettings">
+												            <Col xs={9}>
+												        		<Preview 
+												        			listMessages = {this.state.listMessages}
+												        			welcomeMessage = {this.state.welcomeMessage}
+												        			headerMessage = {this.state.headerMessage}
+												        			_type = {'chat'}
+												        			colorMain={this.state.colorMain}
+												        			styleConversation={this.state.styleConversation}
+												        		/>
+												        	</Col>
+												       </Form.Row> 
+												    </Col>
+											</Form.Row>
+
+
+										    <Form.Row className="titleFragment lg">
+											    <Col xs={6}><h2>Configuration Login</h2></Col>
+											    <Col xs={6} className="buttons options"></Col>
+											</Form.Row>
+
+											<Form.Row>
+												<Col xs={6}>
+														<Form.Row>
+										        	        <Col xs={12}>
+										        				
+														        <Form.Group controlId="welcomeMessageInit">
+																    <Form.Control 
+																     placeholder="Welcome Message" 
+																     required as="textarea" 
+																     value={this.state.welcomeMessageInit} 
+																     onChange={this.changeName = (event) => {this.setState({welcomeMessageInit: event.target.value})}} 
+																     rows="3" />
+																    <Form.Label>Welcome message start conversation</Form.Label>
+																</Form.Group>
+
+
+													        </Col>
+													    </Form.Row>
+
+
+													    <Form.Row>
+													    	<Form.Group  controlId="formClientId">
+															        <strong  size="sm">Request to start conversation</strong>
+															</Form.Group>
+														</Form.Row>
+													    <Form.Row>
+										        	        
+										        	        <Col xs={4}>
+										        				<Form.Check type="checkbox" disabled checked className="mb-2" label="Request Name"/>
+													        </Col>
+
+										        	        <Col xs={4}>
+										        				<Form.Check
+															        type="checkbox"
+															        className="mb-2"
+															        onChange={this.toggleCheckbox}
+															        label="Request Email"
+															        checked={this.state.checksSelected.includes('Email')}
+															        value="Email"
+															    />
+													        </Col>
+
+													        <Col xs={4}>
+										        				<Form.Check
+															        type="checkbox"
+															        className="mb-2"
+															        onChange={ this.toggleCheckbox}
+															        value="Telephone"
+															        checked={this.state.checksSelected.includes('Telephone')}
+															        label="Request Telephone"
+															    />
+													        </Col>
+													    </Form.Row>
+											    </Col>
+
+											    <Col xs={1}> </Col>
+
+											    <Col xs={5}>
+											       <Form.Row className="previewSettings">
+											            <Col xs={9}>
+											        		<Preview 
+											        			welcomeMessage = {this.state.welcomeMessageInit}
+											        			_type = {'login'}
+											        			_inputs = {this.state.checksSelected}
+											        			colorMain={this.state.colorMain}
+											        		/>
+											        	</Col>
+											       </Form.Row> 
+											    </Col>
+											</Form.Row>
+
+
+										    <Button variant="primary" type="submit">
+											    Save Settings
+											</Button>
+										</div>
+								    }
 					        	</Form>
 					    </Col>
 

@@ -44,6 +44,10 @@ export class ConnectionSSE extends Component{
 		this.props._setItems(items, res);
 	}
 
+	setTotalItems = (total) =>{
+		this.props._setTotalItems(total);
+	}
+
 	setPageCount = (value) =>{
        this.props._setPageCount(value);
 	}
@@ -137,6 +141,7 @@ export class ConnectionSSE extends Component{
 	          	sse.onmessage = function(event){
 		            var _res = JSON.parse(event.data);
 		            _this.setItems(_res.items, _res);
+		            _this.setTotalItems(_res.total_count);
 		            _this.setPageCount(Math.ceil(_res.total_count / _this.state.perPage));
 		            //_this.props._setItems(_res.items);
 
@@ -163,23 +168,25 @@ export class ConnectionSSE extends Component{
 	render() {
 		return (
 			<div>
-				<Filters _handleSSE={this.connectionSSE} _filters={this.props._filters}/>
+				
 				
 				<div id="react-paginate">
 		            <ReactPaginate
-			          previousLabel={'Anterior'}
-			          nextLabel={'Siguiente'}
+			          previousLabel={'Previous'}
+			          nextLabel={'Next'}
 			          breakLabel={'...'}
 			          breakClassName={'break-me'}
 			          pageCount={this.props._getPageCount}
-			          marginPagesDisplayed={2}
-			          pageRangeDisplayed={5}
+			          marginPagesDisplayed={1}
+			          pageRangeDisplayed={1}
 			          onPageChange={this.handlePageClick}
 			          containerClassName={'pagination'}
 			          subContainerClassName={'pages pagination'}
 			          activeClassName={'active'}
 			        />
 		        </div>
+
+		        <Filters _handleSSE={this.connectionSSE} _filters={this.props._filters}/>
 			</div>
 		);
 	}

@@ -55,9 +55,41 @@ export default class RealTime extends Component {
 	      filter_user: '',
 	      filters_active: [],
 	      validated: false,
-	      contactPendingCount:0
+	      contactPendingCount:0,
+	      
+	      scrollMessagesEnd: React.createRef(),
+	      scrollAccessEnd: React.createRef(),
+	      scrollContactEnd: React.createRef(),
+	      totalItemsRealTime: 0,
+	      totalItemsAccess: 0,
+	      totalItemsContact: 0
 	    };
 	}
+
+	scrollToBottom(prevState) {
+	    if(this.state.scrollMessagesEnd.current != null && this.state.totalItemsRealTime > prevState.totalItemsRealTime){
+	      this.state.scrollMessagesEnd.current.scrollIntoView({"behavior": "smooth", 'block': "center", 'scrollMode': 'if-needed'});
+	    }
+
+	    if(this.state.scrollAccessEnd.current != null && this.state.totalItemsAccess > prevState.totalItemsAccess){
+	      this.state.scrollAccessEnd.current.scrollIntoView({"behavior": "smooth", 'block': "center", 'scrollMode': 'if-needed'});
+	    }
+
+	    if(this.state.scrollContactEnd.current != null && this.state.totalItemsContact > prevState.totalItemsContact){
+	      this.state.scrollContactEnd.current.scrollIntoView({"behavior": "smooth", 'block': "center", 'scrollMode': 'if-needed'});
+	    }
+	}
+
+	componentDidMount(){
+	    //this.getRealTimeSSE();
+	    //this.loadAccess();
+	    //this.loadContacts();
+	}
+
+
+	componentDidUpdate(prevProps, prevState) {
+	      this.scrollToBottom(prevState);
+	} 
 
 	/*async setConnectionSSE(value, _where){
 		await this.setState({connectionSSERealTime: value });
@@ -81,11 +113,7 @@ export default class RealTime extends Component {
 
 	
 
-	componentDidMount(){
-	    //this.getRealTimeSSE();
-	    //this.loadAccess();
-	    //this.loadContacts();
-	}
+	
 
 
 	
@@ -126,7 +154,11 @@ export default class RealTime extends Component {
 	}
 
 	setItemsRealTime = (items, res) =>{
-		this.setState({'items': items});
+		this.setState({'items': items.reverse()});
+	}
+
+	setTotalItemsRealTime = (total) =>{
+		this.setState({'totalItemsRealTime': total});
 	}
 
 	setPageCount = (value) =>{
@@ -149,7 +181,11 @@ export default class RealTime extends Component {
 	}
 
 	setItemsAccess = (items, res) =>{
-		this.setState({'itemsAccess': items});
+		this.setState({'itemsAccess': items.reverse()});
+	}
+
+	setTotalItemsAccess = (total) =>{
+		this.setState({'totalItemsAccess': total});
 	}
 
 	setPageCountAccess = (value) =>{
@@ -180,7 +216,11 @@ export default class RealTime extends Component {
 		});*/
 
 		this.setState({'contactPendingCount': res.pending});
-		this.setState({'itemsContact': items});
+		this.setState({'itemsContact': items.reverse()});
+	}
+
+	setTotalItemsContact = (total) => {
+		this.setState({'totalItemsContact': total});
 	}
 
 	setPageCountContact = (value) =>{
@@ -205,6 +245,7 @@ export default class RealTime extends Component {
 		    <div id="content">
 	            <SidebarAction/>
 
+	            {/*
 	            <Tabs defaultActiveKey="Messages" transition={false} id="noanim-tab-example">
 				 
 				  <Tab eventKey="Messages" title={
@@ -212,23 +253,203 @@ export default class RealTime extends Component {
 		              <Icon.ChatQuote size={20}/> Messages
 		            </React.Fragment>
 		          }>
-				    		<h2 className="title-page">Real Time Chat</h2>
-				            <p>Last messages</p>
-				            <div className="line"></div>
-				            
+		      */}
+				    		
 
-				            <ConnectionSSE
-				                _setConnectionSSE={this.setConnectionSSErealtime}
-					            _getConnectionSSE={this.getConnectionSSErealtime}
-				            	_setItems={this.setItemsRealTime} 
-				            	_setPageCount = {this.setPageCount}
-				            	_getPageCount = {this.state.pageCountWords}
-				            	_url = {'/api/v1/real-time'}
-				            	_this = {this}
-				            	_filters= {filtersRealTime}
-				            />
 
+				            <Row className="contentRealTime">
+					            <Col sm={4}>
+					            	<h2 className="title-page"><Icon.ChatQuote size={20}/>{' '}Real Time Chat</h2>
+
+					                
+
+						            <div className="contChat app real-time">
+							            	<div className="contentResponse">
+					          					{this.state.items.map((item, index) => {
+			                                        if(item.type == '_req'){
+			                                          return new Helper().messageClient(index, item, this.state.items, this.state.scrollMessagesEnd);
+			                                        }else if(item.type == '_res'){
+			                                          return new Helper().messageResponse(
+			                                            index, 
+			                                            item, 
+			                                            this.state.items, 
+			                                            this.state.scrollMessagesEnd, 
+			                                            this.sendAction,
+			                                            this.setMessage,
+			                                            this.statusValidation,
+			                                            this.inputChange,
+			                                            this.inputChangeOptions,
+			                                            this.updateScheduleEvents,
+			                                            this.successSentForm,
+			                                            this.closeSession
+			                                          );
+			                                        }
+			                                    })}
+
+			                                    {this.state.items.length == 0 &&
+												   new Helper().setAlertApp('warning', 'There are no records to display.')
+												}
+					          				</div>
+						            </div>
+
+						            <ConnectionSSE
+						                _setConnectionSSE={this.setConnectionSSErealtime}
+							            _getConnectionSSE={this.getConnectionSSErealtime}
+						            	_setItems={this.setItemsRealTime} 
+						            	_setTotalItems={this.setTotalItemsRealTime} 
+						            	_setPageCount = {this.setPageCount}
+						            	_getPageCount = {this.state.pageCountWords}
+						            	_url = {'/api/v1/real-time'}
+						            	_this = {this}
+						            	_filters= {filtersRealTime}
+						            />
+
+						        </Col>
+
+						        <Col sm={4}>
+						        	<h2 className="title-page">Login Chat History</h2>
+						            
+						            
+
+						            <section className="login-chat">
+						            	<Accordion defaultActiveKey="">
+												{this.state.itemsAccess.map((item, index) =>
+										          	
+									          		<Card className="cont-real-time" ref={index == (this.state.itemsAccess.length - 1)  ? this.state.scrollAccessEnd : ''}>
+													    <Card.Header className="header">
+														    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
+														      	{item.name}
+														    </Accordion.Toggle>
+
+													        <DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+															    <Dropdown.Item eventKey="2" onClick="">Messages</Dropdown.Item>
+															    <Dropdown.Item eventKey="2" onClick="">To Lock</Dropdown.Item>
+															</DropdownButton>
+
+										                	{this.state.scope &&
+									                    	item._client.map((item1) => 
+										                    		<div className="domain">{item1.client_domain}</div>
+										                    	)
+											                }
+															<div className="_created">{moment(item._created).fromNow()}</div>
+															
+													    </Card.Header>
+
+													    <Accordion.Collapse eventKey={index}>
+													      <Card.Body>
+													      		<p>{item.name}</p>
+											                  	<p>{item.email}</p>
+											                  	<p>{item.telephone}</p>
+											                  	<p>{item._created}</p>
+													      </Card.Body>
+													    </Accordion.Collapse>
+													</Card>
+										        )}
+
+										        {this.state.itemsAccess.length == 0 &&
+												   new Helper().setAlertApp('warning', 'There are no records to display.')
+												}
+								        </Accordion>
+							        </section>
+
+							        <ConnectionSSE 
+						            	_setItems={this.setItemsAccess}
+						            	_setTotalItems={this.setTotalItemsAccess} 
+						            	_setPageCount = {this.setPageCountAccess}
+						            	_getPageCount = {this.state.pageCountAccess}
+						            	_setConnectionSSE={this.setConnectionSSEaccess}
+						            	_getConnectionSSE={this.getConnectionSSEaccess}
+						            	_url = {'/api/v1/access-chat'}
+						            	_this = {this}
+						            	_filters= {filtersAccess}
+						            />
+
+						        </Col>
+
+
+						        <Col sm={4}>
+						        			<h2 className="title-page"><Icon.ChatQuote size={20}/>{' '}Contact Chat
+
+						        			 Contact Chat {this.state.contactPendingCount > 0 && 
+						                        <Badge variant='warning'>{this.state.contactPendingCount}</Badge>
+								              }
+
+						        			</h2>
+											
+											
+
+											<section className="contact-chat">
+										           	
+													<Accordion defaultActiveKey="">
+															{this.state.itemsContact.map((item, index) =>
+													          	
+												          		<Card className="cont-real-time" ref={index == (this.state.itemsContact.length - 1)  ? this.state.scrollContactEnd : ''}>
+																    <Card.Header className="header">
+																	    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
+																	      	{item._customer[0].name}&nbsp;
+																	      	
+																	      	{item.status == 'pending' &&
+																	      	   <Badge variant='warning'>Pending</Badge>	
+																	      	}
+
+																	      	{item.status == 'open' &&
+																	      	   <Badge variant='warning'>Open</Badge>	
+																	      	}
+
+																	      	{item.status == 'closed' &&
+																	      	   <Badge variant='success'>Closed</Badge>	
+																	      	}
+																	    </Accordion.Toggle>
+
+																        {/*<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
+																		    <Dropdown.Item eventKey="1" href={"contacts/" + item._id}>Detail</Dropdown.Item>
+																   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
+																		</DropdownButton>*/}
+
+																		<Button href={"contacts/" + item._id} size="sm" variant="outline-secondary">Detail</Button>
+
+
+													                	{this.state.scope &&
+												                    	item._client.map((item1) => 
+													                    		<div className="domain">{item1.client_domain}</div>
+													                    	)
+														                }
+																		<div className="_created">{moment(item._created).fromNow()}</div>
+
+																    </Card.Header>
+
+																    <Accordion.Collapse eventKey={index}>
+																      <Card.Body>{item.status}</Card.Body>
+																    </Accordion.Collapse>
+																</Card>
+
+													          	
+													        )}
+
+													        {this.state.itemsContact.length == 0 &&
+															   new Helper().setAlertApp('warning', 'There are no records to display.')
+															}
+
+											        </Accordion>
+										    </section>
+
+										    <ConnectionSSE 
+								            	_setItems={this.setItemsContact}
+								            	_setTotalItems={this.setTotalItemsContact} 
+								            	_setPageCount = {this.setPageCountContact}
+								            	_getPageCount = {this.state.pageCountContact}
+								            	_setConnectionSSE={this.setConnectionSSEcontact}
+								            	_getConnectionSSE={this.getConnectionSSEcontact}
+								            	_url = {'/api/v1/contacts'}
+								            	_this = {this}
+								            	_filters= {filtersContact}
+								            />
+						        </Col>
+				            </Row>
+
+				            {/*
 					        <section className="parent-cont-real-time">
+					            
 					            {this.state.items.map((item) =>
 						            <div key={item._id.$oid}>
 						            	<div className={item.type + " cont-real-time"}>
@@ -254,13 +475,6 @@ export default class RealTime extends Component {
 
 											  
 											  <div className="body">
-											  		{/*item.type == '_req' &&
-											  		  <p>
-													    {item._input.message}
-													  </p>
-													*/}
-
-													{/*<div>{JSON.stringify(item)}</div>*/}
 
 													  {item.type_resp == 'Text' &&
 														  <p>
@@ -279,69 +493,18 @@ export default class RealTime extends Component {
 						            </div>
 								)}
 
+					        
+
 								{this.state.items.length == 0 &&
 								   new Helper().setAlertApp('warning', 'There are no records to display.')
 								}
-					        </section>
+					        </section>*/}
+				  {/*
 				  </Tab>
 				  
 
 				  <Tab eventKey="access" title="Login Chat History">
-				    			<h2 className="title-page">Login Chat History</h2>
-					            <p>Last hits</p>
-					            <div className="line"></div>
-					            
-					            <ConnectionSSE 
-					            	_setItems={this.setItemsAccess} 
-					            	_setPageCount = {this.setPageCountAccess}
-					            	_getPageCount = {this.state.pageCountAccess}
-					            	_setConnectionSSE={this.setConnectionSSEaccess}
-					            	_getConnectionSSE={this.getConnectionSSEaccess}
-					            	_url = {'/api/v1/access-chat'}
-					            	_this = {this}
-					            	_filters= {filtersAccess}
-					            />
-
-					            <section>
-					            	<Accordion defaultActiveKey="">
-											{this.state.itemsAccess.map((item, index) =>
-									          	
-								          		<Card className="cont-real-time">
-												    <Card.Header className="header">
-													    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
-													      	{item.name}
-													    </Accordion.Toggle>
-
-												        <DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-														    <Dropdown.Item eventKey="2" onClick="">Messages</Dropdown.Item>
-														    <Dropdown.Item eventKey="2" onClick="">To Lock</Dropdown.Item>
-														</DropdownButton>
-
-									                	{this.state.scope &&
-								                    	item._client.map((item1) => 
-									                    		<div className="domain">{item1.client_domain}</div>
-									                    	)
-										                }
-														<div className="_created">{moment(item._created).fromNow()}</div>
-														
-												    </Card.Header>
-
-												    <Accordion.Collapse eventKey={index}>
-												      <Card.Body>
-												      		<p>{item.name}</p>
-										                  	<p>{item.email}</p>
-										                  	<p>{item.telephone}</p>
-										                  	<p>{item._created}</p>
-												      </Card.Body>
-												    </Accordion.Collapse>
-												</Card>
-									        )}
-
-									        {this.state.itemsAccess.length == 0 &&
-											   new Helper().setAlertApp('warning', 'There are no records to display.')
-											}
-							        </Accordion>
-						        </section>
+				    			
 				  </Tab>
 
 				  <Tab eventKey="contact-chat" title={
@@ -351,75 +514,9 @@ export default class RealTime extends Component {
 		              }
 		            </React.Fragment>
 		          }>
-				  	<h2 className="title-page">Contact Chat</h2>
-					<p>Last hits</p>
-					
-					<ConnectionSSE 
-		            	_setItems={this.setItemsContact} 
-		            	_setPageCount = {this.setPageCountContact}
-		            	_getPageCount = {this.state.pageCountContact}
-		            	_setConnectionSSE={this.setConnectionSSEcontact}
-		            	_getConnectionSSE={this.getConnectionSSEcontact}
-		            	_url = {'/api/v1/contacts'}
-		            	_this = {this}
-		            	_filters= {filtersContact}
-		            />
-
-					<section>
-				           	
-							<Accordion defaultActiveKey="">
-									{this.state.itemsContact.map((item, index) =>
-							          	
-						          		<Card className="cont-real-time">
-										    <Card.Header className="header">
-											    <Accordion.Toggle className="name_client" as={Button} variant="link" eventKey={index}>
-											      	{item._customer[0].name}&nbsp;
-											      	
-											      	{item.status == 'pending' &&
-											      	   <Badge variant='warning'>Pending</Badge>	
-											      	}
-
-											      	{item.status == 'open' &&
-											      	   <Badge variant='warning'>Open</Badge>	
-											      	}
-
-											      	{item.status == 'closed' &&
-											      	   <Badge variant='success'>Closed</Badge>	
-											      	}
-											    </Accordion.Toggle>
-
-										        {/*<DropdownButton variant="link" className="options" size="sm" as={ButtonGroup} title="Options" id="bg-nested-dropdown">
-												    <Dropdown.Item eventKey="1" href={"contacts/" + item._id}>Detail</Dropdown.Item>
-										   			<Dropdown.Item eventKey="2">Asign</Dropdown.Item>
-												</DropdownButton>*/}
-
-												<Button href={"contacts/" + item._id} size="sm" variant="outline-secondary">Detail</Button>
-
-
-							                	{this.state.scope &&
-						                    	item._client.map((item1) => 
-							                    		<div className="domain">{item1.client_domain}</div>
-							                    	)
-								                }
-												<div className="_created">{moment(item._created).fromNow()}</div>
-
-										    </Card.Header>
-
-										    <Accordion.Collapse eventKey={index}>
-										      <Card.Body>{item.status}</Card.Body>
-										    </Accordion.Collapse>
-										</Card>
-
-							          	
-							        )}
-
-							        {this.state.itemsContact.length == 0 &&
-									   new Helper().setAlertApp('warning', 'There are no records to display.')
-									}
-
-					        </Accordion>
-				        </section>
+				  	
 				  </Tab>
+				*/}
 
 				  {/*<Tab eventKey="words-base" title={
 		            <React.Fragment>
@@ -428,7 +525,7 @@ export default class RealTime extends Component {
 		          }>
 
 		          </Tab>*/}
-				</Tabs>
+				{/*</Tabs>*/}
 
 
 
