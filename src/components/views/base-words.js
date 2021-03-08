@@ -218,12 +218,12 @@ export default class BaseWords extends Component {
 							    <option value="">Choose Client...</option>
 							    
 							    {this.state.clients.map((item) =>{
-							    	   if(typeof item._client[0] != "undefined"){
+							    	   if(item.status == "Active"){
 							    		return(<option value={item._client[0].client_id}>{item.domain}</option>);
-							    	
 							    	   }
 							    	}
 							    )}
+
 							  </Form.Control>
 			             }
 

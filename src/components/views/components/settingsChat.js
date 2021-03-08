@@ -276,9 +276,12 @@ export class SettingsChat extends Component {
 								        		<Form.Group required controlId="ControlSelect1">
 												    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
 												        <option value="">Select</option>
-													    {this.props.clients.map((item) => 
-													      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
-										                )}
+													    {this.props.clients.map((item) => {
+													       if(item.status == 'Active'){	
+													      	   return(<option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>);
+													       }
+
+										                })}
 												    </Form.Control>
 												    <Form.Label>Client</Form.Label>
 												  </Form.Group>

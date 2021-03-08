@@ -114,9 +114,11 @@ export class FormUser extends Component {
 						        		<Form.Group required controlId="clients">
 										    <Form.Control placeholder="Client" value={this.state.client} required as="select" onChange={this._handleSelectClient}>
 										        <option value="">Select</option>
-											    {this.state.clients.map((item) => 
-											      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
-								                )}
+											    {this.state.clients.map((item) =>  {
+											      	if(item.status == "Active"){
+											      		return(<option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>);
+											      	}
+											    })}
 										    </Form.Control>
 										    <Form.Label>Client</Form.Label>
 										 </Form.Group>
