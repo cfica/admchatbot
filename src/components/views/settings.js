@@ -21,6 +21,7 @@ import * as Icon from 'react-bootstrap-icons';
 import {Validation, Status} from './components/componentsUtils';
 import {Helper} from './components/helper';
 import {SettingsChat} from './components/settingsChat';
+import * as moment from 'moment';
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -35,7 +36,7 @@ export default class Settings extends Component {
 	      user_id: localStorage.getItem('_id'),
 	      client: localStorage.getItem('client'),
 	      error: null,
-	      perPage: 50,
+	      perPage: 10,
 	      items: [],
 	      offset: 0,
 	      listPatterns : [],
@@ -197,44 +198,42 @@ export default class Settings extends Component {
 						        	/>
 						        }
 
-						            <Table id="itemTable" striped bordered hover size="sm">
+						            <Table id="itemTable" variant="dark" striped bordered hover size="sm">
 						              <thead>
 						                <tr>
 						                  <th>Domain</th>
 						                  <th>Name</th>
-						                  <th>Status</th>
-						                  <th></th>
 						                </tr>
 						              </thead>
+						              
 						              <tbody>
 						                {this.state.items.map((item) => 
 						                  <tr key={item._id.$oid}>
-						                    <td>#{item.domain}</td>
-						                    <td>{item.name}</td>
-						                    <td>
-						                      <Status status={item.status}/>
-						                    </td>
+						                    <td>#<a href={'http://'+item.domain} target="_blank"> {item.domain} </a></td>
+						                    <td>{item.name}{' '}<Status status={item.status}/>
 
-						                    <td>
-						                      <DropdownButton as={ButtonGroup} size="sm" variant="outline-primary" title="Options" id="bg-vertical-dropdown-1">
-												    <Dropdown.Item eventKey="4" onClick={(e) => this.editClient(item._id.$oid)}>Edit</Dropdown.Item>
+						                    	<div className="table-options">
+						                    		<span className="_created">{moment(new Helper().formatDate(item._created)).fromNow()}</span>
+							                    	
+							                    	{item.status == 'Active' && 
+								                    	<DropdownButton className="btn-3p" as={ButtonGroup} title="...">
+																<Dropdown.Item eventKey="4" onClick={(e) => this.editClient(item._id.$oid)}>Edit</Dropdown.Item>
 
-												    {/*<Dropdown.Item eventKey="4" onClick={(e) => this.delClient(item._id.$oid)}>Delete</Dropdown.Item>*/}
+															    {/*<Dropdown.Item eventKey="4" onClick={(e) => this.delClient(item._id.$oid)}>Delete</Dropdown.Item>*/}
 
-												    <Dropdown.Item eventKey="1" onClick={(e) => this.handleGenConfigChat(item._id.$oid, e)}>Get code Chatbot</Dropdown.Item>
-												    
 
-												    <Dropdown.Item eventKey="5" onClick="">Group Client Account</Dropdown.Item>
+															    {item.status == 'Active' &&
+															      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Inactive', e)}>Deactivate</Dropdown.Item>
+															    }
 
-												    {item.status == 'Active' &&
-												      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Inactive', e)}>Deactivate</Dropdown.Item>
-												    }
+															    {item.status == 'Inactive' &&
+															      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Active', e)}>Activate</Dropdown.Item>
+															    }
+														</DropdownButton>
+													}
 
-												    {item.status == 'Inactive' &&
-												      <Dropdown.Item eventKey="3" onClick={(e) => this.changeStatusClient(item._id.$oid,'Active', e)}>Activate</Dropdown.Item>
-												    }
-											  
-											  </DropdownButton>
+						                    	</div>
+
 						                    </td>
 						                  </tr>
 						                )}

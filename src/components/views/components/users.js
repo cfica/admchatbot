@@ -49,6 +49,7 @@ export class FormUser extends Component {
 		).then(res => {
 			this.setState({fullname: res.data.data.result[0].fullname});
 			this.setState({email: res.data.data.result[0].email});
+			this.setState({client: res.data.data.result[0].client});
 	    }).catch(function (error) {
 	    }).then(function () {});
 	}
@@ -111,7 +112,7 @@ export class FormUser extends Component {
 					        		
 					        		{this.state.typeUser != 'account' && this.state.scope &&
 						        		<Form.Group required controlId="clients">
-										    <Form.Control placeholder="Client" required as="select" onChange={this._handleSelectClient}>
+										    <Form.Control placeholder="Client" value={this.state.client} required as="select" onChange={this._handleSelectClient}>
 										        <option value="">Select</option>
 											    {this.state.clients.map((item) => 
 											      <option key={item._id.$oid} value={item._id.$oid}>{item.name}</option>
@@ -184,15 +185,20 @@ export class Users extends Component {
 		this.loadUsers();
 	}
 
-	handlePageClick = (e)=>{
+	handlePageClick = data => {
+	    let selected = data.selected;
+	    let offset = Math.ceil(selected * this.state.perPage);
+	    this.setState({ offset: offset }, () => {
+	      this.loadUsers();
+	    });
+	};
 
-	}
 
 	loadUsers() {
 		var _url = config.get('baseUrlApi')+'/api/v1/users?limit='+this.state.perPage+'&offset='+this.state.offset;
 		var _config = {headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}};
 	    axios.get(_url, _config).then(res => {
-	    	this.setState({items: res.data.data.items,pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit),});
+	    	this.setState({items: res.data.data.items,pageCount: Math.ceil(res.data.data.total_count / res.data.data.limit)});
 	    }).catch(function (error) {});
 	}
 
@@ -227,6 +233,7 @@ export class Users extends Component {
 		    	{headers: {'Content-Type': 'application/json;charset=UTF-8', 'Authorization' : 'Bearer ' + this.state.token}}
 		).then(res => {}).catch(function (error) {
 	    }).then(function () {});
+		this.loadUsers();
 	}
 
 	deactivateUserClose = ()=>{
@@ -272,20 +279,27 @@ export class Users extends Component {
 	                {this.state.items.map((item) => 
 	                  <tr key={item._id.$oid}>
 	                    <td>{item.email}{' '}<Status status={item.status}/>
+	                        
 	                        <div className="table-options">
 	                    		<span className="_created">{moment(new Helper().formatDate(item._created)).fromNow()}</span>
-		                    	<DropdownButton className="btn-3p" as={ButtonGroup} title="...">
-									<Dropdown.Item eventKey="1" onClick={(e) => this.editUser(item)}>Edit</Dropdown.Item>
-								    {this.state.user_id != item._id.$oid && 
-								    	<Dropdown.Item eventKey="2" onClick={(e) => this.deactivateUser(item)}>Deactivate</Dropdown.Item>
-								    }
-								</DropdownButton>
+		                    	
+		                    	{item.status == 'Active' && 
+			                    	<DropdownButton className="btn-3p" as={ButtonGroup} title="...">
+											<Dropdown.Item eventKey="1" onClick={(e) => this.editUser(item)}>Edit</Dropdown.Item>
+									    {this.state.user_id != item._id.$oid && 
+									    	<Dropdown.Item eventKey="2" onClick={(e) => this.deactivateUser(item)}>Deactivate</Dropdown.Item>
+									    }
+									</DropdownButton>
+								}
+
 	                    	</div>
+	                    	
 	                    </td>
 	                 </tr>
 	                )}
 	              </tbody>
 	            </Table>
+	           
 	            <div id="react-paginate">
 		            <ReactPaginate
 			          previousLabel={'Anterior'}
@@ -301,6 +315,7 @@ export class Users extends Component {
 			          activeClassName={'active'}
 			        />
 		        </div>
+
 	        </section>
 		);
     }
