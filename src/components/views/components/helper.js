@@ -339,7 +339,8 @@ export class Helper extends Component{
 
 
       loadMessagesSSE(_strUrl){
-          var sse = new EventSource(config.get('baseUrlApi')+'/api/v1/messages-sse?token='+_strUrl);
+          var sse = new EventSourcePolyfill(config.get('baseUrlApi')+'/api/v1/messages-sse', {
+          headers: {'Authorization': 'Bearer ' + new VarStorage().getToken()}});
           return sse;
       }
 
