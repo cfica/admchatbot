@@ -124,13 +124,20 @@ export class ConnectionSSE extends Component{
 		      	}
 		      }
 		      
-	          var _strUrl = config.get('baseUrlApi')+
+	          /*var _strUrl = config.get('baseUrlApi')+
 	          				this.props._url+
 	          				'?limit='+this.state.perPage+
 	          				'&offset='+
 	          				this.state.offset+
 	          				'&t-dsi-restful='+
 	          				this.state.token+
+	          				__filters;*/
+
+	           var _strUrl = config.get('baseUrlApi')+
+	          				this.props._url+
+	          				'?limit='+this.state.perPage+
+	          				'&offset='+
+	          				this.state.offset+
 	          				__filters;
 	          				
 	          var sse = new Helper().requestSSE(_strUrl);

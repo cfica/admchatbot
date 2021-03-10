@@ -7,6 +7,10 @@ import { Alert, Navbar, Nav, DropdownButton, Dropdown, Tab, Modal, Badge, Tabs, 
 import {GetSlide} from './slide';
 import {VarStorage} from './varsStorage';
 import Cleave from 'cleave.js/react';
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
+const EventSource = NativeEventSource || EventSourcePolyfill;
+// OR: may also need to set as global property
+global.EventSource =  NativeEventSource || EventSourcePolyfill;
 
 export class Helper extends Component{
     	constructor(props){
@@ -340,7 +344,9 @@ export class Helper extends Component{
       }
 
       requestSSE(_strUrl){
-          var sse = new EventSource(_strUrl);
+          var sse = new EventSourcePolyfill(_strUrl,
+          {
+          headers: {'Authorization': 'Bearer ' + new VarStorage().getTokenBack()}});
           return sse;
       }
 
